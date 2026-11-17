@@ -23,6 +23,16 @@ async function desktop(browserType, label) {
   const y1 = await p.evaluate(() => scrollY);
   cek(`${label}: peta bisa digulir saat panel terbuka`, y1 > y0, `scrollY ${y0} -> ${y1}`);
 
+  // 1b. Topik lain di peta bisa diklik saat panel terbuka (panel non-modal).
+  await p.evaluate(() => scrollTo(0, 0));
+  await p.waitForTimeout(300);
+  await p.click('[data-topic="git-github"]', { timeout: 5000 }).catch(() => {});
+  await p.waitForTimeout(800);
+  const judul = await p.locator('.sheet .sheet-title').textContent().catch(() => '');
+  cek(`${label}: topik lain bisa diklik saat panel terbuka`, judul === 'Git & GitHub', `judul panel: ${judul}`);
+  await p.click('[data-topic="python"]', { timeout: 5000 }).catch(() => {});
+  await p.waitForTimeout(800);
+
   // 2. Pembaca materi bisa digulir dengan roda mouse.
   await p.click('.book-card');
   await p.click('.r-cover .r-btn.primary');
