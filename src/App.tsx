@@ -134,9 +134,14 @@ function Roadmap({ userId }: { userId: string | null }) {
         </footer>
       </div>
 
-      <TopicSheet data={sheet} done={done} isDesktop={isDesktop}
-        onClose={() => setActiveTopic(null)} onStep={(id, v) => setSteps([id], v)}
-        onRead={(start, resume) => sheet && setReading({ topicId: sheet.topic.id, start, resume: !!resume })} />
+      {/* Panel dilepas selama pembaca terbuka. Vaul 1.1.2 tidak meneruskan modal={false} ke Radix Dialog,
+          sehingga panel yang terbuka memasang pengunci gulir (RemoveScroll) yang menelan gulir di pembaca.
+          Topik aktif tetap disimpan, jadi panel muncul lagi saat pembaca ditutup. */}
+      {!reading && (
+        <TopicSheet data={sheet} done={done} isDesktop={isDesktop}
+          onClose={() => setActiveTopic(null)} onStep={(id, v) => setSteps([id], v)}
+          onRead={(start, resume) => sheet && setReading({ topicId: sheet.topic.id, start, resume: !!resume })} />
+      )}
 
       {book && reading && (
         <Reader key={`${reading.topicId}:${reading.start}`} topic={book.topic} phase={book.phase} phaseIndex={book.phaseIndex}
