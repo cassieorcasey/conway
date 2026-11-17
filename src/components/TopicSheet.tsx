@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type CSSProperties } from 'react';
-import { Drawer } from 'vaul';
+import { Drawer } from '../vendor/vaul';
 import { motion } from 'motion/react';
 import type { Phase, Topic } from '../data/roadmap';
 import { topicCount } from '../lib/stats';
