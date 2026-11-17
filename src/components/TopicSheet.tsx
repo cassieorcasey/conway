@@ -1,13 +1,14 @@
-import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 import { Drawer } from 'vaul';
 import { motion } from 'motion/react';
 import type { Phase, Topic } from '../data/roadmap';
 import { topicCount } from '../lib/stats';
 import { NOTES } from '../content';
-import { readingMinutes } from '../lib/markdown';
-import { Markdown } from './Markdown';
+import { splitBook } from '../lib/book';
+import { loadPos } from '../lib/reader';
 import { Ring } from './Ring';
-import { ArrowUpRight, Check, Close, Globe, Play } from './icons';
+import { chapterLabel } from './Reader';
+import { ArrowUpRight, Book, Check, ChevronRight, Close, Globe, Play } from './icons';
 
 interface Props {
   data: { topic: Topic; phase: Phase; phaseIndex: number } | null;
@@ -15,13 +16,15 @@ interface Props {
   isDesktop: boolean;
   onClose: () => void;
   onStep: (id: string, value: boolean) => void;
+  /** Buka pembaca materi di bab tertentu (null = sampul). */
+  onRead: (start: string | null, resume?: boolean) => void;
 }
 
 /**
  * Panel topik: slide-over kanan di laptop, bottom sheet di iPhone.
  * Non-modal, jadi peta di belakangnya tetap bisa diketuk dan ikut berubah saat langkah dicentang.
  */
-export function TopicSheet({ data, done, isDesktop, onClose, onStep }: Props) {
+export function TopicSheet({ data, done, isDesktop, onClose, onStep, onRead }: Props) {
   // Simpan isi terakhir supaya panel tidak kosong selama animasi menutup.
   const [shown, setShown] = useState(data);
   useEffect(() => { if (data) setShown(data); }, [data]);
@@ -41,7 +44,7 @@ export function TopicSheet({ data, done, isDesktop, onClose, onStep }: Props) {
           aria-describedby={undefined}
         >
           {!isDesktop && <div className="sheet-handle" aria-hidden="true" />}
-          {view && <SheetBody key={view.topic.id} {...view} done={done} onStep={onStep} />}
+          {view && <SheetBody key={view.topic.id} {...view} done={done} onStep={onStep} onRead={onRead} />}
           <Drawer.Close className="sheet-close" aria-label="Tutup panel"><Close /></Drawer.Close>
         </Drawer.Content>
       </Drawer.Portal>
@@ -49,22 +52,19 @@ export function TopicSheet({ data, done, isDesktop, onClose, onStep }: Props) {
   );
 }
 
-type Tab = 'langkah' | 'materi';
-
-function SheetBody({ topic, phase, phaseIndex, done, onStep }: { topic: Topic; phase: Phase; phaseIndex: number; done: Set<string>; onStep: Props['onStep'] }) {
+function SheetBody({ topic, phase, phaseIndex, done, onStep, onRead }: {
+  topic: Topic; phase: Phase; phaseIndex: number; done: Set<string>; onStep: Props['onStep']; onRead: Props['onRead'];
+}) {
   const c = topicCount(topic, done);
   const note = NOTES[topic.id];
-  const [tab, setTab] = useState<Tab>('langkah');
-  const scroller = useRef<HTMLDivElement>(null);
-  const show = note ? tab : 'langkah';
-
-  function pick(next: Tab) {
-    setTab(next);
-    scroller.current?.scrollTo({ top: 0 });
-  }
+  const book = useMemo(() => (note ? splitBook(note, topic.steps) : null), [note, topic]);
+  const byStep = useMemo(() => new Map((book?.chapters ?? []).filter(ch => ch.stepId).map(ch => [ch.stepId!, ch])), [book]);
+  const pos = loadPos(topic.id);
+  const resumeAt = pos && book ? book.chapters.find(ch => ch.key === pos.key) : undefined;
+  const numbered = book ? book.chapters.filter(ch => ch.n !== null).length : 0;
 
   return (
-    <div className="sheet-scroll" ref={scroller}>
+    <div className="sheet-scroll">
       <header className="sheet-head">
         <p className="sheet-eyebrow"><strong>Fase {phaseIndex + 1}</strong> · {phase.title}</p>
         <Drawer.Title className="sheet-title">{topic.title}</Drawer.Title>
@@ -74,32 +74,25 @@ function SheetBody({ topic, phase, phaseIndex, done, onStep }: { topic: Topic; p
         </div>
       </header>
 
-      {note && (
-        <div className="tabs" role="tablist" aria-label="Isi topik">
-          <button type="button" role="tab" id="tab-langkah" aria-selected={show === 'langkah'} aria-controls="panel-langkah"
-            className={`tab${show === 'langkah' ? ' on' : ''}`} onClick={() => pick('langkah')}>
-            Langkah
-          </button>
-          <button type="button" role="tab" id="tab-materi" aria-selected={show === 'materi'} aria-controls="panel-materi"
-            className={`tab${show === 'materi' ? ' on' : ''}`} onClick={() => pick('materi')}>
-            Materi <span className="tab-meta">· {readingMinutes(note)} mnt</span>
-          </button>
-        </div>
+      {book && (
+        <button type="button" className="book-card" onClick={() => (resumeAt ? onRead(resumeAt.key, true) : onRead(null))}>
+          <span className="book-card-icon"><Book /></span>
+          <span className="book-card-text">
+            <strong>{resumeAt ? `Lanjutkan ${chapterLabel(resumeAt)}` : 'Baca materi'}</strong>
+            <span>{resumeAt ? resumeAt.title : `${numbered} bab · ${book.minutes} menit baca`}</span>
+          </span>
+          <ChevronRight />
+        </button>
       )}
 
-      {show === 'materi' && note ? (
-        <div role="tabpanel" id="panel-materi" aria-labelledby="tab-materi" className="sheet-section">
-          <Markdown source={note} />
-        </div>
-      ) : (
-        <div role={note ? 'tabpanel' : undefined} id="panel-langkah" aria-labelledby={note ? 'tab-langkah' : undefined}>
       <section className="sheet-section">
         <h3>Langkah</h3>
         <ul className="steps">
           {topic.steps.map(s => {
             const on = done.has(s.id);
+            const ch = byStep.get(s.id);
             return (
-              <li key={s.id}>
+              <li key={s.id} className="step-row">
                 <button type="button" role="checkbox" aria-checked={on} className={`step${on ? ' on' : ''}`} onClick={() => onStep(s.id, !on)}>
                   <motion.span
                     className="tick"
@@ -111,6 +104,11 @@ function SheetBody({ topic, phase, phaseIndex, done, onStep }: { topic: Topic; p
                   </motion.span>
                   <span className="step-text">{s.text}</span>
                 </button>
+                {ch && (
+                  <button type="button" className="step-read" onClick={() => onRead(ch.key)} aria-label={`Baca ${chapterLabel(ch)}: ${s.text}`}>
+                    <Book size={17} />
+                  </button>
+                )}
               </li>
             );
           })}
@@ -135,8 +133,6 @@ function SheetBody({ topic, phase, phaseIndex, done, onStep }: { topic: Topic; p
             ))}
           </ul>
         </section>
-      )}
-        </div>
       )}
     </div>
   );

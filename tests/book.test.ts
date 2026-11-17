@@ -141,3 +141,17 @@ test('setiap langkah di roadmap punya tepat satu bab', () => {
   }
   assert.deepEqual(missing, []);
 });
+
+test('setiap bab yang terhubung ke langkah punya Intinya dan rangkuman', () => {
+  const missing: string[] = [];
+  for (const p of PHASES) for (const t of p.topics) {
+    const note = NOTES[t.id];
+    if (!note) continue;
+    for (const c of splitBook(note, t.steps).chapters) {
+      if (!c.stepId) continue;
+      if (!c.intinya) missing.push(`${c.stepId}: intinya`);
+      if (!c.rangkuman) missing.push(`${c.stepId}: rangkuman`);
+    }
+  }
+  assert.deepEqual(missing, []);
+});

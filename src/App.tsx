@@ -10,6 +10,7 @@ import { currentPhaseId, findTopic, overallCount } from './lib/stats';
 import { findLegacy, markLegacyHandled } from './lib/legacy';
 import { PhaseMap } from './components/PhaseMap';
 import { TopicSheet } from './components/TopicSheet';
+import { Reader } from './components/Reader';
 import { Ring } from './components/Ring';
 import { Login } from './components/Login';
 import { Logo } from './components/Logo';
@@ -36,6 +37,7 @@ function Roadmap({ userId }: { userId: string | null }) {
   const [openPhase, setOpenPhase] = useState<string | null>(null);
   const [activeTopic, setActiveTopic] = useState<string | null>(null);
   const [legacy, setLegacy] = useState<string[]>([]);
+  const [reading, setReading] = useState<{ topicId: string; start: string | null; resume: boolean } | null>(null);
   const [booted, setBooted] = useState(false);
 
   // Saat data siap: buka fase yang sedang dikerjakan, cek progres lama.
@@ -56,6 +58,7 @@ function Roadmap({ userId }: { userId: string | null }) {
   const all = overallCount(done);
   const current = PHASES.findIndex(p => p.id === currentPhaseId(done));
   const sheet = useMemo(() => findTopic(activeTopic), [activeTopic]);
+  const book = useMemo(() => (reading ? findTopic(reading.topicId) : null), [reading]);
 
   function togglePhase(id: string) {
     setActiveTopic(null);
@@ -132,7 +135,14 @@ function Roadmap({ userId }: { userId: string | null }) {
       </div>
 
       <TopicSheet data={sheet} done={done} isDesktop={isDesktop}
-        onClose={() => setActiveTopic(null)} onStep={(id, v) => setSteps([id], v)} />
+        onClose={() => setActiveTopic(null)} onStep={(id, v) => setSteps([id], v)}
+        onRead={(start, resume) => sheet && setReading({ topicId: sheet.topic.id, start, resume: !!resume })} />
+
+      {book && reading && (
+        <Reader key={`${reading.topicId}:${reading.start}`} topic={book.topic} phase={book.phase} phaseIndex={book.phaseIndex}
+          done={done} start={reading.start} resume={reading.resume}
+          onStep={(id, v) => setSteps([id], v)} onClose={() => setReading(null)} />
+      )}
 
       <AnimatePresence>
         {error && ready && (
