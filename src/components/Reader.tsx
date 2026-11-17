@@ -41,11 +41,10 @@ export function Reader({ topic, phase, phaseIndex, done, start, resume, onStep, 
   const firstPage = useMemo(() => (start ? Math.max(-1, book.chapters.findIndex(c => c.key === start)) : -1), []); // eslint-disable-line react-hooks/exhaustive-deps
   const [page, setPage] = useState(firstPage);
   const [sheet, setSheet] = useState<null | 'aa' | 'toc'>(null);
-  const [progress, setProgress] = useState(0);
-  const [saved, setSaved] = useState(() => loadPos(topic.id));
 
   const root = useRef<HTMLDivElement>(null);
   const scroller = useRef<HTMLDivElement>(null);
+  const bar = useRef<HTMLElement>(null);
   const pendingY = useRef<number>(resume && start ? loadPos(topic.id)?.y ?? 0 : 0);
   const saveTimer = useRef<number>(0);
   const closeRef = useRef(onClose);
@@ -69,25 +68,28 @@ export function Reader({ topic, phase, phaseIndex, done, start, resume, onStep, 
     const el = document.documentElement;
     const prev = el.style.overflow;
     el.style.overflow = 'hidden';
+    // Isi di belakang pembaca tidak bisa dijangkau Tab atau pembaca layar selama pembaca terbuka.
+    const behind = [...document.body.children].filter(c => c !== root.current && !c.hasAttribute('inert'));
+    behind.forEach(c => c.setAttribute('inert', ''));
     root.current?.focus();
-    return () => { el.style.overflow = prev; };
+    return () => { el.style.overflow = prev; behind.forEach(c => c.removeAttribute('inert')); };
   }, []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== 'Escape') return;
+      e.stopPropagation(); // jangan sampai panel topik di belakang ikut tertutup
       if (sheet) setSheet(null); else close();
     };
-    addEventListener('keydown', onKey);
-    return () => removeEventListener('keydown', onKey);
+    addEventListener('keydown', onKey, true);
+    return () => removeEventListener('keydown', onKey, true);
   });
 
   // Setiap ganti halaman: gulir ke posisi yang diminta (atas, atau posisi terakhir saat melanjutkan).
   useLayoutEffect(() => {
     const s = scroller.current;
     if (!s) return;
-    s.scrollTop = pendingY.current;
-    pendingY.current = 0;
+    s.scrollTop = pendingY.current; // diisi oleh goTo (atau posisi tersimpan saat melanjutkan)
     measure();
     if (page >= 0) remember(page, s.scrollTop);
   }, [page]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -96,7 +98,8 @@ export function Reader({ topic, phase, phaseIndex, done, start, resume, onStep, 
     const s = scroller.current;
     if (!s) return;
     const h = s.scrollHeight - s.clientHeight;
-    setProgress(h > 0 ? Math.min(1, Math.max(0, s.scrollTop / h)) : 0);
+    const p = h > 0 ? Math.min(1, Math.max(0, s.scrollTop / h)) : 0;
+    if (bar.current) bar.current.style.transform = `scaleX(${p})`;
   }
 
   function remember(p: number, y: number) {
@@ -104,7 +107,6 @@ export function Reader({ topic, phase, phaseIndex, done, start, resume, onStep, 
     if (!c) return;
     const pos = { key: c.key, y: Math.round(y) };
     savePos(topic.id, pos);
-    setSaved(pos);
   }
 
   function onScroll() {
@@ -121,6 +123,8 @@ export function Reader({ topic, phase, phaseIndex, done, start, resume, onStep, 
     setPage(p);
   }
 
+  // Posisi terakhir dibaca langsung dari penyimpanan saat sampul tampil, supaya selalu terbaru.
+  const saved = page < 0 ? loadPos(topic.id) : null;
   const savedIndex = saved ? book.chapters.findIndex(c => c.key === saved.key) : -1;
   const where = chapter
     ? `${chapterLabel(chapter)}${chapter.n !== null ? ` dari ${numbered}` : ''}`
@@ -139,7 +143,7 @@ export function Reader({ topic, phase, phaseIndex, done, start, resume, onStep, 
             <button type="button" className="r-icon" onClick={() => setSheet('toc')} aria-label="Daftar isi"><ListIcon /></button>
             <button type="button" className="r-icon r-aa" onClick={() => setSheet('aa')} aria-label="Tampilan baca: ukuran huruf, tema, mode">Aa</button>
           </div>
-          <div className="r-progress" aria-hidden="true"><i style={{ transform: `scaleX(${progress})` }} /></div>
+          <div className="r-progress" aria-hidden="true"><i ref={bar} /></div>
         </header>
 
         <main className="r-page" style={{ '--fs': `${settings.fs}px` } as CSSProperties}>
