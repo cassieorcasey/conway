@@ -1,6 +1,8 @@
 Catatan ini membahas satu langkah di checklist, dengan tiga pilihan platform, ditambah mini-proyek penutup Fase 6. Setelah API terbungkus Docker, langkah terakhir adalah menjalankannya di server yang bisa diakses internet. Ketiga platform di sini menerima **image Docker**, jadi Dockerfile dari catatan sebelumnya bisa dipakai hampir tanpa perubahan.
 
-## Memilih platform
+## 1. Deploy API ke cloud
+
+### Memilih platform
 
 | | Hugging Face Spaces | Render | AWS EC2 / App Runner |
 |---|---|---|---|
@@ -11,7 +13,7 @@ Catatan ini membahas satu langkah di checklist, dengan tiga pilihan platform, di
 
 Batas paket gratis dan harga sering berubah; cek halaman harga resmi sebelum memilih.
 
-## Persiapan yang sama untuk semua platform
+### Persiapan yang sama untuk semua platform
 
 1. **Port dari variabel lingkungan.** Banyak platform menentukan port sendiri lewat `PORT`. Ubah baris terakhir Dockerfile:
 
@@ -23,7 +25,7 @@ CMD ["sh", "-c", "uvicorn app:app --host 0.0.0.0 --port ${PORT:-8000}"]
 3. **Rahasia** (API key, URL database) diatur di pengaturan *environment variables* platform, bukan di kode atau image.
 4. **Uji lokal dulu**: `docker build` dan `docker run` harus berhasil di laptop sebelum dicoba di cloud.
 
-## Hugging Face Spaces
+### Hugging Face Spaces
 
 Spaces adalah repositori Git di Hugging Face yang otomatis dibangun dan dijalankan.
 
@@ -43,7 +45,7 @@ app_port: 8000
 
 File model besar disimpan dengan Git LFS, atau lebih baik diunggah sebagai repositori model terpisah di Hub dan diunduh saat start dengan `huggingface_hub`. Untuk demo interaktif tanpa menulis frontend, Space juga mendukung **Gradio** dan **Streamlit**.
 
-## Render
+### Render
 
 1. Push proyek (dengan Dockerfile) ke GitHub.
 2. Di dashboard Render: **New → Web Service**, hubungkan repo-nya. Render mendeteksi Dockerfile.
@@ -52,7 +54,7 @@ File model besar disimpan dengan Git LFS, atau lebih baik diunggah sebagai repos
 
 Render memberi variabel `PORT` dan sertifikat HTTPS otomatis. Di paket gratis, layanan berhenti setelah tidak ada permintaan selama beberapa waktu, sehingga permintaan pertama sesudahnya lambat (*cold start*). Itu wajar untuk portofolio, tapi tidak untuk produksi.
 
-## AWS: App Runner atau EC2
+### AWS: App Runner atau EC2
 
 **App Runner** adalah layanan terkelola: kamu memberi image, AWS mengurus server, skala, dan HTTPS. Alurnya:
 
@@ -75,7 +77,7 @@ Pastikan image dibangun untuk arsitektur yang sesuai. Laptop Apple Silicon mengh
 
 > **Penting:** aktifkan **budget alert** di AWS sejak hari pertama, dan matikan sumber daya yang tidak dipakai. Tagihan cloud yang terlupa adalah kesalahan pemula yang paling mahal. Jangan pernah commit *access key* AWS ke Git.
 
-## Setelah online
+### Setelah online
 
 - **Uji dari luar**: panggil `/health` dan `/predict` lewat URL publik.
 - **Pantau log** di dashboard platform, terutama error 4xx/5xx dan latensi.

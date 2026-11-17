@@ -15,7 +15,63 @@ export type Block =
   | { t: 'list'; list: ListNode }
   | { t: 'quote'; text: string }
   | { t: 'table'; head: string[]; rows: string[][]; align: ('left' | 'right' | 'center')[] }
-  | { t: 'hr' };
+  | { t: 'hr' }
+  // Blok interaktif untuk pembaca buku:
+  //   ::: telusuri   blok kode, lalu baris "3: penjelasan" per langkah eksekusi
+  //   ::: tebak      blok kode (opsional), "? pertanyaan", pilihan "- ..." / "- [x] benar", lalu penjelasan
+  | { t: 'telusuri'; lang: string; code: string; steps: { line: number; text: string }[] }
+  | { t: 'tebak'; code: { lang: string; code: string } | null; question: string; options: { text: string; right: boolean }[]; explain: string };
+
+const DIRECTIVE_RE = /^:::\s*([\w-]+)\s*$/;
+const DIRECTIVE_END_RE = /^:::\s*$/;
+
+/** Kumpulkan baris di dalam blok ":::" sampai penutupnya (pagar kode di dalamnya dihormati). */
+function directiveLines(lines: string[], start: number): [string[], number] {
+  const inner: string[] = [];
+  let fence = false;
+  let i = start + 1;
+  for (; i < lines.length; i++) {
+    if (/^\s*```/.test(lines[i])) fence = !fence;
+    else if (!fence && DIRECTIVE_END_RE.test(lines[i])) return [inner, i + 1];
+    inner.push(lines[i]);
+  }
+  return [inner, i];
+}
+
+/** Pisahkan blok kode berpagar pertama dari baris-baris lainnya. */
+function takeFence(lines: string[]): [{ lang: string; code: string } | null, string[]] {
+  const at = lines.findIndex(l => FENCE_RE.test(l));
+  if (at < 0) return [null, lines];
+  const end = lines.findIndex((l, j) => j > at && /^\s*```\s*$/.test(l));
+  const stop = end < 0 ? lines.length : end;
+  return [
+    { lang: FENCE_RE.exec(lines[at])![1], code: lines.slice(at + 1, stop).join('\n') },
+    [...lines.slice(0, at), ...lines.slice(stop + 1)],
+  ];
+}
+
+function parseDirective(name: string, inner: string[]): Block[] {
+  if (name === 'telusuri') {
+    const [fence, rest] = takeFence(inner);
+    const steps = rest.map(l => /^\s*(\d+)\s*:\s*(.+)$/.exec(l)).filter(Boolean).map(m => ({ line: parseInt(m![1], 10), text: m![2].trim() }));
+    return [{ t: 'telusuri', lang: fence?.lang ?? '', code: fence?.code ?? '', steps }];
+  }
+  if (name === 'tebak') {
+    const [code, rest] = takeFence(inner);
+    let question = '';
+    const options: { text: string; right: boolean }[] = [];
+    const explain: string[] = [];
+    for (const l of rest) {
+      const q = /^\s*\?\s+(.+)$/.exec(l);
+      const o = /^\s*[-*]\s+(\[x\]\s+)?(.+)$/i.exec(l);
+      if (q) question = q[1].trim();
+      else if (o) options.push({ text: o[2].trim(), right: !!o[1] });
+      else if (l.trim()) explain.push(l.trim());
+    }
+    return [{ t: 'tebak', code, question, options, explain: explain.join(' ') }];
+  }
+  return parseMarkdown(inner.join('\n'));
+}
 
 const LIST_RE = /^(\s*)([-*+]|\d+[.)])\s+(.*)$/;
 const FENCE_RE = /^\s*```\s*([\w+-]*)\s*$/;
@@ -58,7 +114,7 @@ function parseList(lines: string[], start: number): [ListNode, number] {
 }
 
 const startsBlock = (line: string, next: string | undefined) =>
-  FENCE_RE.test(line) || HEADING_RE.test(line) || LIST_RE.test(line) || /^\s*>/.test(line) ||
+  FENCE_RE.test(line) || DIRECTIVE_RE.test(line) || DIRECTIVE_END_RE.test(line) || HEADING_RE.test(line) || LIST_RE.test(line) || /^\s*>/.test(line) ||
   /^\s*(-{3,}|\*{3,})\s*$/.test(line) || (/^\s*\|/.test(line) && next !== undefined && TABLE_SEP_RE.test(next));
 
 export function parseMarkdown(src: string): Block[] {
@@ -68,6 +124,15 @@ export function parseMarkdown(src: string): Block[] {
   while (i < lines.length) {
     const line = lines[i];
     if (!line.trim()) { i++; continue; }
+
+    const dir = DIRECTIVE_RE.exec(line);
+    if (dir) {
+      const [inner, next] = directiveLines(lines, i);
+      out.push(...parseDirective(dir[1], inner));
+      i = next;
+      continue;
+    }
+    if (DIRECTIVE_END_RE.test(line)) { i++; continue; } // penutup yatim
 
     const fence = FENCE_RE.exec(line);
     if (fence) {
