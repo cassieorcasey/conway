@@ -1,0 +1,25 @@
+name: Tes browser
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-audit --no-fund
+      - run: npm ls vaul @radix-ui/react-dialog react-remove-scroll || true
+      - run: npm test
+      - run: npm run build
+      - run: npm install --no-save --no-audit --no-fund playwright@1.48.2
+      - run: npx playwright install --with-deps chromium webkit
+      - name: Jalankan pratinjau dan tes
+        run: |
+          npx vite preview --port 4173 --strictPort &
+          for i in $(seq 1 30); do curl -sf http://localhost:4173/waypoint/ >/dev/null && break; sleep 1; done
+          node e2e/gulir.mjs
