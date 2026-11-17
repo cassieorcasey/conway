@@ -42,7 +42,7 @@ function directiveLines(lines: string[], start: number): [string[], number] {
 function takeFence(lines: string[]): [{ lang: string; code: string } | null, string[]] {
   const at = lines.findIndex(l => FENCE_RE.test(l));
   if (at < 0) return [null, lines];
-  const end = lines.findIndex((l, j) => j > at && /^\s*```\s*$/.test(l));
+  const end = lines.findIndex((l, j) => j > at && FENCE_END_RE.test(l));
   const stop = end < 0 ? lines.length : end;
   return [
     { lang: FENCE_RE.exec(lines[at])![1], code: lines.slice(at + 1, stop).join('\n') },
@@ -75,14 +75,21 @@ function parseDirective(name: string, inner: string[]): Block[] {
 
 const LIST_RE = /^(\s*)([-*+]|\d+[.)])\s+(.*)$/;
 const FENCE_RE = /^\s*```\s*([\w+-]*)\s*$/;
+const FENCE_END_RE = /^\s*```\s*$/;
+const HR_RE = /^\s*(-{3,}|\*{3,})\s*$/;
+const QUOTE_RE = /^\s*>/;
+const TABLE_ROW_RE = /^\s*\|/;
 const HEADING_RE = /^(#{1,4})\s+(.*?)\s*#*\s*$/;
 const TABLE_SEP_RE = /^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)*\|?\s*$/;
+
+/** Penanda daftar bernomor ("1." / "1)") atau poin ("-", "*", "+"). */
+const isOrdered = (marker: string) => /\d/.test(marker);
 
 const cells = (line: string) => line.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map(c => c.trim());
 
 function parseList(lines: string[], start: number): [ListNode, number] {
   const first = LIST_RE.exec(lines[start])!;
-  const root: ListNode = { ordered: /\d/.test(first[2]), items: [] };
+  const root: ListNode = { ordered: isOrdered(first[2]), items: [] };
   // Daftar bernomor yang dilanjutkan setelah blok kode ("3. ...") tetap mulai dari nomornya sendiri.
   if (root.ordered) { const n = parseInt(first[2], 10); if (n !== 1) root.start = n; }
   const stack: { indent: number; list: ListNode }[] = [{ indent: first[1].replace(/\t/g, '    ').length, list: root }];
@@ -92,12 +99,12 @@ function parseList(lines: string[], start: number): [ListNode, number] {
     if (m) {
       const indent = m[1].replace(/\t/g, '    ').length;
       // Ganti jenis penanda (poin ke nomor atau sebaliknya) di tingkat paling luar = daftar baru.
-      if (indent <= stack[0].indent && /\d/.test(m[2]) !== root.ordered) break;
+      if (indent <= stack[0].indent && isOrdered(m[2]) !== root.ordered) break;
       while (stack.length > 1 && indent < stack[stack.length - 1].indent) stack.pop();
       let top = stack[stack.length - 1];
       if (indent > top.indent && top.list.items.length) {
         const parent = top.list.items[top.list.items.length - 1];
-        parent.sub ??= { ordered: /\d/.test(m[2]), items: [] };
+        parent.sub ??= { ordered: isOrdered(m[2]), items: [] };
         stack.push({ indent, list: parent.sub });
         top = stack[stack.length - 1];
       }
@@ -114,8 +121,8 @@ function parseList(lines: string[], start: number): [ListNode, number] {
 }
 
 const startsBlock = (line: string, next: string | undefined) =>
-  FENCE_RE.test(line) || DIRECTIVE_RE.test(line) || DIRECTIVE_END_RE.test(line) || HEADING_RE.test(line) || LIST_RE.test(line) || /^\s*>/.test(line) ||
-  /^\s*(-{3,}|\*{3,})\s*$/.test(line) || (/^\s*\|/.test(line) && next !== undefined && TABLE_SEP_RE.test(next));
+  FENCE_RE.test(line) || DIRECTIVE_RE.test(line) || DIRECTIVE_END_RE.test(line) || HEADING_RE.test(line) || LIST_RE.test(line) || QUOTE_RE.test(line) ||
+  HR_RE.test(line) || (TABLE_ROW_RE.test(line) && next !== undefined && TABLE_SEP_RE.test(next));
 
 export function parseMarkdown(src: string): Block[] {
   const lines = src.replace(/\r\n?/g, '\n').split('\n');
@@ -138,7 +145,7 @@ export function parseMarkdown(src: string): Block[] {
     if (fence) {
       const code: string[] = [];
       i++;
-      while (i < lines.length && !/^\s*```\s*$/.test(lines[i])) code.push(lines[i++]);
+      while (i < lines.length && !FENCE_END_RE.test(lines[i])) code.push(lines[i++]);
       i++; // pagar penutup
       out.push({ t: 'code', lang: fence[1], code: code.join('\n') });
       continue;
@@ -151,21 +158,21 @@ export function parseMarkdown(src: string): Block[] {
       continue;
     }
 
-    if (/^\s*(-{3,}|\*{3,})\s*$/.test(line)) { out.push({ t: 'hr' }); i++; continue; }
+    if (HR_RE.test(line)) { out.push({ t: 'hr' }); i++; continue; }
 
-    if (/^\s*\|/.test(line) && i + 1 < lines.length && TABLE_SEP_RE.test(lines[i + 1])) {
+    if (TABLE_ROW_RE.test(line) && i + 1 < lines.length && TABLE_SEP_RE.test(lines[i + 1])) {
       const head = cells(line);
       const align = cells(lines[i + 1]).map(c => (c.startsWith(':') && c.endsWith(':') ? 'center' : c.endsWith(':') ? 'right' : 'left') as 'left' | 'right' | 'center');
       const rows: string[][] = [];
       i += 2;
-      while (i < lines.length && /^\s*\|/.test(lines[i])) rows.push(cells(lines[i++]));
+      while (i < lines.length && TABLE_ROW_RE.test(lines[i])) rows.push(cells(lines[i++]));
       out.push({ t: 'table', head, rows, align });
       continue;
     }
 
-    if (/^\s*>/.test(line)) {
+    if (QUOTE_RE.test(line)) {
       const q: string[] = [];
-      while (i < lines.length && /^\s*>/.test(lines[i])) q.push(lines[i++].replace(/^\s*>\s?/, ''));
+      while (i < lines.length && QUOTE_RE.test(lines[i])) q.push(lines[i++].replace(/^\s*>\s?/, ''));
       out.push({ t: 'quote', text: q.join(' ').trim() });
       continue;
     }

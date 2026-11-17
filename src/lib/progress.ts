@@ -21,11 +21,15 @@ export function useProgress(client: SupabaseClient | null, userId: string | null
   const [ready, setReady] = useState(!client);
   const [error, setError] = useState<string | null>(null);
   const pending = useRef(0);
+  // Naik setiap kali ada perubahan lokal; hasil muat yang dimulai sebelum perubahan itu dibuang.
+  const gen = useRef(0);
 
   const load = useCallback(async () => {
     if (!client || !userId || pending.current > 0) return;
+    const startGen = gen.current;
     const { data, error } = await client.from(TABLE).select('step_id');
-    if (pending.current > 0) return; // ada simpanan yang sedang jalan; jangan timpa
+    // Ada simpanan yang sedang jalan, atau sudah selesai setelah muat ini dimulai: data ini basi.
+    if (pending.current > 0 || gen.current !== startGen) return;
     if (error) { setError('Progres tidak bisa dimuat. Periksa koneksi lalu muat ulang.'); return; }
     setDone(new Set((data as { step_id: string }[]).map(r => r.step_id).filter(id => VALID.has(id))));
     setReady(true);
@@ -52,20 +56,30 @@ export function useProgress(client: SupabaseClient | null, userId: string | null
       return next;
     });
 
-  const setSteps = useCallback(async (ids: string[], value: boolean) => {
+  /** Mengembalikan true kalau perubahan tersimpan (atau tidak ada yang perlu disimpan). */
+  const setSteps = useCallback(async (ids: string[], value: boolean): Promise<boolean> => {
     ids = ids.filter(id => VALID.has(id));
-    if (!ids.length) return;
+    if (!ids.length) return true;
     apply(ids, value);
-    if (!client) return;
+    if (!client) return true;
+    gen.current++;
     pending.current++;
-    const res = value
-      ? await client.from(TABLE).upsert(ids.map(step_id => ({ step_id })), { onConflict: 'user_id,step_id', ignoreDuplicates: true })
-      : await client.from(TABLE).delete().in('step_id', ids);
-    pending.current--;
-    if (res.error) {
+    let failed = false;
+    try {
+      const res = value
+        ? await client.from(TABLE).upsert(ids.map(step_id => ({ step_id })), { onConflict: 'user_id,step_id', ignoreDuplicates: true })
+        : await client.from(TABLE).delete().in('step_id', ids);
+      failed = !!res.error;
+    } catch {
+      failed = true;
+    } finally {
+      pending.current--;
+    }
+    if (failed) {
       apply(ids, !value);
       setError('Gagal menyimpan. Periksa koneksi lalu coba lagi.');
     }
+    return !failed;
   }, [client]);
 
   const clearError = useCallback(() => setError(null), []);

@@ -4,9 +4,11 @@ import { build } from 'esbuild';
 import { readdirSync, mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 
-const dir = new URL('.', import.meta.url).pathname;
+// fileURLToPath, bukan .pathname: di Windows .pathname menghasilkan "/C:/..." yang tidak valid.
+const dir = fileURLToPath(new URL('.', import.meta.url));
 const out = mkdtempSync(join(tmpdir(), 'waypoint-tests-'));
 const files = readdirSync(dir).filter(f => f.endsWith('.test.ts'));
 await build({

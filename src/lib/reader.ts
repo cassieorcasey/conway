@@ -12,7 +12,13 @@ const DEFAULTS: ReaderSettings = { fs: 18, tone: 'auto', mode: 'lengkap' };
 const SKEY = 'waypoint-reader';
 const PKEY = 'waypoint-reader-pos';
 
-const parse = <T,>(raw: string | null, fallback: T): T => { try { return raw ? JSON.parse(raw) as T : fallback; } catch { return fallback; } };
+/** Hanya objek biasa yang diterima; null, angka, atau larik dari penyimpanan rusak diganti nilai bawaan. */
+const parse = <T extends object,>(raw: string | null, fallback: T): T => {
+  try {
+    const v: unknown = raw ? JSON.parse(raw) : null;
+    return v && typeof v === 'object' && !Array.isArray(v) ? v as T : fallback;
+  } catch { return fallback; }
+};
 
 export function loadSettings(): ReaderSettings {
   const s = parse<Partial<ReaderSettings>>(safeStorage.get(SKEY), {});

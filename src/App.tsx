@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import type { Session } from '@supabase/supabase-js';
 import { DEMO } from './config';
@@ -21,7 +21,10 @@ export default function App() {
 
   useEffect(() => {
     if (!sb) return;
-    sb.auth.getSession().then(({ data }) => { setSession(data.session); setAuthReady(true); });
+    sb.auth.getSession()
+      .then(({ data }) => setSession(data.session))
+      .catch(() => setSession(null))
+      .finally(() => setAuthReady(true));
     const { data } = sb.auth.onAuthStateChange((_e, s) => setSession(s));
     return () => data.subscription.unsubscribe();
   }, []);
@@ -38,22 +41,23 @@ function Roadmap({ userId }: { userId: string | null }) {
   const [activeTopic, setActiveTopic] = useState<string | null>(null);
   const [legacy, setLegacy] = useState<string[]>([]);
   const [reading, setReading] = useState<{ topicId: string; start: string | null; resume: boolean } | null>(null);
-  const [booted, setBooted] = useState(false);
+  const booted = useRef(false);
 
-  // Saat data siap: buka fase yang sedang dikerjakan, cek progres lama.
+  // Saat data siap (sekali saja): buka fase yang sedang dikerjakan, cek progres lama.
   useEffect(() => {
-    if (!ready || booted) return;
-    setBooted(true);
+    if (!ready || booted.current) return;
+    booted.current = true;
     setOpenPhase(currentPhaseId(done));
     const old = findLegacy().filter(id => !done.has(id));
     if (old.length) setLegacy(old); else markLegacyHandled();
-  }, [ready, booted, done]);
+  }, [ready, done]);
 
   useEffect(() => {
-    if (!error) return;
+    // Galat muat awal tetap tampil (menggantikan peta); hanya toast setelah siap yang hilang sendiri.
+    if (!error || !ready) return;
     const t = setTimeout(clearError, 4200);
     return () => clearTimeout(t);
-  }, [error, clearError]);
+  }, [error, ready, clearError]);
 
   const all = overallCount(done);
   const current = PHASES.findIndex(p => p.id === currentPhaseId(done));
@@ -80,11 +84,13 @@ function Roadmap({ userId }: { userId: string | null }) {
   }
 
   async function importLegacy() {
-    await setSteps(legacy, true);
+    // Kalau gagal tersimpan, banner tetap ada supaya bisa dicoba lagi.
+    if (!(await setSteps(legacy, true))) return;
     setLegacy([]);
     markLegacyHandled();
   }
 
+  const toggleStep = (id: string, value: boolean) => setSteps([id], value);
   const sheetOpen = isDesktop && !!sheet;
 
   return (
@@ -139,14 +145,14 @@ function Roadmap({ userId }: { userId: string | null }) {
           Topik aktif tetap disimpan, jadi panel muncul lagi saat pembaca ditutup. */}
       {!reading && (
         <TopicSheet data={sheet} done={done} isDesktop={isDesktop}
-          onClose={() => setActiveTopic(null)} onStep={(id, v) => setSteps([id], v)}
+          onClose={() => setActiveTopic(null)} onStep={toggleStep}
           onRead={(start, resume) => sheet && setReading({ topicId: sheet.topic.id, start, resume: !!resume })} />
       )}
 
       {book && reading && (
         <Reader key={`${reading.topicId}:${reading.start}`} topic={book.topic} phase={book.phase} phaseIndex={book.phaseIndex}
           done={done} start={reading.start} resume={reading.resume}
-          onStep={(id, v) => setSteps([id], v)} onClose={() => setReading(null)} />
+          onStep={toggleStep} onClose={() => setReading(null)} />
       )}
 
       <AnimatePresence>

@@ -68,10 +68,8 @@ export function splitBook(src: string, steps: { id: string; text: string }[]): B
     const n = num ? parseInt(num[1], 10) : null;
     const title = num ? num[2] : s.title;
     const stepId = n !== null ? steps[n - 1]?.id ?? null : /^Mini-proyek/i.test(title) ? miniStep?.id ?? null : null;
-    let rest = s.lines;
-    let intinya: string | null, rangkuman: string | null;
-    [intinya, rest] = extract(rest, 'intinya');
-    [rangkuman, rest] = extract(rest, 'rangkuman');
+    const [intinya, withoutInti] = extract(s.lines, 'intinya');
+    const [rangkuman, rest] = extract(withoutInti, 'rangkuman');
     const body = rest.join('\n').trim();
     return {
       key: stepId ?? `lampiran-${slug(title)}`,

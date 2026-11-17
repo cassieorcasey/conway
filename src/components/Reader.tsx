@@ -4,6 +4,7 @@ import type { Phase, Topic } from '../data/roadmap';
 import { NOTES } from '../content';
 import { splitBook, type Chapter } from '../lib/book';
 import { FS_MAX, FS_MIN, loadPos, loadSettings, savePos, saveSettings, type Mode, type ReaderSettings, type Tone } from '../lib/reader';
+import { topicCount } from '../lib/stats';
 import { Markdown } from './Markdown';
 import { Bolt, Check, ChevronLeft, ChevronRight, Close, ListIcon } from './icons';
 
@@ -104,9 +105,7 @@ export function Reader({ topic, phase, phaseIndex, done, start, resume, onStep, 
 
   function remember(p: number, y: number) {
     const c = book.chapters[p];
-    if (!c) return;
-    const pos = { key: c.key, y: Math.round(y) };
-    savePos(topic.id, pos);
+    if (c) savePos(topic.id, { key: c.key, y: Math.round(y) });
   }
 
   function onScroll() {
@@ -117,7 +116,11 @@ export function Reader({ topic, phase, phaseIndex, done, start, resume, onStep, 
     saveTimer.current = window.setTimeout(() => remember(page, y), 350);
   }
 
+  // Simpanan gulir yang tertunda jangan sampai menimpa posisi setelah pembaca ditutup.
+  useEffect(() => () => clearTimeout(saveTimer.current), []);
+
   function goTo(p: number, y = 0) {
+    clearTimeout(saveTimer.current); // simpanan tertunda dari bab lama tidak boleh menimpa bab baru
     pendingY.current = y;
     setSheet(null);
     setPage(p);
@@ -126,6 +129,7 @@ export function Reader({ topic, phase, phaseIndex, done, start, resume, onStep, 
   // Posisi terakhir dibaca langsung dari penyimpanan saat sampul tampil, supaya selalu terbaru.
   const saved = page < 0 ? loadPos(topic.id) : null;
   const savedIndex = saved ? book.chapters.findIndex(c => c.key === saved.key) : -1;
+  const progress = topicCount(topic, done);
   const where = chapter
     ? `${chapterLabel(chapter)}${chapter.n !== null ? ` dari ${numbered}` : ''}`
     : 'Sampul';
@@ -198,7 +202,7 @@ export function Reader({ topic, phase, phaseIndex, done, start, resume, onStep, 
             <article className="r-cover">
               <p className="r-kicker">Fase {phaseIndex + 1} · {phase.title}</p>
               <h1 className="r-title">{topic.title}</h1>
-              <p className="r-meta">{numbered} bab · {book.minutes} menit baca · {topic.steps.filter(s => done.has(s.id)).length} dari {topic.steps.length} langkah selesai</p>
+              <p className="r-meta">{numbered} bab · {book.minutes} menit baca · {progress.done} dari {progress.total} langkah selesai</p>
               {book.intro && <div className="r-body"><Markdown source={book.intro} /></div>}
               <button type="button" className="r-btn primary wide"
                 onClick={() => (savedIndex >= 0 ? goTo(savedIndex, saved!.y) : goTo(0))}>

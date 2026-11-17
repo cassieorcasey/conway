@@ -60,11 +60,11 @@ function Trace({ b }: { b: Extract<Block, { t: 'telusuri' }> }) {
       <p className="block-label">Telusuri kodenya</p>
       <CodeBlock lang={b.lang} code={b.code} numbered active={cur?.line} />
       <p className="trace-text" aria-live="polite">{cur && <><span className="trace-at">Baris {cur.line}.</span> {inline(cur.text)}</>}</p>
-      <div className="trace-nav">
+      {b.steps.length > 0 && <div className="trace-nav">
         <button type="button" className="r-btn" disabled={i === 0} onClick={() => setI(i - 1)}>Sebelumnya</button>
         <span className="trace-count">Langkah {i + 1} dari {b.steps.length}</span>
         <button type="button" className="r-btn primary" disabled={i >= b.steps.length - 1} onClick={() => setI(i + 1)}>Berikutnya</button>
-      </div>
+      </div>}
     </div>
   );
 }

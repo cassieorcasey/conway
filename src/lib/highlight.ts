@@ -18,18 +18,21 @@ const SH = words(`if then else elif fi for do done in while until case esac func
 const DOCKER = words(`FROM RUN COPY WORKDIR CMD ENTRYPOINT ENV EXPOSE ARG USER ADD LABEL VOLUME HEALTHCHECK AS`);
 const JS = words(`const let var function return if else for while import from export default class new await async true false null undefined`);
 
+const defineLang = (comment: string, kw: string[], opts: Partial<Pick<Lang, 'ci' | 'strPrefix'>> = {}): Lang =>
+  ({ comment, kw: new Set(kw), ci: false, strPrefix: false, ...opts });
+
+const python = defineLang('#', PY, { strPrefix: true });
+const shell = defineLang('#', SH);
+const yaml = defineLang('#', words('true false null'));
+const js = defineLang('//', JS);
+
 const LANGS: Record<string, Lang> = {
-  python: { comment: '#', kw: new Set(PY), ci: false, strPrefix: true },
-  py: { comment: '#', kw: new Set(PY), ci: false, strPrefix: true },
-  sql: { comment: '--', kw: new Set(SQL), ci: true, strPrefix: false },
-  bash: { comment: '#', kw: new Set(SH), ci: false, strPrefix: false },
-  sh: { comment: '#', kw: new Set(SH), ci: false, strPrefix: false },
-  shell: { comment: '#', kw: new Set(SH), ci: false, strPrefix: false },
-  yaml: { comment: '#', kw: new Set(words('true false null')), ci: false, strPrefix: false },
-  yml: { comment: '#', kw: new Set(words('true false null')), ci: false, strPrefix: false },
-  dockerfile: { comment: '#', kw: new Set(DOCKER), ci: false, strPrefix: false },
-  js: { comment: '//', kw: new Set(JS), ci: false, strPrefix: false },
-  ts: { comment: '//', kw: new Set(JS), ci: false, strPrefix: false },
+  python, py: python,
+  sql: defineLang('--', SQL, { ci: true }),
+  bash: shell, sh: shell, shell,
+  yaml, yml: yaml,
+  dockerfile: defineLang('#', DOCKER),
+  js, ts: js,
 };
 const PLAIN: Lang = { comment: null, kw: new Set(), ci: false, strPrefix: false };
 
@@ -60,7 +63,6 @@ export function highlightLine(line: string, langName: string): Tok[] {
     if (k === 'x' && last?.k === 'x') last.v += v; else out.push({ k, v });
   };
   let at = 0;
-  re.lastIndex = 0;
   for (const m of line.matchAll(re)) {
     push('x', line.slice(at, m.index));
     const [whole, c, s, n, id] = m;
@@ -68,7 +70,7 @@ export function highlightLine(line: string, langName: string): Tok[] {
     else if (s !== undefined) push('s', whole);
     else if (n !== undefined) push('n', whole);
     else if (id !== undefined) {
-      const isKw = lang.kw.has(lang.ci ? id.toLowerCase() : id) || (lang.ci && lang.kw.has(id.toLowerCase()));
+      const isKw = lang.kw.has(lang.ci ? id.toLowerCase() : id);
       push(isKw ? 'k' : line[m.index! + id.length] === '(' ? 'f' : 'x', whole);
     }
     at = m.index! + whole.length;
