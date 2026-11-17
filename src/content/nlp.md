@@ -4,6 +4,10 @@ Sebelum masuk model, teks dipecah menjadi **token** (kata, potongan kata, atau k
 
 ## 1. RNN
 
+::: intinya
+RNN membaca teks satu token demi satu sambil membawa hidden state sebagai ingatan. Masalahnya, gradien menghilang di urutan panjang dan pelatihannya harus berurutan.
+:::
+
 *Recurrent Neural Network* membaca urutan satu langkah demi satu langkah sambil membawa **hidden state** `h`, semacam ingatan ringkas tentang semua yang sudah dibaca:
 
 ```text
@@ -14,7 +18,17 @@ Bobot yang sama dipakai di setiap langkah, sehingga RNN bisa memproses urutan se
 
 Masalah utamanya: saat backpropagation melewati banyak langkah waktu, gradien dikalikan berulang-ulang dengan matriks yang sama sehingga **menghilang** (atau meledak). Akibatnya RNN biasa sulit mengingat informasi dari puluhan langkah sebelumnya. Training-nya juga harus berurutan, jadi lambat dan sulit diparalelkan.
 
+::: rangkuman
+- Teks dipecah menjadi token, lalu menjadi id angka.
+- Bobot yang sama dipakai di setiap langkah waktu.
+- Vanishing gradient dan pelatihan berurutan adalah kelemahan utama.
+:::
+
 ## 2. LSTM
+
+::: intinya
+LSTM menambah cell state dengan tiga gerbang, sehingga informasi bisa dibawa jauh tanpa gradien menghilang. Untuk teks, perannya kini hampir sepenuhnya digantikan Transformer.
+:::
 
 *Long Short-Term Memory* menambahkan **cell state** `c`, jalur memori panjang yang diatur oleh tiga gerbang (nilainya 0–1 dari sigmoid):
 
@@ -49,7 +63,17 @@ print(model(torch.randint(1, 20_000, (8, 40))).shape)   # torch.Size([8, 2])
 
 LSTM masih berguna untuk deret waktu dan perangkat dengan sumber daya terbatas, tapi untuk teks sudah hampir sepenuhnya digantikan Transformer.
 
+::: rangkuman
+- Gerbang forget, input, dan output mengatur memori.
+- Cell state diperbarui lewat penjumlahan, bukan perkalian berulang.
+- GRU adalah versi ringkas; LSTM masih berguna untuk deret waktu.
+:::
+
 ## 3. Word Embeddings
+
+::: intinya
+Embedding menyimpan kata sebagai vektor padat, dengan kata bermakna mirip berletak berdekatan. Ide yang sama untuk kalimat menjadi dasar pencarian semantik dan RAG.
+:::
 
 Representasi kata paling naif adalah **one-hot**: vektor sepanjang kosakata dengan satu angka 1. Semua kata sama jauhnya satu sama lain, dan tidak ada makna yang tertangkap.
 
@@ -78,7 +102,17 @@ print(round(cos(emb["kucing"], emb["anjing"]), 3), round(cos(emb["kucing"], emb[
 
 Konsep yang sama berlaku untuk kalimat dan dokumen utuh (*sentence embeddings*), dan menjadi dasar pencarian semantik dan RAG di Fase 7.
 
+::: rangkuman
+- One-hot tidak menangkap makna; embedding menangkapnya.
+- Kata dalam konteks serupa bermakna serupa.
+- Kemiripan diukur dengan cosine similarity.
+:::
+
 ## 4. Self attention
+
+::: intinya
+Self-attention membuat setiap token bisa langsung melihat semua token lain dan mengambil yang relevan, lewat vektor Query, Key, dan Value.
+:::
 
 Attention memungkinkan setiap token **melihat langsung semua token lain** dan mengambil informasi yang relevan, tanpa harus melewati rantai panjang seperti RNN. Dalam "Hewan itu tidak menyeberang jalan karena **ia** terlalu lelah", attention membantu "ia" merujuk ke "hewan".
 
@@ -116,7 +150,17 @@ print(np.round(softmax(skor), 2)[0])               # token pertama hanya melihat
 
 **Multi-head attention** menjalankan beberapa attention secara paralel dengan proyeksi berbeda, sehingga tiap "kepala" bisa fokus pada hubungan yang berbeda (sintaksis, rujukan, posisi), lalu hasilnya digabung.
 
+::: rangkuman
+- Skor `Q Kᵀ / √d_k`, lalu softmax, menjadi bobot untuk Value.
+- Multi-head menjalankan beberapa attention paralel.
+- Tidak ada rantai panjang seperti RNN.
+:::
+
 ## 5. Dasar arsitektur Transformer
+
+::: intinya
+Transformer memakai attention saja, tanpa rekurensi, sehingga pelatihannya bisa diparalelkan besar-besaran. Arsitektur inilah dasar semua LLM modern.
+:::
 
 Transformer (paper *Attention Is All You Need*, 2017) membuang rekurensi sepenuhnya dan hanya memakai attention. Karena semua token diproses sekaligus, training bisa diparalelkan besar-besaran di GPU, dan inilah yang memungkinkan model berukuran miliaran parameter.
 
@@ -134,6 +178,12 @@ Model menumpuk puluhan blok seperti ini. Karena attention tidak tahu urutan, dit
 | Encoder-decoder | Encoder dua arah + decoder causal dengan *cross-attention* | T5, BART | Terjemahan, ringkasan |
 
 Kelemahan utama: biaya attention tumbuh **kuadratik** terhadap panjang teks, karena setiap token dibandingkan dengan semua token lain. Banyak riset (FlashAttention, sparse attention) berfokus di sini. Kelanjutan topik ini, cara LLM dilatih dan dipakai, ada di catatan LLM Fase 7.
+
+::: rangkuman
+- Satu blok: multi-head attention dan feed-forward, masing-masing dengan residual dan layer norm.
+- Positional encoding memberi tahu urutan token.
+- Biaya attention tumbuh kuadratik terhadap panjang teks.
+:::
 
 ## Latihan
 

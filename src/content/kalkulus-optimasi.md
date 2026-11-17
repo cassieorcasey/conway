@@ -2,6 +2,10 @@ Catatan ini mengikuti enam langkah di checklist. Melatih model ML pada dasarnya 
 
 ## 1. Turunan
 
+::: intinya
+Turunan `f'(x)` adalah laju perubahan atau kemiringan fungsi di satu titik. Tandanya memberi tahu arah: untuk mengecilkan `f`, geser `x` berlawanan dengan tanda turunan.
+:::
+
 Turunan `f'(x)` adalah laju perubahan `f` di titik `x`: kemiringan garis singgung grafiknya.
 
 ```text
@@ -35,7 +39,17 @@ print(round(turunan_numerik(f, 3), 6))       # 9.0
 
 Arti praktis: kalau `f'(x) > 0`, menaikkan `x` menaikkan `f`. Jadi untuk **mengecilkan** `f`, geser `x` ke arah **berlawanan** dengan tanda turunan. Di titik minimum (atau maksimum), `f'(x) = 0`.
 
+::: rangkuman
+- Turunan = kemiringan garis singgung.
+- Aturan pangkat: `xⁿ` menjadi `n·xⁿ⁻¹`; turunan bisa dicek secara numerik.
+- Di titik minimum atau maksimum, turunannya nol.
+:::
+
 ## 2. Turunan parsial
+
+::: intinya
+Fungsi dengan banyak variabel punya satu turunan parsial per variabel: turunkan terhadap satu variabel dan anggap yang lain konstanta.
+:::
 
 Fungsi dengan banyak variabel, misalnya loss yang bergantung pada semua bobot model, punya satu **turunan parsial** per variabel: turunkan terhadap satu variabel, anggap variabel lain konstanta.
 
@@ -47,7 +61,17 @@ f(x, y) = x²y + 3y
 
 Di titik `(1, 2)`: `∂f/∂x = 4` dan `∂f/∂y = 4`. Setiap turunan parsial menjawab: "kalau hanya variabel ini yang digeser sedikit, seberapa cepat `f` berubah?"
 
+::: rangkuman
+- Satu turunan parsial per parameter model.
+- Variabel lain diperlakukan sebagai konstanta.
+- Menjawab: kalau hanya variabel ini digeser, seberapa cepat `f` berubah?
+:::
+
 ## 3. Chain rule
+
+::: intinya
+Chain rule menurunkan fungsi bersusun dengan mengalikan turunan luar dan turunan dalam. Ini mesin di balik backpropagation di neural network.
+:::
 
 Untuk fungsi bersusun `f(g(x))`:
 
@@ -64,7 +88,17 @@ x → z = w·x + b → a = σ(z) → L = (a - y)²
 ∂L/∂w = ∂L/∂a · ∂a/∂z · ∂z/∂w = 2(a - y) · σ'(z) · x
 ```
 
+::: rangkuman
+- `(f(g(x)))' = f'(g(x)) · g'(x)`.
+- Neural network adalah fungsi yang sangat bersusun.
+- Backpropagation mengalikan turunan lokal dari belakang ke depan.
+:::
+
 ## 4. Gradient vector
+
+::: intinya
+Gradien adalah vektor semua turunan parsial, dan ia menunjuk ke arah kenaikan tercuram. Arah penurunan tercuram adalah kebalikannya, `-∇f`.
+:::
 
 **Gradien** `∇f` adalah vektor berisi semua turunan parsial:
 
@@ -76,7 +110,17 @@ Sifat penting: gradien menunjuk ke arah **kenaikan tercuram** `f`, dan panjangny
 
 Contoh: `f(x, y) = x² + y²` (mangkuk dengan dasar di `(0, 0)`). `∇f = [2x, 2y]`. Di titik `(3, 4)`, gradiennya `[6, 8]`, menunjuk menjauhi dasar mangkuk; bergerak ke arah `[-6, -8]` membawa kita turun.
 
+::: rangkuman
+- `∇f` = vektor berisi semua turunan parsial.
+- Gradien menunjuk ke atas; `-∇f` menunjuk ke bawah.
+- Di titik minimum, gradiennya vektor nol.
+:::
+
 ## 5. Gradient descent
+
+::: intinya
+Gradient descent menggeser parameter sedikit demi sedikit ke arah berlawanan gradien sampai loss mengecil. Besar langkahnya (learning rate) menentukan apakah ia sampai, lambat, atau meledak.
+:::
 
 Algoritma yang melatih hampir semua model ML modern:
 
@@ -121,7 +165,17 @@ Varian berdasarkan jumlah data per langkah:
 | Stochastic GD | Satu contoh | Cepat, berisik |
 | Mini-batch GD | 32–512 contoh | Standar deep learning |
 
+::: rangkuman
+- `θ ← θ - η ∇L(θ)` diulang sampai konvergen.
+- Learning rate terlalu kecil lambat, terlalu besar divergen; coba skala log.
+- Mini-batch (32–512 contoh) adalah standar deep learning.
+:::
+
 ## 6. Fungsi optimasi
+
+::: intinya
+Loss adalah fungsi yang diminimalkan saat melatih model. Bentuknya (konveks atau tidak) menentukan seberapa mudah optimasi, dan optimizer modern seperti Adam mempercepat perjalanan menuju lembah.
+:::
 
 Fungsi yang diminimalkan disebut **loss** (atau *cost*, *objective*). Bentuknya menentukan seberapa mudah optimasinya:
 
@@ -137,6 +191,12 @@ Optimizer modern memperbaiki gradient descent biasa:
 | Adam | Gabungan momentum dan RMSProp; titik awal yang aman untuk deep learning (`lr=1e-3`) |
 
 Regularisasi juga bagian dari fungsi optimasi: menambahkan penalti `λ‖w‖²` (L2) atau `λ‖w‖₁` (L1) ke loss membuat model memilih bobot yang lebih kecil dan tidak *overfit* (Ridge dan Lasso di Fase 4).
+
+::: rangkuman
+- Konveks: satu minimum global, pasti tercapai; neural network non-konveks.
+- Momentum, RMSProp, dan Adam memperbaiki gradient descent biasa.
+- Regularisasi L1 dan L2 menambah penalti agar bobot tetap kecil.
+:::
 
 ## Latihan
 

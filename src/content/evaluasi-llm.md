@@ -2,6 +2,10 @@ Catatan ini mengikuti lima langkah di checklist, ditambah mini-proyek penutup Fa
 
 ## 1. Mengapa evaluasi LLM berbeda
 
+::: intinya
+Evaluasi LLM berbeda dari ML klasik karena keluarannya terbuka, tidak deterministik, dan punya banyak dimensi kualitas. Evaluasi harus dibangun dari kasus nyata milikmu dan diulang setiap ada perubahan.
+:::
+
 Di ML klasik, ada label dan satu metrik: akurasi, AUC. Di LLM:
 
 - **Keluaran terbuka.** Ada banyak jawaban yang sama-sama benar dengan susunan kata berbeda, sehingga pencocokan string sering gagal.
@@ -12,7 +16,17 @@ Di ML klasik, ada label dan satu metrik: akurasi, AUC. Di LLM:
 
 Kesimpulannya: **evaluasi harus dibangun dari kasus nyata milikmu**, dan dijalankan ulang setiap kali sesuatu berubah, seperti tes otomatis di perangkat lunak.
 
+::: rangkuman
+- Banyak jawaban benar dengan kata-kata berbeda.
+- Perubahan kecil pada prompt atau model bisa merusak kasus lain.
+- Benchmark umum tidak mewakili kasusmu.
+:::
+
 ## 2. Set evaluasi dan error analysis
+
+::: intinya
+Mulai dari 30 sampai 100 contoh nyata yang dipilih dengan sengaja, termasuk kasus sulit dan yang harus ditolak. Error analysis menunjukkan perbaikan mana yang paling berharga.
+:::
 
 Mulai dari kecil: **30 sampai 100 contoh** yang dipilih dengan sengaja sudah jauh lebih berguna daripada tidak punya sama sekali.
 
@@ -43,7 +57,17 @@ for jenis, n in Counter(label).most_common():
 
 Dari hitungan di atas, perbaikan paling berharga adalah **retrieval**, bukan prompt. Tanpa error analysis, tim sering menghabiskan seminggu mengutak-atik prompt untuk masalah yang sumbernya di tempat lain.
 
+::: rangkuman
+- Ambil contoh dari log nyata, kasus sulit, dan bug yang pernah terjadi.
+- Simpan input, kriteria benar, dan tag kategori.
+- Beri label setiap kegagalan, hitung, lalu perbaiki yang terbanyak.
+:::
+
 ## 3. Metode penilaian dan evaluasi RAG
+
+::: intinya
+Pilih metode penilaian dari yang paling murah dan pasti. LLM-as-judge praktis tapi harus divalidasi terhadap penilaian manusia, dan RAG dievaluasi terpisah antara retrieval dan generasi.
+:::
 
 Pilih dari yang paling murah dan paling pasti, lalu naik sesuai kebutuhan:
 
@@ -101,7 +125,17 @@ print(round(mrr(hasil, relevan), 2))                                     # 0.5
 
 Jika Recall@5 rendah, perbaiki *chunking*, embedding, atau pencarian hibrida dulu; memoles prompt tidak akan menolong.
 
+::: rangkuman
+- Aturan kode, pencocokan, rubrik manusia, lalu LLM-as-judge.
+- Rubrik biner dan cek kesepakatan hakim dengan manusia.
+- Recall@k dan MRR untuk retrieval; faithfulness untuk generasi.
+:::
+
 ## 4. Biaya dan latensi
+
+::: intinya
+Biaya LLM dihitung per token dan latensi naik dengan panjang keluaran. Hitung biaya sejak awal dan pantau kualitas, biaya per permintaan, dan latensi p95 bersama-sama.
+:::
 
 Biaya LLM dihitung per **token** (potongan kata), biasanya terpisah untuk token masukan dan keluaran. Latensi naik dengan panjang keluaran dan ukuran model. Hitung biayanya sejak awal, bukan setelah peluncuran.
 
@@ -129,7 +163,17 @@ Tuas penghematan, dari yang paling aman:
 
 Pantau tiga angka per versi: **kualitas** (skor evaluasi), **biaya per permintaan**, dan **latensi p95**. Perubahan yang menaikkan kualitas 1% tetapi biaya tiga kali lipat bukan perbaikan otomatis.
 
+::: rangkuman
+- Biaya = token masuk × harga + token keluar × harga.
+- Hemat lewat prompt ringkas, caching, routing model, batching, dan batas keluaran.
+- Perbaikan kualitas kecil dengan biaya tiga kali lipat bukan perbaikan otomatis.
+:::
+
 ## 5. Memilih pendekatan dan keamanan
+
+::: intinya
+Mulai dari pendekatan termurah (prompt), lalu naik ke RAG atau fine-tuning hanya jika evaluasi menunjukkan perlu. Uji keamanan masuk ke set evaluasi yang sama.
+:::
 
 Urutan yang hampir selalu benar: **mulai dari yang paling murah, naik hanya jika evaluasi menunjukkan perlu.**
 
@@ -149,7 +193,17 @@ Evaluasi keamanan dimasukkan ke dalam set yang sama:
 - **Penolakan yang tepat**: menolak permintaan berbahaya, tanpa menolak berlebihan pada permintaan wajar.
 - **Guardrail**: validasi keluaran (format, daftar kata terlarang, pemeriksaan sumber), batas penggunaan alat bagi agen, dan persetujuan manusia untuk tindakan yang tidak bisa dibatalkan.
 
+::: rangkuman
+- Prompt untuk mengarahkan, RAG untuk pengetahuan, fine-tuning untuk format dan tugas sempit.
+- Model kecil cukup bila skornya sebanding di set evaluasimu.
+- Uji prompt injection, kebocoran, dan penolakan sebelum rilis.
+:::
+
 ## Mini-proyek Fase 7
+
+::: intinya
+Bangun RAG kecil dengan 30 pertanyaan evaluasi, ukur retrieval dan kebenaran jawaban, lalu hitung biaya per permintaan. Ini cara kerja LLM yang bisa dipertanggungjawabkan.
+:::
 
 Bangun aplikasi RAG kecil di atas 20 sampai 50 dokumen yang kamu pahami (catatan sendiri, dokumentasi, atau artikel publik), lalu:
 
@@ -158,6 +212,12 @@ Bangun aplikasi RAG kecil di atas 20 sampai 50 dokumen yang kamu pahami (catatan
 3. Ubah satu hal (ukuran chunk, jumlah dokumen, atau prompt), jalankan ulang evaluasi, dan tunjukkan angka sebelum dan sesudahnya.
 4. Hitung **biaya dan latensi per permintaan**, lalu coba satu penghematan (model lebih kecil atau prompt lebih ringkas) dan lihat dampaknya pada skor.
 5. Tulis ringkasan satu halaman untuk orang non teknis: seberapa andal aplikasinya, berapa biayanya per seribu pertanyaan, dan apa risiko terbesarnya.
+
+::: rangkuman
+- Set evaluasi dengan jawaban acuan, termasuk lima pertanyaan tanpa jawaban di dokumen.
+- Ubah satu hal dan tunjukkan angka sebelum dan sesudah.
+- Ringkasan satu halaman: keandalan, biaya, dan risiko.
+:::
 
 ## Latihan
 

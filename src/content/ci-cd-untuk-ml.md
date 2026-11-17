@@ -2,6 +2,10 @@ Catatan ini mengikuti dua langkah di checklist. **CI** (*Continuous Integration*
 
 ## 1. Automasi pengujian model
 
+::: intinya
+Proyek ML diuji di tiga lapis: kode, data, dan model. Uji perilaku seperti ambang minimum, invariansi, dan arah prediksi menangkap model yang diam-diam rusak.
+:::
+
 Tiga lapis pengujian untuk proyek ML:
 
 | Lapis | Menguji | Contoh |
@@ -76,7 +80,17 @@ Jenis uji perilaku model yang berguna:
 
 Untuk validasi data yang lebih lengkap, library seperti `pandera` atau Great Expectations mendefinisikan skema dan aturan sebagai kode.
 
+::: rangkuman
+- Uji kode, skema data, dan performa model dengan `pytest`.
+- Uji ambang, tidak mundur, invariansi, arah, dan irisan data.
+- Set uji harus data yang tidak dipakai saat training.
+:::
+
 ## 2. Automasi deployment via GitHub Actions
+
+::: intinya
+GitHub Actions menjalankan tes di setiap pull request dan men-deploy otomatis dari `main` setelah tes lulus. Image diberi tag hash commit supaya setiap versi bisa dilacak dan dikembalikan.
+:::
 
 GitHub Actions menjalankan *workflow* (file YAML di `.github/workflows/`) saat terjadi peristiwa tertentu, misalnya pull request dibuka atau commit masuk ke `main`.
 
@@ -150,6 +164,12 @@ Praktik penting:
 - **Lindungi branch `main`**: wajib lulus CI dan review sebelum merge.
 - **Pisahkan latih ulang model besar dari CI.** Training yang memakan jam dijalankan sebagai pipeline terjadwal terpisah (atau di platform ML), lalu menghasilkan model yang didaftarkan di registry. CI cukup menguji kode dengan data kecil dan memvalidasi model dari registry.
 - **Deploy bertahap** untuk model penting: *shadow mode* (model baru ikut memprediksi tanpa dipakai), lalu *canary* (sebagian kecil trafik), baru penuh.
+
+::: rangkuman
+- Workflow CI: lint, latih model kecil, lalu `pytest`.
+- Workflow CD: build image, push ke registry, picu deploy.
+- Rahasia di Secrets, lindungi `main`, pisahkan training besar dari CI.
+:::
 
 ## Latihan
 

@@ -7,6 +7,10 @@ from scipy import stats
 
 ## 1. Korelasi vs kausalitas
 
+::: intinya
+Korelasi belum tentu sebab-akibat; sering ada **confounder** yang memengaruhi keduanya. Randomisasi adalah cara paling andal membuat pembanding yang adil.
+:::
+
 Dua hal yang berkorelasi belum tentu saling menyebabkan. Penyebab umumnya adalah **confounder**: faktor ketiga yang memengaruhi keduanya.
 
 > Pelanggan yang memakai fitur baru membeli lebih banyak. Apakah fitur itu penyebabnya? Mungkin pelanggan paling aktif saja yang menemukan fitur itu, dan mereka memang sudah suka membeli.
@@ -29,7 +33,17 @@ print("Selisih diacak :", round(belanja_acak[acak].mean() - belanja_acak[~acak].
 
 Perbandingan naif menunjukkan selisih besar padahal efek sebenarnya nol. Setelah diacak, selisihnya mendekati nol.
 
+::: rangkuman
+- Efek kausal = selisih antara dengan dan tanpa perlakuan (counterfactual).
+- Confounder membuat perbandingan naif menyesatkan.
+- Kelompok yang diacak rata-rata identik kecuali perlakuannya.
+:::
+
 ## 2. Merancang A/B test
+
+::: intinya
+Rancang A/B test sebelum dijalankan: hipotesis, satu metrik utama, guardrail, unit randomisasi, durasi, dan aturan keputusan.
+:::
 
 Sebelum menjalankan, tulis ini di dokumen rancangan:
 
@@ -45,7 +59,17 @@ Sebelum menjalankan, tulis ini di dokumen rancangan:
 
 Dua prinsip: **tentukan metrik dan aturan keputusan sebelum melihat data**, dan **acak pada unit yang sama dengan yang dianalisis**. Mengacak per pengguna lalu menganalisis per sesi membuat data tampak lebih banyak daripada kenyataannya dan menggelembungkan keyakinan.
 
+::: rangkuman
+- Tetapkan metrik dan aturan keputusan sebelum melihat data.
+- Acak dan analisis pada unit yang sama.
+- Durasi minimal satu atau dua siklus mingguan penuh.
+:::
+
 ## 3. Power analysis
+
+::: intinya
+Power analysis menentukan berapa sampel yang dibutuhkan untuk mendeteksi efek terkecil yang bernilai (MDE). Untuk mendeteksi efek yang besarnya tinggal separuh, dibutuhkan kira-kira empat kali sampel.
+:::
 
 *Power* adalah peluang mendeteksi efek yang memang ada. Ukuran sampel bergantung pada empat hal: tingkat signifikansi α (biasanya 0,05), power (biasanya 0,8), variansi metrik, dan **MDE** (*minimum detectable effect*), yaitu efek terkecil yang cukup bernilai untuk dideteksi.
 
@@ -66,7 +90,17 @@ print(n_per_kelompok(0.10, 0.02))    # efek dua kali lebih besar
 
 Efek yang setengahnya lebih kecil membutuhkan kira-kira **empat kali** sampel. Itu sebabnya perubahan kecil pada metrik yang jarang terjadi sering tidak layak diuji. Jika sampelnya tidak cukup, pilihannya: pakai metrik yang lebih sensitif, perbesar perubahannya, perpanjang durasi, atau terima bahwa eksperimen ini tidak akan menghasilkan jawaban yang tegas.
 
+::: rangkuman
+- Ukuran sampel bergantung pada α, power, variansi, dan MDE.
+- Efek kecil pada metrik langka sering tidak layak diuji.
+- Kurang sampel? Perbesar perubahan, ganti metrik, atau perpanjang durasi.
+:::
+
 ## 4. Menganalisis hasil
+
+::: intinya
+Baca hasil eksperimen dari interval kepercayaan, bukan hanya p-value, dan bedakan signifikan secara statistik dari penting secara bisnis. Hindari banyak metrik tanpa koreksi dan kebiasaan mengintip.
+:::
 
 Untuk dua proporsi, uji z memberi nilai p dan interval kepercayaan selisihnya:
 
@@ -105,7 +139,17 @@ for _ in range(500):
 print("Tingkat positif palsu dengan peeking:", positif_palsu / 500)   # jauh di atas 0,05
 ```
 
+::: rangkuman
+- Uji z dua proporsi memberi selisih, p-value, dan interval.
+- Satu metrik utama; koreksi untuk metrik lain.
+- Mengintip lalu berhenti menaikkan positif palsu jauh di atas 5%.
+:::
+
 ## 5. Jebakan eksperimen
+
+::: intinya
+Eksperimen bisa rusak tanpa terlihat: rasio kelompok menyimpang (SRM), efek kebaruan, interferensi antarpengguna, dan efek hari dalam minggu.
+:::
 
 | Jebakan | Gejala | Tindakan |
 |---|---|---|
@@ -123,7 +167,17 @@ chi2, p = stats.chisquare(observasi, f_exp=[10_000, 10_000])
 print(round(chi2, 1), p < 0.001)     # True: ada yang salah dengan penugasan
 ```
 
+::: rangkuman
+- Uji SRM dengan chi-kuadrat sebelum percaya hasilnya.
+- Interferensi diatasi dengan randomisasi per kluster atau wilayah.
+- Temuan pada irisan setelah eksperimen adalah hipotesis baru.
+:::
+
 ## 6. Inferensi kausal dari data observasional
+
+::: intinya
+Saat tidak bisa mengacak, metode observasional seperti difference-in-differences dan propensity score meniru eksperimen, dengan asumsi yang harus kamu sebut dan periksa.
+:::
 
 Tidak semua hal bisa diacak: kebijakan harga di satu kota, perubahan regulasi, program yang sudah berjalan. Ada beberapa metode yang meniru eksperimen, masing-masing dengan **asumsi** yang harus kamu sebutkan dan periksa.
 
@@ -142,6 +196,12 @@ print(did)    # 15: kenaikan 30 dikurangi tren umum 15 yang juga terjadi tanpa p
 ```
 
 Metode observasional hampir selalu lebih lemah daripada eksperimen acak. Jika memungkinkan, ujilah juga dengan eksperimen kecil, dan laporkan hasilnya dengan jujur: "perkiraan efek dengan asumsi X", bukan "terbukti".
+
+::: rangkuman
+- DiD bergantung pada asumsi parallel trends.
+- Propensity score butuh semua confounder penting terukur.
+- Laporkan sebagai perkiraan dengan asumsi, bukan bukti.
+:::
 
 ## Latihan
 

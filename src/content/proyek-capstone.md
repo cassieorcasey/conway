@@ -1,6 +1,6 @@
 Catatan ini mengikuti enam langkah di checklist. Capstone adalah satu proyek **end to end** yang menggabungkan semua fase: data, model, deployment, monitoring, dan komunikasi ke bisnis. Bagi rekruter dan manajer, satu proyek yang lengkap dan bisa dipakai jauh lebih meyakinkan daripada sepuluh notebook Kaggle.
 
-## Memilih proyek
+### Memilih proyek
 
 Kriteria proyek capstone yang baik:
 
@@ -15,7 +15,7 @@ Contoh ide yang sesuai dengan checklist (gabungan RAG dan ML):
 
 Ide lain: deteksi anomali transaksi dengan penjelasan dalam bahasa alami, prediksi permintaan stok untuk UMKM, atau sistem rekomendasi materi belajar.
 
-## Rencana kerja
+### Rencana kerja
 
 | Minggu | Fokus | Hasil |
 |---|---|---|
@@ -27,6 +27,10 @@ Ide lain: deteksi anomali transaksi dengan penjelasan dalam bahasa alami, predik
 | 7 | Dokumentasi dan presentasi | README, model card, slide eksekutif |
 
 ## 1. Riset dan arsitektur data
+
+::: intinya
+Mulailah capstone dengan problem statement, tinjauan pendekatan yang sudah ada, peta sumber data, dan gambar arsitektur dari data mentah sampai pengguna.
+:::
 
 - Tulis **problem statement** dengan metrik bisnis dan metrik model yang disepakati sejak awal.
 - Tinjau pendekatan yang sudah ada (paper, artikel teknis perusahaan, solusi Kaggle) supaya tidak menemukan ulang hal yang sama.
@@ -42,7 +46,17 @@ sumber data → ingest (skrip terjadwal) → penyimpanan (Postgres / Parquet) �
 
 Simpan keputusan penting dalam catatan singkat (*decision log*): apa yang dipilih, alternatifnya, dan alasannya.
 
+::: rangkuman
+- Metrik bisnis dan metrik model disepakati sejak awal.
+- Peta data: asal, ukuran, frekuensi, kualitas, privasi.
+- Simpan keputusan penting di decision log.
+:::
+
 ## 2. Model RAG/ML
+
+::: intinya
+Bangun model dari baseline, dengan set evaluasi yang ditetapkan sebelum eksperimen dan semua eksperimen dilacak di MLflow.
+:::
 
 - Mulai dari **baseline** sederhana dan catat skornya, supaya setiap peningkatan bisa diukur.
 - Tetapkan **set evaluasi** sebelum eksperimen: data uji untuk model ML; daftar pertanyaan dengan jawaban yang diharapkan untuk RAG.
@@ -50,7 +64,17 @@ Simpan keputusan penting dalam catatan singkat (*decision log*): apa yang dipili
 - Evaluasi lebih dari satu angka: per kelompok (*slice*), analisis kesalahan pada contoh yang salah, dan untuk RAG ukur kualitas retrieval dan kesetiaan jawaban secara terpisah.
 - Pilih model akhir dengan mempertimbangkan latensi, biaya, dan kemudahan menjelaskan, bukan hanya skor.
 
+::: rangkuman
+- Baseline dulu, supaya setiap peningkatan terukur.
+- Evaluasi per irisan, analisis kesalahan, dan untuk RAG ukur retrieval terpisah dari jawaban.
+- Pilih model akhir dengan mempertimbangkan latensi, biaya, dan keterjelasan.
+:::
+
 ## 3. API Docker dan CI/CD
+
+::: intinya
+Bawa model ke produksi: FastAPI dengan versi model di setiap respons, Docker dengan versi terkunci, GitHub Actions untuk tes dan deploy, dan URL publik.
+:::
 
 - Bungkus model dalam **FastAPI** dengan skema input/output, `/health`, dan versi model di setiap respons.
 - Paketkan dengan **Docker**, dengan versi library terkunci.
@@ -58,7 +82,17 @@ Simpan keputusan penting dalam catatan singkat (*decision log*): apa yang dipili
 - Deploy ke **Hugging Face Spaces, Render, atau AWS**, dan pastikan URL publiknya bisa dicoba orang lain.
 - Catat setiap prediksi (tanpa data pribadi) untuk monitoring.
 
+::: rangkuman
+- Skema input dan output plus `/health`.
+- CI menguji kode, data, dan ambang model; CD dari `main`.
+- Log setiap prediksi tanpa data pribadi.
+:::
+
 ## 4. Dashboard dampak bisnis
+
+::: intinya
+Dashboard menjawab pertanyaan pemangku kepentingan dalam tiga lapis, bukan menampilkan semua metrik. Bila dampak sebenarnya belum terukur, tampilkan estimasi dengan asumsi tertulis.
+:::
 
 Dashboard menjawab pertanyaan pemangku kepentingan, bukan menampilkan semua metrik yang ada. Susun tiga lapis:
 
@@ -70,7 +104,17 @@ Dashboard menjawab pertanyaan pemangku kepentingan, bukan menampilkan semua metr
 
 Alat yang praktis: **Streamlit** (Python, cepat dibuat), Metabase atau Looker Studio (terhubung langsung ke database). Terapkan prinsip dari catatan Visualisasi & Storytelling: judul berupa kesimpulan dan satu pesan per grafik. Jika dampak sebenarnya belum bisa diukur, tampilkan **estimasi** dengan asumsi yang tertulis jelas.
 
+::: rangkuman
+- Lapis dampak bisnis, perilaku sistem, dan kesehatan model.
+- Streamlit, Metabase, atau Looker Studio.
+- Judul berupa kesimpulan, satu pesan per grafik.
+:::
+
 ## 5. Dokumentasi teknis
+
+::: intinya
+Dokumentasi membuat proyek bisa dinilai, dipakai, dan dilanjutkan orang lain: README, model card, dokumentasi API, decision log, dan catatan reproducibility.
+:::
 
 Dokumentasi yang lengkap membuat proyekmu bisa dinilai, dipakai, dan dilanjutkan orang lain:
 
@@ -81,7 +125,17 @@ Dokumentasi yang lengkap membuat proyekmu bisa dinilai, dipakai, dan dilanjutkan
 - **Reproducibility**: commit, versi data, seed, dan cara melatih ulang.
 - **Keterbatasan dan langkah berikutnya**: jujur tentang apa yang belum berhasil. Ini menunjukkan kedewasaan, bukan kelemahan.
 
+::: rangkuman
+- README dengan demo dan cara menjalankan lokal.
+- Model card dan dokumentasi API dengan contoh `curl`.
+- Jujur tentang keterbatasan dan langkah berikutnya.
+:::
+
 ## 6. Presentasi eksekutif untuk stakeholder
+
+::: intinya
+Presentasi eksekutif 10 menit dengan struktur jawaban dulu: masalah, solusi dan demo, hasil, risiko, lalu keputusan yang diminta.
+:::
 
 Format 10 menit untuk audiens non teknis, dengan struktur **jawaban dulu**:
 
@@ -92,6 +146,12 @@ Format 10 menit untuk audiens non teknis, dengan struktur **jawaban dulu**:
 5. **Rekomendasi dan permintaan** (1 slide): keputusan apa yang kamu minta dari mereka, misalnya uji coba 4 minggu di satu tim.
 
 Siapkan **lampiran teknis** untuk pertanyaan detail, tapi jangan masukkan ke alur utama. Latih presentasinya dengan batas waktu, dan siapkan jawaban untuk tiga pertanyaan yang pasti muncul: "berapa biayanya?", "apa risikonya?", dan "kenapa tidak pakai cara yang lebih sederhana?".
+
+::: rangkuman
+- Angka bisnis lebih dulu, metrik model sebagai pendukung.
+- Detail teknis di lampiran, bukan di alur utama.
+- Siapkan jawaban untuk biaya, risiko, dan cara yang lebih sederhana.
+:::
 
 ## Daftar periksa akhir
 

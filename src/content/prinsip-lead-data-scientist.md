@@ -2,6 +2,10 @@ Catatan ini mengikuti empat langkah di checklist. Pergeseran terbesar dari data 
 
 ## 1. Leverage: tooling, pustaka internal, data asset bersama
 
+::: intinya
+Leverage adalah melakukan pekerjaan sekali yang membuat banyak orang lebih cepat berkali-kali: pustaka internal, template proyek, data asset bersama, dan platform.
+:::
+
 *Leverage* adalah melakukan pekerjaan sekali yang membuat banyak orang lebih cepat berkali-kali. Seorang Lead mencari pekerjaan yang berulang di tim dan mengubahnya menjadi aset bersama.
 
 | Bentuk | Contoh | Dampak |
@@ -14,7 +18,17 @@ Catatan ini mengikuti empat langkah di checklist. Pergeseran terbesar dari data 
 
 Cara memilih investasi leverage: hitung **frekuensi × waktu yang dihemat × jumlah orang**, dibandingkan dengan biaya membangun dan merawatnya. Mulai dari masalah yang benar-benar dikeluhkan tim, buat versi kecil, dan biarkan dipakai sebelum diperluas. Pustaka yang tidak dipakai siapa pun hanyalah beban perawatan.
 
+::: rangkuman
+- Hitung frekuensi × waktu dihemat × jumlah orang dibanding biaya membangun.
+- Mulai dari keluhan nyata tim, buat versi kecil.
+- Pustaka yang tidak dipakai hanya beban perawatan.
+:::
+
 ## 2. Mentorship dan code review untuk tim junior
+
+::: intinya
+Tujuan mentorship adalah membuat orang lain mampu mengambil keputusan yang baik tanpa kamu. Code review adalah alat mengajar utamanya.
+:::
 
 Tujuan mentorship adalah membuat orang lain **mampu mengambil keputusan yang baik tanpa kamu**. Kalau semua keputusan masih harus lewat kamu, tim tidak akan tumbuh lebih besar dari kapasitasmu sendiri.
 
@@ -33,7 +47,17 @@ Code review sebagai alat mengajar (lengkap dengan catatan Git & GitHub di Fase 1
 - Tandai tingkat urgensi: wajib diperbaiki, saran, atau `Nit:` (kecil, boleh diabaikan).
 - Sesekali, **minta mereka me-review kodemu**. Ini mengajarkan cara membaca kode orang lain dan menunjukkan bahwa semua orang bisa salah.
 
+::: rangkuman
+- Tanya sebelum memberi tahu; delegasikan hasil, bukan langkah.
+- Biarkan kesalahan kecil yang bisa dipulihkan terjadi, lalu bahas.
+- Dalam review, utamakan kebenaran dan cara berpikir, tandai urgensi, jelaskan alasan.
+:::
+
 ## 3. Clean code guidelines
+
+::: intinya
+Kode yang masuk produksi lebih sering dibaca daripada ditulis. Panduan clean code tim yang pendek, disepakati, dan ditegakkan alat mempercepat review dan mengurangi perdebatan.
+:::
 
 Kode data science sering ditulis sekali di notebook lalu dibuang, tapi kode yang masuk produksi dibaca jauh lebih sering daripada ditulis. Panduan bersama mengurangi perdebatan dan mempercepat review.
 
@@ -69,7 +93,17 @@ def hitung_rasio_belanja(transaksi: pd.DataFrame) -> pd.DataFrame:
 
 Panduan yang baik itu **pendek** (bisa dibaca dalam sepuluh menit), **disepakati bersama**, dan **ditegakkan oleh alat** sejauh mungkin, bukan oleh komentar manusia di setiap review.
 
+::: rangkuman
+- Notebook untuk eksplorasi, modul dengan tes untuk produksi.
+- Nama yang menjelaskan, fungsi kecil, tanpa angka ajaib, tanpa rahasia di kode.
+- Format dan lint otomatis lewat `ruff` dan pre-commit.
+:::
+
 ## 4. Menerjemahkan masalah bisnis jadi problem statement dan hipotesis teruji
+
+::: intinya
+Keterampilan paling khas seorang Lead: mengubah permintaan bisnis yang kabur menjadi problem statement terukur dan hipotesis yang bisa dibuktikan salah.
+:::
 
 Ini keterampilan yang paling membedakan seorang Lead. Permintaan bisnis hampir selalu datang dalam bentuk solusi atau keluhan yang kabur: "kita butuh model AI untuk churn", "penjualan turun, tolong analisis". Tugasmu mengubahnya menjadi masalah yang jelas, terukur, dan bisa diuji.
 
@@ -94,6 +128,12 @@ Contoh: "Untuk tim retensi yang setiap minggu memilih 2.000 pelanggan yang dihub
 **Langkah 5. Mulai dari baseline paling sederhana**: aturan bisnis, query SQL, atau heuristik. Sering kali baseline sudah memberi 70% nilainya dalam seminggu, dan model kompleks hanya layak jika selisihnya sepadan.
 
 Pertanyaan yang selalu berguna di rapat awal: "Kalau proyek ini berhasil sempurna, apa yang berbeda dalam enam bulan?", "Bagaimana kita tahu kalau proyek ini gagal?", dan "Apa yang terjadi kalau kita tidak mengerjakan ini sama sekali?"
+
+::: rangkuman
+- Gali keputusan di balik permintaan; tanpa keputusan, jangan dikerjakan.
+- Problem statement: pengguna, hasil terukur, target, waktu, dampak, batasan.
+- Sepakati metrik bisnis di awal dan mulai dari baseline paling sederhana.
+:::
 
 ## Latihan
 

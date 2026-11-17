@@ -2,6 +2,10 @@ Catatan ini mengikuti empat langkah di checklist. Model yang sudah di-deploy buk
 
 ## 1. Tracking eksperimen dengan MLflow
 
+::: intinya
+MLflow mencatat setiap run eksperimen: parameter, metrik, artefak, versi kode, dan lingkungan. Model Registry menyimpan versi model yang dipertimbangkan untuk produksi.
+:::
+
 Tanpa tracking, eksperimen berakhir di nama file seperti `model_final_v3_benar.pkl` dan tidak ada yang ingat parameter apa yang menghasilkan skor terbaik. MLflow mencatat setiap **run**: parameter, metrik, artefak (model, grafik), versi kode, dan lingkungan.
 
 ```python
@@ -44,7 +48,17 @@ Komponen MLflow:
 
 Kebiasaan yang baik: catat versi **data** (hash file atau tag) di setiap run, beri nama run yang bermakna, dan daftarkan ke Model Registry hanya model yang benar-benar dipertimbangkan untuk produksi. Alternatif populer: Weights & Biases (kuat untuk deep learning) dan DVC (versi data di Git).
 
+::: rangkuman
+- Tracking, Models, dan Model Registry adalah komponen utamanya.
+- Catat versi data di setiap run dan beri nama run yang bermakna.
+- Weights & Biases dan DVC adalah alternatif populer.
+:::
+
 ## 2. Data drift
+
+::: intinya
+Data drift terjadi saat distribusi input di produksi berbeda dari data latih. Karena bisa dideteksi tanpa label, ini peringatan dini yang murah.
+:::
 
 **Data drift** (*covariate shift*) terjadi ketika distribusi **input** di produksi berbeda dari data latih. Contoh: model kredit dilatih saat suku bunga rendah, lalu suku bunga naik; atau aplikasi masuk ke kota baru dengan profil pengguna berbeda.
 
@@ -79,7 +93,17 @@ Untuk fitur kategorikal, bandingkan proporsi tiap kategori (uji chi-square atau 
 
 Library seperti Evidently AI membuat laporan drift lengkap untuk semua fitur sekaligus.
 
+::: rangkuman
+- Uji KS dan PSI untuk fitur numerik; patokan PSI di atas 0,25 berarti bergeser signifikan.
+- Proporsi kategori untuk fitur kategorikal.
+- Banyak drift sebenarnya bug di pipeline hulu.
+:::
+
 ## 3. Concept drift
+
+::: intinya
+Concept drift terjadi saat hubungan input dan target berubah, misalnya pola penipuan yang beradaptasi. Mendeteksinya butuh label, yang sering datang terlambat.
+:::
 
 **Concept drift** terjadi ketika **hubungan** antara input dan target berubah, walaupun distribusi inputnya tetap. Contoh: pola penipuan berubah karena penipu beradaptasi dengan model; kebiasaan belanja berubah setelah pandemi; definisi "pelanggan aktif" diubah oleh tim bisnis.
 
@@ -96,7 +120,17 @@ Mendeteksi concept drift membutuhkan **label sebenarnya**, yang sering datang te
 - Pantau **distribusi skor prediksi** model: perubahan mendadak sering menjadi tanda pertama.
 - Siapkan kebijakan **retraining**: terjadwal (tiap bulan), atau dipicu ketika metrik turun di bawah ambang, dengan model baru yang selalu dibandingkan dulu dengan model lama (*champion vs challenger*) sebelum menggantikannya.
 
+::: rangkuman
+- Pantau metrik setiap kali label datang.
+- Pakai proksi cepat dan distribusi skor prediksi sebagai peringatan awal.
+- Retraining terjadwal atau dipicu ambang, dengan champion vs challenger.
+:::
+
 ## 4. Latensi dan degradasi performa
+
+::: intinya
+Model di produksi juga layanan perangkat lunak yang harus cepat dan stabil. Ukur latensi dengan persentil, tetapkan SLO, dan pasang alert.
+:::
 
 Selain kualitas prediksi, model di produksi adalah **layanan perangkat lunak** yang harus cepat dan stabil.
 
@@ -121,6 +155,12 @@ Metrik yang perlu dipantau (biasanya dengan Prometheus + Grafana, atau layanan m
 | Bisnis | Metrik yang dipengaruhi model: konversi, kerugian penipuan, kepuasan |
 
 Tetapkan **SLO** (misalnya "p95 di bawah 200 ms, error di bawah 0,1%") dan pasang **alert** ketika dilanggar. Penyebab umum latensi naik: model dimuat ulang di setiap permintaan, fitur dihitung dengan query lambat, ukuran batch terlalu besar, atau server kekurangan memori. Penyebab umum performa model turun tanpa error: perubahan skema data di hulu, fitur yang diam-diam berisi nilai default, dan drift.
+
+::: rangkuman
+- p50, p95, dan p99, bukan rata-rata.
+- Pantau latensi, throughput, error rate, dan sumber daya.
+- SLO yang jelas plus alert saat dilanggar.
+:::
 
 ## Latihan
 

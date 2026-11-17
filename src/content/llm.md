@@ -2,6 +2,10 @@ Catatan ini mengikuti tiga langkah di checklist. *Large Language Model* adalah T
 
 ## 1. Arsitektur Transformer encoder/decoder
 
+::: intinya
+LLM adalah Transformer decoder yang dilatih menebak token berikutnya, lalu disempurnakan agar mengikuti instruksi. Ia menghasilkan teks satu token demi satu dan hanya melihat isi context window-nya.
+:::
+
 Ringkasan tiga varian Transformer (detailnya di catatan NLP):
 
 | Varian | Melihat | Dilatih untuk | Contoh |
@@ -34,7 +38,17 @@ Tahap pelatihan LLM percakapan:
 
 Keterbatasan yang harus selalu diingat: LLM bisa **berhalusinasi** (menghasilkan fakta yang terdengar meyakinkan tapi salah), pengetahuannya berhenti di tanggal tertentu, dan hasilnya tidak deterministik. Untuk fakta, hubungkan dengan sumber (RAG); untuk angka, minta model menulis kode yang menghitungnya.
 
+::: rangkuman
+- Pretraining, supervised fine-tuning, lalu preference tuning.
+- Temperature dan top-p mengatur keragaman keluaran.
+- LLM bisa berhalusinasi; hubungkan ke sumber untuk fakta dan ke kode untuk angka.
+:::
+
 ## 2. Prompt engineering
+
+::: intinya
+Prompt engineering adalah menulis instruksi yang jelas untuk rekan kerja cerdas yang tidak tahu konteksmu. Perlakukan prompt seperti kode: beri versi dan uji dengan kumpulan contoh.
+:::
 
 Prompt engineering adalah menulis instruksi supaya model menghasilkan yang kamu butuhkan secara konsisten. Anggap model sebagai rekan kerja cerdas yang **tidak tahu konteksmu** sama sekali.
 
@@ -80,7 +94,17 @@ Perlakukan prompt seperti kode: simpan versinya, dan **uji dengan kumpulan conto
 
 > **Keamanan:** teks dari pengguna atau dokumen bisa berisi instruksi tersembunyi (*prompt injection*), misalnya "abaikan instruksi sebelumnya". Pisahkan data dari instruksi dengan tag, jangan beri model akses ke aksi berbahaya tanpa konfirmasi, dan validasi keluarannya sebelum dipakai.
 
+::: rangkuman
+- Spesifik, beri konteks dan alasan, beri contoh, pisahkan bagian dengan tag.
+- Tentukan format keluaran; pecah tugas besar menjadi rantai.
+- Waspadai prompt injection: pisahkan data dari instruksi dan validasi keluaran.
+:::
+
 ## 3. Fine tuning dengan Hugging Face Transformers
+
+::: intinya
+Fine-tuning melatih ulang model pada datamu, tapi hanya layak setelah prompt yang baik dan RAG tidak cukup. Kualitas data lebih menentukan daripada jumlahnya.
+:::
 
 Fine-tuning melatih ulang model yang sudah ada pada data milikmu. Sebelum memutuskan, urutkan pilihan dari yang termurah:
 
@@ -146,6 +170,12 @@ model_lora.print_trainable_parameters()
 ```
 
 Hal yang paling menentukan hasil fine-tuning adalah **kualitas data**, bukan jumlahnya: beberapa ratus sampai ribuan contoh yang bersih, konsisten, dan mewakili kasus nyata. Selalu bandingkan dengan baseline prompt yang baik di set evaluasi yang sama; kalau selisihnya kecil, fine-tuning tidak sepadan dengan biaya perawatannya.
+
+::: rangkuman
+- Urutan biaya: prompt, few-shot, RAG, baru fine-tuning.
+- LoRA dan QLoRA melatih sebagian kecil parameter sehingga muat di satu GPU.
+- Bandingkan selalu dengan baseline prompt di set evaluasi yang sama.
+:::
 
 ## Latihan
 

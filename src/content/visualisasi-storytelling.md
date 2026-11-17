@@ -9,6 +9,10 @@ import pandas as pd
 
 ## 1. Matplotlib: histogram dan scatter plot
 
+::: intinya
+Matplotlib adalah fondasi grafik di Python. Histogram menunjukkan bentuk distribusi satu variabel, scatter plot menunjukkan hubungan dua variabel numerik.
+:::
+
 Matplotlib adalah fondasi; seaborn dibangun di atasnya. Selalu pakai antarmuka berorientasi objek (`fig, ax`): lebih jelas dan mudah diatur ketika grafiknya lebih dari satu.
 
 ```python
@@ -32,7 +36,17 @@ fig.savefig("eksplorasi.png", dpi=150)
 
 **Scatter plot** menunjukkan hubungan dua variabel numerik: arah, kekuatan, bentuk (linear atau melengkung), dan kelompok. Dengan ribuan titik, kecilkan `alpha` atau pakai `hexbin` supaya titik tidak menumpuk.
 
+::: rangkuman
+- Pakai antarmuka `fig, ax` supaya mudah diatur.
+- Coba beberapa jumlah `bins`; ceritanya bisa berubah.
+- Ribuan titik: kecilkan `alpha` atau pakai `hexbin`.
+:::
+
 ## 2. Seaborn: box plot dan heatmap korelasi
+
+::: intinya
+Seaborn bekerja langsung dengan DataFrame untuk grafik statistik. Box plot membandingkan distribusi antarkelompok, heatmap korelasi meringkas hubungan linear antarfitur.
+:::
 
 Seaborn bekerja langsung dengan DataFrame dan cocok untuk grafik statistik.
 
@@ -63,7 +77,17 @@ fig.tight_layout()
 
 Grafik seaborn lain yang sering dipakai di EDA: `histplot` dengan `hue`, `kdeplot`, `countplot`, `pairplot` (scatter semua pasangan), dan `lineplot` untuk deret waktu.
 
+::: rangkuman
+- Box plot: median, Q1–Q3, kumis 1,5×IQR, titik di luar = kandidat outlier.
+- Heatmap korelasi memakai colormap divergen berpusat 0.
+- Korelasi hanya linear dan bukan sebab-akibat.
+:::
+
 ## 3. Menyajikan insight ke audiens teknis dan non teknis
+
+::: intinya
+Grafik untuk komunikasi dimulai dari **pesan**, bukan dari data. Judulnya adalah kesimpulan, satu warna aksen menunjuk yang penting, dan struktur presentasinya jawaban dulu.
+:::
 
 Grafik untuk komunikasi dimulai dari **pesan**, bukan dari data. Tulis dulu satu kalimat yang ingin kamu sampaikan, lalu pilih grafik yang membuktikannya.
 
@@ -113,7 +137,17 @@ Struktur yang bekerja untuk presentasi ke non teknis adalah **jawaban dulu** (pi
 
 > **Tip:** Uji grafikmu dengan aturan lima detik. Tunjukkan ke orang lain selama lima detik, lalu tanyakan apa pesannya. Kalau jawabannya beda dengan judulmu, perbaiki grafiknya.
 
+::: rangkuman
+- Tulis satu kalimat pesan, lalu pilih grafik yang membuktikannya.
+- Hapus elemen yang tidak membantu; satu warna aksen, sisanya abu-abu.
+- Untuk non teknis: kesimpulan, bukti, rekomendasi dan dampak, keputusan yang diminta.
+:::
+
 ## Mini-proyek Fase 3
+
+::: intinya
+Lakukan EDA penuh pada satu dataset publik, dari pertanyaan bisnis sampai laporan satu halaman, lalu presentasikan ke orang non teknis. Ini latihan kepemimpinan pertamamu.
+:::
 
 Lakukan analisis eksploratif penuh pada **satu dataset publik** yang kamu pilih (Kaggle, data pemerintah, atau portal data terbuka):
 
@@ -125,6 +159,12 @@ Lakukan analisis eksploratif penuh pada **satu dataset publik** yang kamu pilih 
 Latihan kepemimpinan pertamamu: **presentasikan temuan itu ke satu orang non teknis** (teman atau keluarga), catat pertanyaan yang ia ajukan, dan perbaiki laporannya berdasarkan itu.
 
 Tanda selesai: pembaca bisa menyebutkan kesimpulan utamamu setelah membaca satu menit.
+
+::: rangkuman
+- Mulai dari tiga pertanyaan bisnis, bukan dari grafik.
+- Catat setiap keputusan pembersihan beserta alasannya.
+- Uji laporanmu: pembaca bisa menyebut kesimpulannya dalam satu menit.
+:::
 
 ## Latihan
 

@@ -10,6 +10,10 @@ Hampir semua metode di sini berbasis **jarak**, jadi fitur **wajib di-scale** du
 
 ## 1. K-Means
 
+::: intinya
+K-Means mengelompokkan data ke `k` pusat dengan mengulang dua langkah: tempatkan titik ke pusat terdekat, lalu pindahkan pusat ke rata-rata anggotanya. Kamu harus menentukan `k` sendiri.
+:::
+
 Algoritma:
 
 1. Pilih `k` pusat awal (scikit-learn memakai *k-means++* yang menyebarkan pusat awal dengan cerdas).
@@ -39,7 +43,17 @@ Memilih `k`:
 
 Keterbatasan: K-Means mengasumsikan kelompok berbentuk bulat dan berukuran mirip, sensitif terhadap outlier, dan harus diberi `k` di awal.
 
+::: rangkuman
+- Meminimalkan inertia: total kuadrat jarak ke pusat.
+- Pilih `k` dengan elbow, silhouette, dan kebutuhan bisnis.
+- Mengasumsikan kelompok bulat dan sebanding; sensitif outlier; wajib scaling.
+:::
+
 ## 2. DBSCAN
+
+::: intinya
+DBSCAN mengelompokkan berdasarkan kepadatan: kelompok adalah area padat yang dipisahkan area jarang. Ia tidak butuh jumlah kelompok dan otomatis menandai noise.
+:::
 
 DBSCAN mengelompokkan berdasarkan **kepadatan**: kelompok adalah area padat yang dipisahkan area jarang. Dua parameter:
 
@@ -63,7 +77,17 @@ km = KMeans(n_clusters=2, n_init=10, random_state=0).fit(Xm)   # K-Means memoton
 
 Kelebihan: tidak perlu menentukan jumlah kelompok, bisa menemukan bentuk sembarang, dan otomatis mendeteksi outlier. Kelemahan: sulit jika kepadatan antarkelompok sangat berbeda, dan `eps` sensitif. Cara memilih `eps`: urutkan jarak ke tetangga ke-`min_samples` untuk semua titik, plot, lalu cari "siku"-nya. HDBSCAN (`sklearn.cluster.HDBSCAN`) mengatasi kepadatan yang beragam tanpa `eps`.
 
+::: rangkuman
+- `eps` = radius tetangga, `min_samples` = syarat titik inti.
+- Titik berlabel `-1` adalah noise.
+- Pilih `eps` dari siku grafik jarak tetangga; HDBSCAN untuk kepadatan beragam.
+:::
+
 ## 3. Hierarchical Clustering
+
+::: intinya
+Clustering hierarkis membangun pohon kelompok (dendrogram) dengan menggabungkan kelompok terdekat sedikit demi sedikit. Potong pohon di lompatan jarak besar untuk menentukan jumlah kelompok.
+:::
 
 Clustering hierarkis membangun **pohon kelompok** (*dendrogram*). Versi *agglomerative* dimulai dari setiap titik sebagai kelompok sendiri, lalu berulang kali menggabungkan dua kelompok terdekat sampai tersisa satu.
 
@@ -92,7 +116,17 @@ ax.set(title="Dendrogram data wine", ylabel="Jarak penggabungan")
 
 Potong dendrogram secara horizontal di tempat ada lompatan jarak yang besar: jumlah garis yang terpotong adalah jumlah kelompok yang wajar. Kelebihannya: tidak perlu menentukan `k` di awal dan hierarkinya sendiri informatif. Kelemahannya: memori dan waktunya tumbuh kuadratik, jadi kurang cocok untuk lebih dari puluhan ribu titik.
 
+::: rangkuman
+- Agglomerative: mulai dari tiap titik, gabung yang terdekat.
+- Linkage (ward, complete, average, single) menentukan arti "terdekat".
+- Informatif, tapi kuadratik sehingga tidak untuk data sangat besar.
+:::
+
 ## 4. Principal Component Analysis
+
+::: intinya
+PCA mengubah fitur yang saling berkorelasi menjadi komponen utama yang tidak berkorelasi, terurut dari yang menangkap variasi terbanyak. Berguna untuk visualisasi, mengurangi fitur, dan mempercepat model.
+:::
 
 PCA mengubah fitur yang saling berkorelasi menjadi **komponen utama** baru yang tidak berkorelasi, terurut dari yang menangkap variasi terbanyak. Secara matematis, komponen adalah eigenvector matriks kovarians (lihat catatan Aljabar Linear), dihitung lewat SVD.
 
@@ -115,6 +149,12 @@ Kegunaan PCA:
 - **Mempercepat** clustering dan model lain.
 
 Hal yang perlu diingat: PCA **wajib** di-scale (tanpa scaling, fitur dengan angka besar mendominasi); komponennya sulit dijelaskan dalam bahasa bisnis (setiap komponen campuran semua fitur, lihat `pca.components_`); dan PCA hanya menangkap struktur **linear**. Untuk visualisasi struktur non-linear, gunakan t-SNE atau UMAP, tapi jangan pakai jarak di plot itu sebagai ukuran sebenarnya.
+
+::: rangkuman
+- Komponen = eigenvector matriks kovarians, dihitung lewat SVD.
+- Wajib scaling; komponen sulit dijelaskan dalam bahasa bisnis.
+- Hanya struktur linear; t-SNE dan UMAP untuk visualisasi non-linear.
+:::
 
 ## Latihan
 

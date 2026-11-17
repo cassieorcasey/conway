@@ -10,6 +10,10 @@ Query (setiap pertanyaan):
 
 ## 1. Vector database: ChromaDB, Pinecone, atau FAISS
 
+::: intinya
+Vector database menyimpan embedding dan mencari vektor yang paling mirip dengan cepat lewat indeks ANN. Pencarian semantik menemukan makna yang sama walau kata-katanya berbeda.
+:::
+
 Vector database menyimpan **embedding** (vektor makna, lihat catatan NLP) dan mencari vektor yang paling mirip dengan cepat. Mencari dengan membandingkan satu per satu terlalu lambat untuk jutaan vektor, jadi dipakai indeks *Approximate Nearest Neighbor* (ANN) seperti **HNSW**: sedikit mengorbankan ketepatan demi kecepatan yang jauh lebih tinggi.
 
 | Pilihan | Jenis | Cocok untuk |
@@ -60,7 +64,17 @@ index.add(vek)
 skor, posisi = index.search(vek[:1], 5)       # 5 tetangga terdekat dari vektor pertama
 ```
 
+::: rangkuman
+- Embedding multibahasa untuk teks bahasa Indonesia.
+- HNSW mengorbankan sedikit ketepatan demi kecepatan.
+- ChromaDB, Pinecone, dan FAISS untuk kebutuhan berbeda.
+:::
+
 ## 2. Aplikasi RAG berbasis dokumen dengan LangChain atau LlamaIndex
+
+::: intinya
+RAG mencari potongan dokumen yang relevan lalu menyertakannya di prompt, sehingga jawaban berdasar sumber dan bisa dikutip. Kualitasnya paling ditentukan oleh cara dokumen dipotong dan dicari.
+:::
 
 Sebelum memakai framework, pahami alurnya dengan versi mini. Contoh di bawah memakai TF-IDF sebagai pengganti embedding supaya bisa dijalankan tanpa model atau layanan apa pun; strukturnya sama dengan RAG sungguhan.
 
@@ -125,6 +139,12 @@ print(jawaban, [n.metadata.get("file_name") for n in jawaban.source_nodes])
 ```
 
 Secara default LlamaIndex memakai model dari OpenAI; atur `Settings.llm` dan `Settings.embed_model` untuk penyedia lain. API kedua framework ini sering berubah antar versi, jadi selalu cocokkan contoh dengan dokumentasi resmi versi yang kamu pasang.
+
+::: rangkuman
+- Alur: potong dokumen, buat embedding, cari, susun prompt, jawab dengan sumber.
+- Ukuran chunk, overlap, jumlah hasil, dan pencarian hibrida sangat berpengaruh.
+- LlamaIndex fokus retrieval, LangChain lebih umum; cocokkan dengan dokumentasi versimu.
+:::
 
 ## Dari RAG ke AI agent
 

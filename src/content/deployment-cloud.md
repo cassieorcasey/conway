@@ -2,6 +2,10 @@ Catatan ini membahas satu langkah di checklist, dengan tiga pilihan platform, di
 
 ## 1. Deploy API ke cloud
 
+::: intinya
+Setelah API terbungkus Docker, jalankan di platform yang bisa diakses internet: Hugging Face Spaces untuk demo, Render untuk API kecil, AWS untuk kebutuhan produksi. Persiapannya sama: port dari variabel lingkungan, `/health`, rahasia di pengaturan platform, dan uji lokal dulu.
+:::
+
 ### Memilih platform
 
 | | Hugging Face Spaces | Render | AWS EC2 / App Runner |
@@ -84,7 +88,17 @@ Pastikan image dibangun untuk arsitektur yang sesuai. Laptop Apple Silicon mengh
 - **Otomatisasi deploy** dari GitHub Actions (catatan CI/CD Fase 8): tes lulus → build image → deploy.
 - **Versi**: beri tag image dengan versi atau hash commit, bukan hanya `latest`, supaya bisa kembali ke versi sebelumnya dengan cepat.
 
+::: rangkuman
+- Spaces paling mudah, Render terhubung GitHub, AWS paling banyak pengaturan.
+- Aktifkan budget alert di cloud sejak hari pertama.
+- Beri tag image dengan versi supaya bisa rollback cepat.
+:::
+
 ## Mini-proyek Fase 6
+
+::: intinya
+Bawa satu model dari Fase 4 atau 5 sampai bisa dipanggil orang lain: API, Docker, deploy ke cloud, dan README. Inilah titik ketika model mulai memberi nilai di luar notebook.
+:::
 
 Bawa satu model dari Fase 4 atau 5 ke bentuk yang bisa dipakai orang lain:
 
@@ -95,6 +109,12 @@ Bawa satu model dari Fase 4 atau 5 ke bentuk yang bisa dipakai orang lain:
 5. Catat **latensi** dan perkiraan biaya bulanan.
 
 Tanda selesai: seseorang yang tidak mengenalmu bisa memanggil API-mu dengan satu perintah `curl` dari README.
+
+::: rangkuman
+- API dengan validasi input dan `/health`.
+- Image kecil, tanpa rahasia, berjalan sebagai pengguna non-root.
+- Orang asing bisa memanggilnya dengan satu perintah `curl` dari README.
+:::
 
 ## Latihan
 

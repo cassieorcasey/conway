@@ -2,6 +2,10 @@ Catatan ini mengikuti empat langkah di checklist. Governance adalah sisi ML yang
 
 ## 1. Standar kualitas data
 
+::: intinya
+Kualitas data diukur dari kelengkapan, keakuratan, konsistensi, keunikan, dan kesegaran. Tulis aturannya sebagai kode yang berjalan otomatis setiap data baru masuk.
+:::
+
 Model tidak bisa lebih baik dari datanya. Kualitas data diukur dari beberapa dimensi:
 
 | Dimensi | Pertanyaan | Contoh aturan |
@@ -37,7 +41,17 @@ print(cek_kualitas(contoh))
 
 Buat juga **kontrak data** dengan tim pemilik sumber data: skema, arti setiap kolom, jadwal pembaruan, dan siapa yang dihubungi jika ada masalah. Perubahan skema tanpa pemberitahuan adalah penyebab paling umum model rusak diam-diam.
 
+::: rangkuman
+- Aturan kualitas data dijalankan sebelum training dan prediksi.
+- Kontrak data dengan pemilik sumber.
+- Perubahan skema tanpa pemberitahuan adalah penyebab kerusakan paling umum.
+:::
+
 ## 2. Manajemen risiko model
+
+::: intinya
+Setiap model bisa salah, dan manajemen risiko memastikan kesalahan itu dipahami, dibatasi, dan ada pemiliknya. Semakin besar dampak keputusan, semakin ketat pengawasannya.
+:::
 
 Setiap model bisa salah. Manajemen risiko memastikan kesalahan itu dipahami, dibatasi, dan ada yang bertanggung jawab.
 
@@ -74,7 +88,17 @@ for g in ["A", "B"]:
 
 Rujukan kerangka kerja yang banyak dipakai: NIST AI Risk Management Framework (Govern, Map, Measure, Manage). Di sektor keuangan, regulator biasanya juga punya aturan manajemen risiko model sendiri.
 
+::: rangkuman
+- Klasifikasikan risiko dari dampak keputusan.
+- Validasi independen, uji keadilan, dan keterjelasan.
+- Batas pemakaian, manusia dalam loop, dan rencana darurat.
+:::
+
 ## 3. Dokumentasi reproducibility
+
+::: intinya
+Hasil yang bisa direproduksi berarti orang lain bisa mendapat model dan angka yang sama. Kunci kode, data, lingkungan, dan seed, lalu dokumentasikan dengan model card.
+:::
 
 Sebuah hasil bisa direproduksi jika orang lain (atau kamu, enam bulan kemudian) bisa mendapatkan model dan angka yang sama. Yang harus dicatat dan dikunci:
 
@@ -103,7 +127,17 @@ Model card: Prediksi churn pelanggan v2.1
 
 Untuk dataset, dokumen serupa disebut *datasheet*: asal data, cara pengumpulan, siapa yang terwakili dan siapa tidak, dan batasan penggunaannya.
 
+::: rangkuman
+- Catat commit, versi data, versi library, dan seed.
+- Model card: tujuan, data, performa per kelompok, batasan, pemilik.
+- Datasheet untuk dataset.
+:::
+
 ## 4. Privasi data
+
+::: intinya
+Data pribadi dilindungi dengan prinsip minimisasi, pembatasan tujuan, keamanan, dan retensi. Di Indonesia acuannya UU PDP; libatkan tim hukum untuk proyek nyata.
+:::
 
 Data science sering bekerja dengan data pribadi. Prinsip-prinsip yang berlaku di hampir semua regulasi privasi:
 
@@ -140,6 +174,12 @@ print(pseudonim("ayu@contoh.com") == pseudonim(" Ayu@Contoh.com "))   # True
 | Akses minimum | Analis bekerja dengan data yang sudah dipseudonimkan; data mentah hanya untuk peran tertentu |
 
 Perhatian khusus untuk LLM dan layanan pihak ketiga: jangan mengirim data pribadi ke API eksternal tanpa persetujuan dan perjanjian pemrosesan data, dan jangan menaruh data pribadi di prompt, log, atau notebook yang dibagikan. Model juga bisa **menghafal** data latih, jadi data pribadi di training set adalah risiko kebocoran tersendiri.
+
+::: rangkuman
+- Kumpulkan seperlunya dan untuk tujuan yang jelas.
+- Pseudonimisasi, generalisasi, dan agregasi di sisi data science.
+- Jangan kirim data pribadi ke API eksternal atau ke prompt dan log.
+:::
 
 ## Latihan
 

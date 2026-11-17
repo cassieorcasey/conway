@@ -2,6 +2,10 @@ Catatan ini mengikuti tiga langkah di checklist, ditambah mini-proyek penutup fa
 
 ## 1. PyTorch
 
+::: intinya
+PyTorch memberi tensor di GPU, autograd, dan komponen siap pakai. Polanya selalu tiga: `nn.Module` untuk model, `Dataset` dan `DataLoader` untuk data, dan training loop yang kamu tulis sendiri.
+:::
+
 Tensor PyTorch mirip array NumPy, ditambah dua kemampuan: berjalan di GPU dan mencatat operasi untuk menghitung gradien.
 
 ```python
@@ -39,7 +43,17 @@ loss_fn = nn.CrossEntropyLoss()               # menerima logit mentah; softmax s
 optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3, weight_decay=1e-2)
 ```
 
+::: rangkuman
+- Tensor mirip array NumPy, ditambah GPU dan pencatatan gradien.
+- Layer didaftarkan di `__init__`, alurnya ditulis di `forward`.
+- Training loop yang eksplisit memberi kendali penuh.
+:::
+
 ## 2. TensorFlow/Keras
+
+::: intinya
+Keras menyembunyikan training loop di balik `compile` dan `fit`, dan sejak Keras 3 bisa berjalan di atas beberapa backend. Kuasai PyTorch, cukup bisa membaca Keras.
+:::
 
 Keras menyembunyikan training loop di balik `compile` dan `fit`. Sejak Keras 3, kode yang sama bisa berjalan di atas TensorFlow, PyTorch, atau JAX.
 
@@ -72,7 +86,17 @@ model_k.summary()
 
 Saran praktis: kuasai **PyTorch** sebagai alat utama, karena hampir semua model terbaru dan library Hugging Face berbasis PyTorch. Cukup bisa **membaca** kode Keras.
 
+::: rangkuman
+- `Sequential`, `compile`, `fit`, `evaluate`.
+- Keras 3 berjalan di TensorFlow, PyTorch, atau JAX.
+- Ekosistem model terbaru dan Hugging Face berbasis PyTorch.
+:::
+
 ## 3. Membangun, melatih, dan mengevaluasi model
+
+::: intinya
+Training loop standar selalu sama: forward, hitung loss, kosongkan gradien, backward, update. Saat hasilnya buruk, uji dulu apakah model bisa overfit satu batch kecil.
+:::
 
 Training loop standar PyTorch. Polanya sama untuk model sebesar apa pun:
 
@@ -128,7 +152,17 @@ Daftar periksa saat training tidak berjalan baik:
 
 Evaluasi akhir dilakukan sekali pada data uji yang terpisah, dengan metrik dari catatan Evaluasi Model (confusion matrix, precision, recall, ROC-AUC), bukan hanya akurasi.
 
+::: rangkuman
+- Mode `train()` dan `eval()` serta `torch.no_grad()` saat evaluasi.
+- Overfit satu batch kecil untuk menemukan bug.
+- Learning rate adalah hyperparameter terpenting; set seed untuk hasil yang bisa diulang.
+:::
+
 ## Mini-proyek Fase 5
+
+::: intinya
+Fine-tune model pra-latih untuk satu kasus gambar atau teks, bandingkan dengan baseline klasik, lalu tulis laporan error. Tujuannya tahu kapan deep learning sepadan dan kapan tidak.
+:::
 
 Lakukan *transfer learning* pada satu kasus gambar atau teks:
 
@@ -139,6 +173,12 @@ Lakukan *transfer learning* pada satu kasus gambar atau teks:
 5. Bandingkan dengan baseline dari sisi skor, waktu latih, dan biaya.
 
 Tanda selesai: kamu bisa menjelaskan kapan deep learning memang sepadan dibanding model klasik untuk kasus ini, dan kapan tidak.
+
+::: rangkuman
+- Mulai dari baseline klasik dan catat skornya.
+- Fine-tuning yang bisa diulang: seed, versi, konfigurasi.
+- Bandingkan skor, waktu latih, dan biaya.
+:::
 
 ## Latihan
 

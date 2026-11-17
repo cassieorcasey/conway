@@ -2,6 +2,10 @@ Catatan ini mengikuti enam langkah di checklist dan melengkapi catatan Prinsip L
 
 ## 1. Komunikasi ke eksekutif
 
+::: intinya
+Eksekutif butuh kesimpulan, alasan, dan apa yang diminta darinya, bukan perjalanan analisismu. Pakai prinsip jawaban dulu dan bahasa dampak.
+:::
+
 Eksekutif punya sedikit waktu dan banyak keputusan. Mereka tidak butuh perjalanan analisismu, mereka butuh **kesimpulan, alasan, dan apa yang diminta darinya**.
 
 **Prinsip piramida: jawaban dulu, bukti kemudian.**
@@ -22,7 +26,17 @@ Kebiasaan yang membedakan:
 - **Tebak pertanyaannya.** Siapkan jawaban untuk "Berapa biayanya?", "Apa risikonya?", "Kenapa tidak cara yang lebih sederhana?", "Bagaimana kita tahu itu berhasil?".
 - **Hindari jargon**, atau jelaskan dengan analogi. Jika harus memakai istilah teknis, definisikan dalam satu kalimat.
 
+::: rangkuman
+- Urutan: kesimpulan, dampak, dasar, risiko, permintaan.
+- Satu halaman keputusan; angka teknis di bawah atau di lampiran.
+- Judul grafik adalah kesimpulan; siapkan jawaban untuk pertanyaan yang pasti muncul.
+:::
+
 ## 2. Mengelola ekspektasi dan ketidakpastian
+
+::: intinya
+Kejutan merusak kepercayaan lebih dari kabar buruk yang disampaikan lebih awal. Beri estimasi dengan rentang, kabari risiko sejak dini, dan sampaikan hasil negatif sebagai temuan berharga.
+:::
 
 Pekerjaan data science penuh ketidakpastian: apakah datanya cukup, apakah sinyalnya ada. Ekspektasi yang tidak dikelola menimbulkan kejutan, dan kejutan merusak kepercayaan lebih besar daripada kabar buruk yang disampaikan lebih awal.
 
@@ -59,7 +73,17 @@ Kebiasaan yang menjaga kepercayaan:
 - **Janji kecil yang ditepati** lebih berharga daripada janji besar yang melenceng.
 - Katakan **"saya tidak tahu, tapi inilah cara saya mencari tahu"**, tidak menebak untuk terdengar yakin.
 
+::: rangkuman
+- Estimasi tiga titik dan sebut apa yang akan mempersempit rentangnya.
+- Pisahkan fakta, interpretasi, dan opini.
+- Hasil negatif menyelamatkan perusahaan dari investasi sia-sia.
+:::
+
 ## 3. Pemetaan stakeholder dan kolaborasi lintas fungsi
+
+::: intinya
+Proyek data science melibatkan banyak pihak dengan kepentingan berbeda. Petakan pengaruh dan minat mereka, lalu sesuaikan cara dan frekuensi komunikasinya.
+:::
 
 Hampir tidak ada proyek data science yang hanya melibatkan data scientist. Petakan siapa yang berkepentingan:
 
@@ -81,7 +105,17 @@ Praktik yang melancarkan kerja sama:
 - **Pahami bahasa dan tekanan mitra**: apa yang diukur terhadap tim produk, apa yang membuat tim engineering sibuk.
 - Kalau ada konflik prioritas, **bawa ke sponsor bersama** dengan pilihan dan konsekuensinya, jangan menyelesaikannya lewat pesan berkepanjangan.
 
+::: rangkuman
+- Sponsor, produk, engineering, data engineering, pengguna, dan legal punya kepedulian berbeda.
+- Tulis tujuan dan definisi sukses bersama di satu tempat.
+- Konflik prioritas dibawa ke sponsor bersama, lengkap dengan pilihan dan konsekuensi.
+:::
+
 ## 4. Perencanaan kerja tim
+
+::: intinya
+Rencanakan dengan kapasitas nyata, bukan jumlah orang × jam. Pekerjaan eksploratif butuh kotak waktu dan irisan tipis end-to-end, dan utang teknis harus terlihat.
+:::
 
 **Kapasitas.** Hitung kapasitas nyata, bukan jumlah orang × jam kerja. Kurangi cuti, rapat, review, dukungan produksi, dan waktu belajar. Banyak tim hanya memiliki 50 sampai 60% waktu untuk pengembangan baru.
 
@@ -95,7 +129,17 @@ Praktik yang melancarkan kerja sama:
 
 **Prioritas dan fokus.** Batasi pekerjaan yang berjalan bersamaan. Tim yang mengerjakan lima hal sekaligus menyelesaikan nol. Saat ada permintaan mendadak, ajukan pertanyaan: "Apa yang kita tunda untuk ini?"
 
+::: rangkuman
+- Kapasitas nyata sering hanya 50–60% untuk pekerjaan baru.
+- Kotak waktu untuk eksplorasi; baseline end-to-end dulu.
+- Alokasikan porsi tetap untuk utang teknis dan batasi pekerjaan paralel.
+:::
+
 ## 5. 1:1, umpan balik, delegasi, dan pengembangan karier
+
+::: intinya
+1:1 adalah waktu milik anggota tim. Umpan balik spesifik dengan kerangka SBI, delegasi yang disesuaikan kesiapan, dan rencana karier membuat tim tumbuh.
+:::
 
 Catatan Prinsip Lead sudah membahas mentorship dan code review. Di sini fokusnya pada ritme dan percakapan manajerial.
 
@@ -126,7 +170,17 @@ Kesalahan umum Lead baru adalah **menarik kembali pekerjaan** karena "lebih cepa
 
 **Pengembangan karier:** bantu setiap orang menulis rencana sederhana: keterampilan yang ingin dikembangkan, proyek yang menantang, dan siapa yang bisa menjadi mentor. Beri mereka **proyek yang sedikit di atas kemampuan sekarang** dengan jaring pengaman.
 
+::: rangkuman
+- Tanyakan hambatan, energi, umpan balik untukmu, dan tujuan karier.
+- SBI: situasi, perilaku, dampak; kritik secara pribadi.
+- Jangan menarik kembali pekerjaan; delegasikan sesuai kesiapan.
+:::
+
 ## 6. Hiring dan struktur tim
+
+::: intinya
+Komposisi tim mengikuti tahap organisasi, dan proses rekrutmen yang adil memakai kriteria tertulis, tugas yang mirip pekerjaan asli, dan beberapa penilai yang menilai secara terpisah.
+:::
 
 **Peran yang sering muncul di tim data**
 
@@ -150,6 +204,12 @@ Komposisi bergantung pada tahap: tim kecil memerlukan banyak orang berkemampuan 
 6. **Wawancara oleh beberapa orang** dengan fokus berbeda, dan setiap penilai menulis penilaiannya **sebelum** berdiskusi supaya tidak saling memengaruhi.
 
 Pertanyaan wawancara yang berguna: "Ceritakan proyek di mana hasilnya tidak seperti yang kamu harapkan. Apa yang kamu lakukan?", "Bagaimana kamu menjelaskan model ini ke seorang manajer non teknis?", dan "Kapan kamu memutuskan tidak membangun model?"
+
+::: rangkuman
+- Analis, DS, MLE, DE, dan Lead punya fokus berbeda; jangan tinggalkan DS tanpa dukungan DE.
+- Kriteria dan rubrik ditetapkan sebelum wawancara.
+- Uji cara berpikir dan komunikasi, bukan teka-teki.
+:::
 
 ## Latihan
 

@@ -6,6 +6,10 @@ import numpy as np
 
 ## 1. Vektor
 
+::: intinya
+Vektor adalah daftar angka berurutan, sekaligus panah yang punya arah dan panjang. Di data science, satu vektor biasanya mewakili satu objek: satu rumah, satu pelanggan, atau satu kata.
+:::
+
 Vektor adalah daftar angka berurutan. Secara geometri, vektor adalah panah dari titik asal: punya arah dan panjang. Di data science, satu vektor biasanya mewakili satu objek: rumah dengan fitur `[luas, kamar, umur]`, atau satu kata sebagai *embedding* 768 angka.
 
 ```python
@@ -15,7 +19,17 @@ print(rumah.shape)                 # (3,)
 
 Dimensi vektor adalah jumlah elemennya. Ruang berdimensi tinggi (ratusan sampai ribuan) itu biasa di ML, walaupun tidak bisa kita bayangkan secara visual. Rumusnya tetap sama.
 
+::: rangkuman
+- Vektor = daftar angka berurutan; secara geometri, panah dari titik asal.
+- Satu baris data adalah satu vektor fitur; embedding kata juga vektor.
+- Dimensi = jumlah elemen; ruang ratusan dimensi itu biasa di ML.
+:::
+
 ## 2. Operasi vektor
+
+::: intinya
+Vektor bisa dijumlah, diskalakan, dan diukur panjangnya (norma). **Dot product** mengukur seberapa searah dua vektor, dan bila dinormalkan menjadi cosine similarity, ukuran kemiripan yang dipakai mesin pencari dan sistem rekomendasi.
+:::
 
 ```python
 a = np.array([1, 2, 3])
@@ -37,7 +51,17 @@ print(round(cos, 4))            # 0.9746    cosine similarity
 | L2 (Euclidean) | akar dari jumlah kuadrat | Jarak, regularisasi Ridge |
 | L1 (Manhattan) | jumlah nilai mutlak | Regularisasi Lasso |
 
+::: rangkuman
+- Penjumlahan dan perkalian skalar bekerja per elemen.
+- Norma L2 untuk jarak dan Ridge, L1 untuk Lasso.
+- Cosine similarity: 1 searah, 0 tegak lurus, -1 berlawanan.
+:::
+
 ## 3. Matriks
+
+::: intinya
+Matriks adalah tabel angka `m × n`. Dataset dengan 1.000 baris dan 5 fitur adalah matriks `1000 × 5`, dengan setiap baris sebuah vektor data.
+:::
 
 Matriks adalah tabel angka berukuran `m × n` (m baris, n kolom). Dataset dengan 1.000 baris dan 5 fitur adalah matriks `1000 × 5`; setiap baris adalah satu vektor data.
 
@@ -52,7 +76,17 @@ print(X[:, 1])          # kolom kedua: [3 2 4]
 
 Matriks khusus yang sering muncul: **identitas** `I` (diagonal 1, sisanya 0; `A @ I = A`), **diagonal**, dan **simetris** (`A = Aᵀ`, misalnya matriks kovarians dan korelasi).
 
+::: rangkuman
+- Matriks `m × n`: m baris (data), n kolom (fitur).
+- Identitas, diagonal, dan simetris adalah matriks khusus yang sering muncul.
+- Matriks kovarians dan korelasi selalu simetris.
+:::
+
 ## 4. Perkalian matriks
+
+::: intinya
+`A @ B` hanya sah jika jumlah kolom A sama dengan jumlah baris B, dan setiap elemen hasilnya adalah dot product satu baris dengan satu kolom. Model linear dan lapisan neural network pada dasarnya perkalian matriks.
+:::
 
 `A @ B` hanya bisa dilakukan jika jumlah **kolom A** sama dengan jumlah **baris B**: `(m × n) @ (n × p)` menghasilkan `(m × p)`. Setiap elemen hasilnya adalah dot product satu baris A dengan satu kolom B.
 
@@ -68,7 +102,17 @@ Model linear adalah perkalian matriks: prediksi untuk seluruh dataset sekaligus 
 
 > **Tip:** Kalau error "shapes not aligned", tulis bentuk kedua matriks di kertas: kolom kiri harus sama dengan baris kanan.
 
+::: rangkuman
+- `(m × n) @ (n × p)` menghasilkan `(m × p)`.
+- Prediksi seluruh dataset sekaligus: `y_hat = X @ w + b`.
+- Error bentuk tidak cocok? Tulis bentuk kedua matriks di kertas.
+:::
+
 ## 5. Transpose
+
+::: intinya
+Transpose menukar baris dan kolom, sehingga bentuk `m × n` menjadi `n × m`. Bentuk `Xᵀ X` yang persegi dan simetris muncul di rumus regresi linear dan matriks kovarians.
+:::
 
 Transpose menukar baris dan kolom: elemen `(i, j)` pindah ke `(j, i)`, dan bentuk `m × n` menjadi `n × m`.
 
@@ -80,7 +124,17 @@ print(M.shape, M.T.shape)        # (2, 3) (3, 2)
 
 Sifat yang sering dipakai: `(Aᵀ)ᵀ = A` dan `(AB)ᵀ = BᵀAᵀ` (urutan terbalik). `Xᵀ X` selalu persegi dan simetris; bentuk ini muncul di rumus regresi linear `w = (XᵀX)⁻¹ Xᵀ y` dan di matriks kovarians.
 
+::: rangkuman
+- Elemen `(i, j)` pindah ke `(j, i)`.
+- `(AB)ᵀ = BᵀAᵀ`, urutannya terbalik.
+- `Xᵀ X` selalu persegi dan simetris.
+:::
+
 ## 6. Eigenvalues dan Eigenvectors
+
+::: intinya
+Eigenvector adalah arah yang tidak berubah saat dikalikan matriks, hanya diskalakan sebesar eigenvalue (`A v = λ v`). Eigenvector matriks kovarians adalah arah variasi terbesar data, inti dari PCA.
+:::
 
 Untuk matriks persegi `A`, vektor `v` (bukan nol) adalah **eigenvector** jika `A v = λ v`. Artinya, saat dikalikan `A`, vektor itu tidak berubah arah, hanya diskalakan sebesar `λ` (**eigenvalue**).
 
@@ -96,7 +150,17 @@ print(np.allclose(S @ v, 3 * v))     # True
 
 Kenapa penting: eigenvector dari **matriks kovarians** data adalah arah-arah dengan variasi terbesar, dan eigenvalue-nya adalah besar variasi itu. Ini inti **PCA** (Fase 4): proyeksikan data ke beberapa eigenvector dengan eigenvalue terbesar untuk mengurangi dimensi sambil mempertahankan informasi.
 
+::: rangkuman
+- `A v = λ v`: arah tetap, panjang diskalakan λ.
+- Eigenvalue besar = arah dengan variasi besar.
+- PCA memproyeksikan data ke eigenvector dengan eigenvalue terbesar.
+:::
+
 ## 7. Matrix factorization
+
+::: intinya
+Matrix factorization memecah satu matriks menjadi perkalian beberapa matriks yang lebih sederhana atau lebih kecil. Sistem rekomendasi memakai ide ini: rating didekati dari vektor selera pengguna dan film.
+:::
 
 Matrix factorization memecah satu matriks menjadi perkalian beberapa matriks yang lebih sederhana atau lebih kecil. Beberapa bentuk:
 
@@ -125,7 +189,17 @@ print(np.round(W @ H, 1))         # pendekatan R dari dua "selera" saja
 
 Dua kolom di `W` di sini kira-kira menangkap dua kelompok selera (film 1–2 dan film 3–4).
 
+::: rangkuman
+- LU dan QR untuk sistem persamaan dan regresi yang stabil.
+- Eigen dan SVD untuk PCA; NMF untuk topik dan rekomendasi.
+- Rating yang belum ada ditebak dari dot product vektor pengguna dan film.
+:::
+
 ## 8. SVD
+
+::: intinya
+SVD memecah **matriks apa pun** menjadi `U Σ Vᵀ`, dengan nilai singular terurut dari yang terpenting. Menyimpan hanya `k` nilai terbesar memberi pendekatan terbaik berukuran kecil.
+:::
 
 *Singular Value Decomposition* memecah **matriks apa pun** `A` (tidak harus persegi) menjadi `U Σ Vᵀ`:
 
@@ -148,6 +222,12 @@ print(round(s[0]**2 / (s**2).sum(), 2))     # porsi "energi" yang ditangkap komp
 ```
 
 Dengan hanya menyimpan `k` nilai singular terbesar, kita mendapat **pendekatan rank-k** terbaik dari matriks itu (teorema Eckart–Young). Kegunaannya: kompresi gambar, membuang noise, Latent Semantic Analysis untuk teks, dan PCA (PCA pada data yang sudah dipusatkan = SVD dari matriks datanya).
+
+::: rangkuman
+- `U` dan `Vᵀ` berisi arah ortonormal, `Σ` berisi tingkat kepentingan tiap arah.
+- Rank-k dari SVD adalah pendekatan terbaik (Eckart–Young).
+- Dipakai untuk kompresi, membuang noise, LSA, dan PCA.
+:::
 
 ## Latihan
 

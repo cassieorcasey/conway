@@ -14,6 +14,10 @@ df = pd.DataFrame({
 
 ## 1. DataFrame dan Series
 
+::: intinya
+**Series** adalah satu kolom berlabel, **DataFrame** adalah tabel dari banyak Series yang berbagi index. Pilih data dengan `loc` (label) dan `iloc` (posisi), dan buat kolom baru dengan operasi vektor.
+:::
+
 **Series** adalah satu kolom: array satu dimensi dengan label (*index*). **DataFrame** adalah tabel: kumpulan Series yang berbagi index yang sama.
 
 ```python
@@ -44,7 +48,17 @@ Memilih baris dan kolom:
 
 > **Penting:** untuk mengubah nilai, selalu pakai satu langkah `df.loc[baris, kolom] = nilai`. Pola dua langkah seperti `df[df.x > 0]["y"] = 1` tidak mengubah `df` (di pandas 3 tidak pernah, karena *copy-on-write*).
 
+::: rangkuman
+- Series = satu kolom; DataFrame = tabel.
+- `loc` memakai label, `iloc` memakai posisi.
+- Ubah nilai dalam satu langkah: `df.loc[baris, kolom] = nilai`.
+:::
+
 ## 2. Impor/ekspor CSV, JSON, SQL
+
+::: intinya
+pandas membaca dan menulis CSV, JSON, Parquet, Excel, dan tabel SQL. Setelah membaca file apa pun, selalu periksa bentuk, tipe kolom, dan nilai kosongnya.
+:::
 
 ```python
 df = pd.read_csv("penjualan.csv", parse_dates=["tanggal"])
@@ -71,7 +85,17 @@ hasil = pd.read_sql("SELECT kota, SUM(jumlah) AS total FROM penjualan GROUP BY k
 
 Kebiasaan setelah membaca file apa pun: cek `df.shape`, `df.head()`, `df.dtypes`, dan `df.isna().sum()`. Kolom angka yang terbaca sebagai teks biasanya tanda pemisah desimal, simbol mata uang, atau nilai kosong yang ditulis aneh ("-", "N/A").
 
+::: rangkuman
+- `read_csv`, `read_json`, `read_sql`, dan pasangannya `to_*`.
+- Cek `shape`, `head()`, `dtypes`, dan `isna().sum()` setiap kali.
+- Angka terbaca sebagai teks biasanya karena pemisah desimal, simbol, atau penanda kosong yang aneh.
+:::
+
 ## 3. Filtering
+
+::: intinya
+Filtering memilih baris dengan boolean mask, gabungan kondisi `&` dan `|`, `isin`, atau `query`. Setelah itu urutkan dan ambil teratas sesuai pertanyaan.
+:::
 
 ```python
 df[df["jumlah"] > 3]
@@ -91,7 +115,17 @@ df.sort_values(["kota", "jumlah"], ascending=[True, False])
 df.nlargest(3, "pendapatan")
 ```
 
+::: rangkuman
+- Boolean mask: `df[df["kolom"] > nilai]`.
+- Gabungkan kondisi dengan `&` dan `|`, setiap kondisi dalam kurung.
+- `sort_values` dan `nlargest` untuk peringkat.
+:::
+
 ## 4. Groupby
+
+::: intinya
+`groupby` memakai pola split–apply–combine: pecah data per kelompok, hitung per kelompok, lalu gabungkan. `merge` adalah padanan JOIN di SQL.
+:::
 
 Pola **split–apply–combine**: pecah data per kelompok, hitung sesuatu per kelompok, gabungkan hasilnya.
 
@@ -132,7 +166,17 @@ target = pd.DataFrame({"kota": ["Jakarta", "Bandung"], "target": [200000, 150000
 df_kota = ringkas.reset_index().merge(target, on="kota", how="left")   # Surabaya: target NaN
 ```
 
+::: rangkuman
+- `groupby(...).agg(...)` untuk ringkasan per kelompok.
+- `transform` mengembalikan hasil sepanjang data asli, cocok untuk fitur.
+- `merge` setara JOIN; periksa jumlah baris sesudahnya.
+:::
+
 ## 5. Pivot table
+
+::: intinya
+Pivot table menyusun ringkasan dua dimensi, satu kategori di baris dan satu di kolom. `melt` melakukan kebalikannya, dari tabel lebar ke tabel panjang.
+:::
 
 Pivot table menyusun ringkasan dua dimensi: satu kategori di baris, satu di kolom.
 
@@ -161,6 +205,12 @@ panjang = pv.drop(index="All", columns="All").reset_index().melt(id_vars="kota",
 ```
 
 `pd.crosstab(df["kota"], df["produk"])` adalah jalan pintas untuk menghitung frekuensi kombinasi dua kategori.
+
+::: rangkuman
+- `pivot_table(index, columns, values, aggfunc)` untuk ringkasan silang.
+- `melt` mengubah lebar menjadi panjang, format yang disukai seaborn.
+- `pd.crosstab` menghitung frekuensi kombinasi dua kategori.
+:::
 
 ## Latihan
 

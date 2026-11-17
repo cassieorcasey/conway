@@ -15,6 +15,10 @@ print(y.head(3).round(1).to_dict())
 
 ## 1. Komponen: tren, musiman, residu, stasioneritas
 
+::: intinya
+Deret waktu biasanya gabungan tren, pola musiman, dan residu. Banyak model klasik membutuhkan data **stasioner**, dengan rata-rata dan varians yang tidak berubah menurut waktu.
+:::
+
 Hampir semua deret waktu bisa dipandang sebagai gabungan:
 
 | Komponen | Arti | Contoh |
@@ -41,7 +45,17 @@ print(round(selisih.iloc[:365].mean() - selisih.iloc[365:].mean(), 2), "<- hampi
 
 Untuk dekomposisi yang lebih lengkap, `statsmodels.tsa.seasonal.seasonal_decompose` atau `STL` melakukannya langsung. Selalu **plot dulu** sebelum memodelkan: tren, pola musiman, lonjakan, dan data hilang kelihatan jelas di grafik.
 
+::: rangkuman
+- Tren, musiman, siklus, dan residu adalah komponen utamanya.
+- Differencing atau log membuat deret lebih stasioner.
+- Selalu plot dulu sebelum memodelkan.
+:::
+
 ## 2. Baseline wajib
+
+::: intinya
+Sebelum model apa pun, hitung baseline naive, seasonal naive, dan moving average. Banyak model canggih ternyata kalah dari seasonal naive.
+:::
 
 Sebelum model apa pun, hitung tiga baseline. Banyak model canggih ternyata kalah dari **seasonal naive**.
 
@@ -67,7 +81,17 @@ for nama, pred in [("naive", naive), ("seasonal naive", seasonal_naive), ("movin
     print(f"{nama:15s} MAE={np.mean(np.abs(uji - pred)):6.2f}  MASE={mase(uji, pred, latih, m=7):.2f}")
 ```
 
+::: rangkuman
+- Naive = nilai terakhir; seasonal naive = nilai periode musiman sebelumnya.
+- MASE di bawah 1 berarti lebih baik dari naive musiman.
+- Baseline adalah standar yang wajib dikalahkan.
+:::
+
 ## 3. Model klasik: ETS dan ARIMA
+
+::: intinya
+Exponential smoothing memberi bobot lebih besar pada data terbaru, sedangkan ARIMA memodelkan lag nilai, differencing, dan lag galat. Keduanya unggul untuk satu deret dengan interval prediksi yang jelas.
+:::
 
 **Exponential smoothing (ETS)** meramal dengan rata-rata berbobot yang menurun secara eksponensial ke masa lalu: data terbaru berbobot paling besar. Versi Holt-Winters menambah komponen tren dan musiman.
 
@@ -98,7 +122,17 @@ pred_arima = arima.forecast(28)
 
 Model klasik unggul pada **satu deret** dengan data tidak terlalu panjang dan memberi interval prediksi yang jelas. Kelemahannya: sulit memasukkan banyak fitur luar (harga, promo, cuaca) dan harus dilatih per deret.
 
+::: rangkuman
+- ETS dan Holt-Winters menangani level, tren, dan musiman.
+- ARIMA(p, d, q); SARIMA menambah bagian musiman.
+- Sulit memasukkan banyak fitur luar dan harus dilatih per deret.
+:::
+
 ## 4. Forecasting dengan ML
+
+::: intinya
+Masalah deret waktu bisa diubah menjadi tabel dengan fitur lag, rolling, dan kalender, lalu dimodelkan dengan pohon. Aturan kerasnya: fitur hanya boleh memakai informasi dari masa lalu.
+:::
 
 Ubah masalah deret waktu menjadi masalah tabel: setiap baris adalah satu titik waktu, fitur dibuat dari **masa lalu**.
 
@@ -135,7 +169,17 @@ print("MAE model:", round(np.mean(np.abs(y_te - pred)), 2))
 
 Catatan penting: pohon keputusan **tidak bisa mengekstrapolasi tren**, karena prediksinya tidak pernah melewati nilai yang ada di data latih. Atasi dengan memodelkan *selisih* (`y - lag_7`) atau menghilangkan tren lebih dulu. Untuk peramalan banyak deret sekaligus (ribuan produk), satu model global di atas fitur lag biasanya mengalahkan ribuan model klasik.
 
+::: rangkuman
+- Lag, rolling (dengan `shift(1)`), kalender, dan fitur eksternal yang sudah diketahui.
+- Pohon tidak bisa mengekstrapolasi tren; modelkan selisih.
+- Satu model global sering mengalahkan ribuan model klasik.
+:::
+
 ## 5. Validasi yang benar
+
+::: intinya
+Jangan mengacak data deret waktu. Validasi dengan walk-forward: latih di masa lalu, uji di masa sesudahnya, lalu geser.
+:::
 
 Acak-acakan seperti `train_test_split(shuffle=True)` atau K-fold biasa **tidak boleh dipakai**: model akan "melihat masa depan" saat latihan. Gunakan validasi **walk-forward**: latih di masa lalu, uji di masa setelahnya, lalu geser.
 
@@ -159,6 +203,12 @@ Hal yang perlu diwaspadai:
 - **Metrik.** MAE mudah dibaca, MAPE meledak ketika nilai asli mendekati nol, sehingga MASE atau sMAPE lebih aman. Pilih sesuai biaya keputusan: kelebihan stok dan kekurangan stok biasanya tidak sama mahal.
 - **Perubahan regime.** Pandemi, perubahan harga, atau fitur produk baru memutus pola lama. Pantau galat terhadap waktu dan latih ulang berkala.
 - **Interval prediksi.** Keputusan seperti jumlah stok butuh rentang, bukan hanya angka tunggal.
+
+::: rangkuman
+- `TimeSeriesSplit` untuk validasi walk-forward.
+- Uji pada horizon yang benar-benar dipakai bisnis.
+- Pakai MASE atau sMAPE, dan pantau perubahan regime.
+:::
 
 ## Latihan
 

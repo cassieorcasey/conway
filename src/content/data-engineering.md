@@ -2,6 +2,10 @@ Catatan ini mengikuti enam langkah di checklist. Model hanya sebaik data yang ma
 
 ## 1. ETL vs ELT, batch vs streaming
 
+::: intinya
+ELT memuat data mentah dulu lalu mengubahnya di warehouse, sehingga transformasi bisa diulang. Batch cukup untuk sebagian besar kebutuhan; streaming hanya bila keputusan harus diambil dalam hitungan detik.
+:::
+
 | Pola | Urutan | Cocok untuk |
 |---|---|---|
 | **ETL** | Extract, **Transform**, lalu Load ke tujuan | Transformasi berat sebelum masuk, data sensitif yang perlu dibersihkan dulu |
@@ -18,7 +22,17 @@ ELT mengalahkan ETL di banyak tim karena **data mentah tetap tersimpan**. Jika l
 
 Pertanyaan yang menentukan: **berapa cepat keputusan harus diambil?** Dashboard mingguan dan model yang dilatih ulang tiap malam cukup dengan batch. Deteksi penipuan saat transaksi butuh streaming. Jangan memilih streaming hanya karena terdengar modern: biayanya jauh lebih besar untuk dirawat.
 
+::: rangkuman
+- ETL mengubah sebelum memuat, ELT memuat dulu baru mengubah.
+- Batch per jadwal, streaming per peristiwa.
+- Tanyakan dulu: seberapa cepat keputusan harus diambil?
+:::
+
 ## 2. Data warehouse, data lake, dan star schema
+
+::: intinya
+Warehouse menyimpan data terstruktur yang sudah dimodelkan, data lake menyimpan data mentah berbagai format. Star schema menata tabel fakta di tengah dengan tabel dimensi di sekelilingnya.
+:::
 
 | | Data warehouse | Data lake |
 |---|---|---|
@@ -60,7 +74,17 @@ for baris in db.execute(kueri):
 
 Kebiasaan penting: tentukan **grain** (satu baris di tabel fakta mewakili apa persisnya) sebelum merancang apa pun. Grain yang kabur adalah sumber utama angka yang tidak cocok antar laporan.
 
+::: rangkuman
+- Warehouse: skema saat menulis; lake: skema saat membaca.
+- Tabel fakta untuk kejadian, tabel dimensi untuk konteks.
+- Tentukan grain tabel fakta sebelum merancang.
+:::
+
 ## 3. Orkestrasi dengan Airflow
+
+::: intinya
+Orkestrator seperti Airflow menjalankan langkah-langkah pipeline sesuai jadwal dan ketergantungan, mencoba ulang saat gagal, dan memberi tahu saat ada masalah. Setiap tugas harus idempoten.
+:::
 
 Pipeline nyata punya banyak langkah yang saling bergantung. **Orkestrator** menjalankannya sesuai jadwal dan urutan ketergantungan, mencoba ulang saat gagal, dan memberi tahu saat ada masalah. Di Airflow, alurnya berupa **DAG** (*directed acyclic graph*): kumpulan tugas dengan panah ketergantungan tanpa putaran.
 
@@ -117,7 +141,17 @@ print(db.execute("SELECT COUNT(*) FROM harian").fetchone())                  # (
 
 Pola lain yang aman: `INSERT ... ON CONFLICT DO UPDATE` (upsert) atau menimpa seluruh partisi tanggal. Airflow menjalankan versi dan sintaks yang berbeda antar rilis mayor, jadi cocokkan contoh di atas dengan dokumentasi versi yang kamu pakai.
 
+::: rangkuman
+- Pipeline ditulis sebagai DAG berisi tugas dan ketergantungan.
+- Proses data milik tanggal logis (`ds`), bukan waktu sekarang.
+- Idempoten: dijalankan dua kali hasilnya sama dengan sekali.
+:::
+
 ## 4. Transformasi dan tes data dengan dbt
+
+::: intinya
+dbt mengubah transformasi SQL menjadi proyek perangkat lunak: setiap model satu file `SELECT`, ketergantungan dilacak otomatis, dan hasilnya dites serta didokumentasikan.
+:::
 
 **dbt** mengubah transformasi SQL menjadi proyek perangkat lunak: setiap model adalah satu file `SELECT`, ketergantungan antar model dilacak otomatis, dan hasilnya dites serta didokumentasikan.
 
@@ -150,7 +184,17 @@ models:
 
 Manfaat untuk tim data science: fitur yang dihitung di dbt punya satu definisi yang disepakati, ada riwayat Git, dan tes otomatis menangkap perubahan yang merusak kolom penting sebelum sampai ke model.
 
+::: rangkuman
+- `ref()` menghubungkan model dan membangun urutannya.
+- Tes data ditulis di YAML: `not_null`, `unique`, dan lainnya.
+- Definisi fitur yang disepakati bersama dengan riwayat Git.
+:::
+
 ## 5. Kualitas data dan data contract
+
+::: intinya
+Sebagian besar kegagalan model produksi berasal dari data. Pertahankan kualitas dengan pemeriksaan berlapis dan data contract antara pembuat dan pemakai data.
+:::
 
 Sebagian besar kegagalan model produksi berasal dari data, bukan dari algoritma: kolom berubah nama, satuan berganti, atau satu sumber berhenti mengirim data.
 
@@ -169,7 +213,17 @@ Lapisan pertahanan:
 
 Untuk fitur ML, **feature store** menjaga definisi fitur yang sama antara training dan serving, sehingga mencegah *training-serving skew* yang dibahas di catatan Desain Sistem ML.
 
+::: rangkuman
+- Periksa skema, kelengkapan, rentang, keunikan, kesegaran, dan distribusi.
+- Data contract: skema, arti kolom, kesegaran, dan prosedur perubahan.
+- Feature store menjaga definisi fitur sama antara training dan serving.
+:::
+
 ## 6. Kapan butuh komputasi terdistribusi (Spark)
+
+::: intinya
+Spark membagi data ke banyak mesin, tapi kerumitannya baru sepadan bila data tidak muat di satu mesin. Seringkali pandas atau DuckDB sudah cukup.
+:::
 
 Satu mesin dengan pandas atau DuckDB menangani jauh lebih banyak data daripada yang biasanya dikira, sering sampai puluhan gigabita. Tambahan kerumitan Spark baru sepadan ketika data tidak muat di satu mesin atau pekerjaan terlalu lambat.
 
@@ -191,6 +245,12 @@ hasil.write.mode("overwrite").parquet("s3://olahan/omzet_per_kategori/")
 ```
 
 Praktik dasar: simpan data dalam format kolom (Parquet), filter sedini mungkin, pilih hanya kolom yang perlu, dan waspadai *shuffle*. Sebelum menggeser ke Spark, tanyakan dulu apakah DuckDB atau satu mesin besar sudah cukup.
+
+::: rangkuman
+- Partisi diproses paralel; transformasi bersifat malas.
+- Shuffle adalah langkah termahal; waspadai skew.
+- Pakai Parquet, filter sedini mungkin, dan pilih kolom seperlunya.
+:::
 
 ## Latihan
 

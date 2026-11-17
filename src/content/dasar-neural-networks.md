@@ -11,6 +11,10 @@ rng = np.random.default_rng(0)
 
 ## 1. Perceptron dan layers
 
+::: intinya
+Neuron menghitung jumlah tertimbang input ditambah bias lalu memasukkannya ke fungsi aktivasi. Satu layer adalah banyak neuron yang dihitung sekaligus dengan satu perkalian matriks, dan menumpuk layer memungkinkan batas yang melengkung.
+:::
+
 **Perceptron** (neuron) menghitung jumlah tertimbang input ditambah bias, lalu memasukkannya ke fungsi aktivasi: `a = f(w·x + b)`. Satu neuron hanya bisa membuat batas lurus.
 
 **Layer** adalah banyak neuron yang membaca input yang sama. Satu layer dengan `n` neuron untuk input berdimensi `d` punya matriks bobot `W` berukuran `d × n`, sehingga seluruh layer dihitung dengan satu perkalian matriks: `A = f(X @ W + b)`.
@@ -28,7 +32,17 @@ print(W1.size + b1.size + W2.size + b2.size, "parameter")      # 65
 
 Inisialisasi penting: bobot nol membuat semua neuron identik dan belajar hal yang sama; bobot terlalu besar membuat gradien meledak.
 
+::: rangkuman
+- Neuron: `a = f(w·x + b)`; layer: `A = f(X @ W + b)`.
+- Jaringan yang lebih dalam belajar lebih efisien daripada satu layer lebar.
+- Inisialisasi bobot penting: nol membuat neuron identik, terlalu besar membuat gradien meledak.
+:::
+
 ## 2. Activation functions: ReLU, Sigmoid, Tanh, Softmax
+
+::: intinya
+Fungsi aktivasi memberi jaringan kemampuan non-linear; tanpanya, tumpukan layer runtuh menjadi satu transformasi linear. ReLU adalah default, softmax mengubah skor menjadi peluang antarkelas.
+:::
 
 Tanpa fungsi aktivasi non-linear, tumpukan layer apa pun runtuh menjadi satu transformasi linear.
 
@@ -54,7 +68,17 @@ print(np.round(softmax(np.array([[2.0, 1.0, 0.1]])), 3))   # [[0.659 0.242 0.099
 
 Sigmoid dan tanh **jenuh** untuk `z` besar: turunannya mendekati nol sehingga gradien menghilang di jaringan dalam (*vanishing gradient*). ReLU tidak jenuh di sisi positif dan murah dihitung, itulah sebabnya ia menjadi default. Varian seperti Leaky ReLU dan GELU (dipakai di Transformer) memperbaiki neuron ReLU yang "mati" di nol.
 
+::: rangkuman
+- ReLU untuk hidden layer; sigmoid untuk biner; softmax untuk multikelas.
+- Sigmoid dan tanh jenuh, menyebabkan vanishing gradient.
+- Leaky ReLU dan GELU memperbaiki neuron ReLU yang mati.
+:::
+
 ## 3. Forward propagation
+
+::: intinya
+Forward propagation menghitung prediksi dari input, layer demi layer. Nilai antara setiap layer disimpan karena dibutuhkan saat backpropagation.
+:::
 
 Forward pass menghitung prediksi dari input, layer demi layer. Simpan nilai antara (`Z1`, `A1`) karena dibutuhkan saat backpropagation.
 
@@ -67,7 +91,17 @@ def forward(X):
     return Z1, A1, Z2, A2
 ```
 
+::: rangkuman
+- Setiap layer: perkalian matriks, tambah bias, lalu aktivasi.
+- Simpan `Z` dan `A` tiap layer.
+- Bentuk tensor harus cocok di setiap langkah.
+:::
+
 ## 4. Loss function
+
+::: intinya
+Loss mengukur seberapa salah prediksi, dan pilihannya mengikuti tugas: MSE untuk regresi, cross-entropy untuk klasifikasi. Cross-entropy menghukum keras prediksi yang yakin tapi salah.
+:::
 
 Loss mengukur seberapa salah prediksi. Pilih sesuai tugasnya:
 
@@ -85,7 +119,17 @@ def bce(y, p, eps=1e-12):
     return -np.mean(y * np.log(p) + (1 - y) * np.log(1 - p))
 ```
 
+::: rangkuman
+- MSE untuk regresi, binary cross-entropy untuk dua kelas, cross-entropy untuk banyak kelas.
+- Prediksi 0,01 untuk contoh positif menghasilkan loss sekitar 4,6.
+- Loss yang tepat membuat gradiennya sederhana dan stabil.
+:::
+
 ## 5. Backpropagation
+
+::: intinya
+Backpropagation menghitung gradien loss terhadap setiap bobot dengan chain rule, dari output mundur ke input. Polanya sama untuk jaringan sedalam apa pun, dan itulah yang dikerjakan autograd.
+:::
 
 Backpropagation menghitung gradien loss terhadap **setiap** bobot dengan chain rule, dimulai dari output dan mundur ke input. Untuk sigmoid + binary cross-entropy, gradien terhadap `Z2` menyederhana menjadi `A2 - y`.
 
@@ -104,7 +148,17 @@ def backward(X, y, Z1, A1, A2):
 
 Perhatikan polanya: gradien bobot sebuah layer = input layer itu (ditranspose) dikali gradien keluarannya. Gradien yang diteruskan ke belakang = gradien keluaran dikali bobot (ditranspose), lalu dikali turunan aktivasi. Pola yang sama berlaku untuk jaringan sedalam apa pun, dan inilah yang dikerjakan *autograd* di PyTorch.
 
+::: rangkuman
+- Sigmoid + BCE: gradien terhadap `Z2` adalah `A2 - y`.
+- Gradien bobot = input layer (transpose) × gradien keluarannya.
+- Gradien diteruskan ke belakang lewat bobot dan turunan aktivasi.
+:::
+
 ## 6. Optimizer
+
+::: intinya
+Optimizer memakai gradien untuk memperbarui bobot, dari gradient descent dasar sampai Adam. Training loop mini-batch dan teknik pendukung seperti dropout dan learning rate schedule membuat pelatihan stabil.
+:::
 
 Optimizer memakai gradien untuk memperbarui bobot. Versi paling dasar adalah gradient descent: `W ← W - lr · dW`. Menyatukan semuanya menjadi training loop dengan **mini-batch**:
 
@@ -135,6 +189,12 @@ Optimizer modern menambahkan memori atas gradien sebelumnya:
 | AdamW | Adam dengan *weight decay* yang benar | Standar untuk Transformer |
 
 Teknik pendukung yang hampir selalu dipakai: **learning rate schedule** (turunkan lr seiring waktu, atau *warmup* lalu *cosine decay*), **early stopping** berdasarkan loss validasi, **dropout** dan **weight decay** untuk mencegah overfit, serta **batch normalization** atau **layer normalization** untuk menstabilkan training.
+
+::: rangkuman
+- Update dasar: `W ← W - lr · dW` per mini-batch.
+- Momentum, RMSProp, dan Adam menambah memori atas gradien.
+- LR schedule, early stopping, dropout, weight decay, dan normalisasi.
+:::
 
 ## Latihan
 

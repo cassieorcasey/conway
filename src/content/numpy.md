@@ -6,6 +6,10 @@ import numpy as np
 
 ## 1. Array multi dimensi
 
+::: intinya
+`ndarray` adalah tabel angka bertipe sama yang disimpan rapat di memori, jauh lebih cepat dan hemat daripada list Python. Kuasai cara membuat, memotong, dan mengubah bentuknya, serta arti `axis`.
+:::
+
 `ndarray` adalah tabel angka bertipe sama yang disimpan rapat di memori. Itu yang membuatnya jauh lebih cepat dan hemat daripada list Python.
 
 ```python
@@ -53,7 +57,17 @@ print(M.sum(axis=0))    # [12 15 18 21]   total per kolom
 print(M.sum(axis=1))    # [ 6 22 38]      total per baris
 ```
 
+::: rangkuman
+- Slicing menghasilkan view; pakai `.copy()` untuk salinan terpisah.
+- `reshape`, `.T`, `concatenate`, `vstack`, dan `hstack` mengubah dan menggabung bentuk.
+- `axis=0` menghasilkan nilai per kolom, `axis=1` per baris.
+:::
+
 ## 2. Vectorization
+
+::: intinya
+Vectorization berarti menulis operasi untuk seluruh array sekaligus, bukan dengan loop Python. Operasinya dijalankan kode C yang sudah dikompilasi, biasanya puluhan sampai ratusan kali lebih cepat.
+:::
 
 Vectorization berarti menulis operasi pada **seluruh array sekaligus**, bukan dengan loop Python. Operasinya dijalankan oleh kode C yang sudah dikompilasi, biasanya puluhan sampai ratusan kali lebih cepat.
 
@@ -103,6 +117,12 @@ label = jarak.argmin(axis=1)             # pusat terdekat untuk tiap titik
 `[:, None, :]` menambahkan dimensi berukuran 1 supaya broadcasting menghasilkan semua pasangan `(100, 3, 2)`. Pola ini dipakai di K-Means (Fase 4).
 
 > **Tip:** Kalau kamu menulis `for i in range(len(arr))` pada array NumPy, berhenti dan tanyakan: bisakah ini satu ekspresi array?
+
+::: rangkuman
+- Operasi per elemen, ufunc, dan agregasi dengan `axis` menggantikan loop.
+- `np.where` menggantikan if/else di dalam loop.
+- Broadcasting: bentuk cocok dari kanan bila sama atau salah satunya 1.
+:::
 
 ## Latihan
 

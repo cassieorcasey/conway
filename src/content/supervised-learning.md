@@ -19,6 +19,10 @@ Selalu pisahkan data uji **sebelum** melakukan apa pun, dan jangan menyentuhnya 
 
 ## 1. Linear Regression
 
+::: intinya
+Regresi linear menebak angka sebagai jumlah berbobot dari fitur, dengan bobot yang meminimalkan rata-rata kuadrat error. Cepat, mudah dijelaskan, dan baseline wajib untuk regresi.
+:::
+
 Model: `ŷ = w₁x₁ + w₂x₂ + … + b`. Bobot dicari dengan meminimalkan **MSE** (rata-rata kuadrat error), yang punya solusi tertutup maupun bisa dicari dengan gradient descent.
 
 ```python
@@ -31,7 +35,17 @@ print(lr.coef_[:3], lr.intercept_)
 
 Kelebihan: cepat, mudah dijelaskan (setiap koefisien = perubahan `y` per satu satuan fitur, fitur lain tetap). Asumsi yang perlu dicek: hubungan linear, error tidak berpola terhadap prediksi, dan fitur tidak saling berkorelasi sangat kuat (*multikolinearitas* membuat koefisien tidak stabil). Hubungan melengkung bisa ditangani dengan menambahkan fitur baru seperti `x²` atau `log(x)`.
 
+::: rangkuman
+- `ŷ = w₁x₁ + … + b`, bobot dicari dengan meminimalkan MSE.
+- Koefisien = perubahan `y` per satu satuan fitur, fitur lain tetap.
+- Cek linearitas, pola residual, dan multikolinearitas.
+:::
+
 ## 2. Ridge dan Lasso
+
+::: intinya
+Ridge dan Lasso menambah penalti untuk bobot besar supaya model tidak overfit. Lasso bahkan bisa membuat bobot menjadi nol, sekaligus memilih fitur.
+:::
 
 Regularisasi menambahkan penalti terhadap bobot besar supaya model tidak *overfit*:
 
@@ -52,7 +66,17 @@ print("fitur dibuang Lasso:", (lasso[-1].coef_ == 0).sum())
 
 `α` makin besar berarti penalti makin kuat dan model makin sederhana. Cari nilainya dengan cross-validation (`RidgeCV`, `LassoCV`). Karena penalti bergantung pada besar bobot, **fitur harus di-scale dulu**.
 
+::: rangkuman
+- Ridge (L2) mengecilkan semua bobot; Lasso (L1) bisa membuatnya nol.
+- `α` lebih besar berarti model lebih sederhana; cari dengan `RidgeCV` atau `LassoCV`.
+- Fitur harus di-scale dulu.
+:::
+
 ## 3. Logistic Regression
+
+::: intinya
+Logistic regression adalah model **klasifikasi**: kombinasi linear fitur dimasukkan ke sigmoid sehingga hasilnya peluang 0 sampai 1. Ambangnya bisa digeser sesuai biaya kesalahan.
+:::
 
 Walau namanya regresi, ini model **klasifikasi**. Kombinasi linear fitur dimasukkan ke fungsi sigmoid `σ(z) = 1 / (1 + e⁻ᶻ)` sehingga hasilnya peluang 0–1. Bobot dicari dengan meminimalkan **log loss**.
 
@@ -67,7 +91,17 @@ pred = (proba >= 0.5).astype(int)                 # ambang bisa digeser sesuai k
 
 Koefisien dibaca sebagai perubahan **log-odds**; `np.exp(coef)` adalah *odds ratio*. Ambang 0,5 tidak wajib: untuk deteksi penyakit, ambang lebih rendah menangkap lebih banyak kasus dengan risiko lebih banyak alarm palsu. Logistic regression adalah baseline wajib untuk klasifikasi: cepat, terkalibrasi baik, dan mudah dijelaskan.
 
+::: rangkuman
+- Sigmoid mengubah skor menjadi peluang; bobot dicari dengan log loss.
+- `np.exp(coef)` adalah odds ratio.
+- Ambang 0,5 tidak wajib; geser sesuai biaya FP dan FN.
+:::
+
 ## 4. Decision Tree
+
+::: intinya
+Decision tree memecah data berulang kali dengan pertanyaan ya atau tidak yang paling memurnikan kelompok. Mudah dibaca, tapi pohon tanpa batas menghafal data latih.
+:::
 
 Pohon keputusan memecah data berulang kali dengan pertanyaan ya/tidak ("apakah `radius > 15`?"). Setiap pecahan dipilih yang paling memurnikan kelompok (Gini atau entropy untuk klasifikasi, MSE untuk regresi).
 
@@ -81,7 +115,17 @@ print(export_text(tree, feature_names=list(load_breast_cancer().feature_names))[
 
 Kelebihan: mudah dibaca, menangkap interaksi dan hubungan non-linear, tidak butuh scaling. Kelemahan utama: pohon tanpa batas akan menghafal data latih (**overfit**) dan sangat sensitif terhadap perubahan kecil data. Kendalikan dengan `max_depth`, `min_samples_leaf`, atau `ccp_alpha`.
 
+::: rangkuman
+- Pecahan dipilih dengan Gini, entropy, atau MSE.
+- Menangkap interaksi dan pola non-linear tanpa scaling.
+- Kendalikan overfit dengan `max_depth`, `min_samples_leaf`, atau `ccp_alpha`.
+:::
+
 ## 5. Random Forest
+
+::: intinya
+Random forest menggabungkan banyak pohon yang dilatih pada sampel dan fitur acak, lalu memvoting hasilnya. Kesalahan tiap pohon saling meniadakan, sehingga hasilnya stabil dan kuat untuk data tabular.
+:::
 
 Random forest adalah **banyak pohon** yang masing-masing dilatih pada sampel acak data (*bootstrap*) dan subset acak fitur di setiap pecahan. Prediksi akhirnya adalah voting (klasifikasi) atau rata-rata (regresi). Teknik ini disebut *bagging*: kesalahan pohon-pohon yang berbeda saling meniadakan, sehingga varians turun drastis.
 
@@ -95,7 +139,17 @@ penting = sorted(zip(rf.feature_importances_, load_breast_cancer().feature_names
 
 Random forest adalah model "langsung bagus" untuk data tabular: sedikit tuning, tahan outlier, tidak butuh scaling. `feature_importances_` berbasis impurity bisa bias ke fitur dengan banyak nilai unik; `permutation_importance` lebih dapat dipercaya.
 
+::: rangkuman
+- Bagging: bootstrap data + subset fitur acak di setiap pecahan.
+- Sedikit tuning, tahan outlier, tanpa scaling.
+- Pakai `permutation_importance` untuk pentingnya fitur yang lebih bisa dipercaya.
+:::
+
 ## 6. SVM
+
+::: intinya
+SVM mencari batas pemisah dengan margin terlebar antarkelas, dan kernel trick membuatnya bisa melengkung. Kuat untuk data kecil sampai menengah berdimensi tinggi.
+:::
 
 Support Vector Machine mencari batas pemisah dengan **margin terlebar** antara kelas. Hanya titik-titik terdekat ke batas (*support vectors*) yang menentukan posisinya. Dengan **kernel trick** (misalnya RBF), SVM bisa membuat batas melengkung tanpa menghitung fitur berdimensi tinggi secara eksplisit.
 
@@ -108,7 +162,17 @@ print(round(svm.score(Xc_te, yc_te), 3))
 
 Parameter: `C` besar = margin sempit, berusaha mengklasifikasi semua data latih dengan benar (risiko overfit); `gamma` besar = batas lebih berliku. SVM **wajib** di-scale dan kurang cocok untuk data sangat besar (waktu latih tumbuh lebih dari linear terhadap jumlah data). Kuat untuk dataset kecil sampai menengah berdimensi tinggi.
 
+::: rangkuman
+- Hanya support vectors yang menentukan batas.
+- `C` besar = margin sempit; `gamma` besar = batas berliku.
+- Wajib di-scale dan lambat untuk data sangat besar.
+:::
+
 ## 7. XGBoost dan LightGBM
+
+::: intinya
+Gradient boosting membangun pohon secara berurutan, setiap pohon memperbaiki kesalahan gabungan sebelumnya. XGBoost dan LightGBM biasanya model terbaik untuk data tabular.
+:::
 
 **Gradient boosting** membangun pohon secara **berurutan**: setiap pohon baru belajar memperbaiki kesalahan (residual) gabungan pohon sebelumnya. Hasilnya biasanya model terbaik untuk data tabular, dan sering memenangkan kompetisi Kaggle.
 
@@ -142,6 +206,12 @@ lgbm.fit(X_fit, y_fit, eval_set=[(X_val, y_val)], callbacks=[lgb.early_stopping(
 Parameter terpenting: `learning_rate` kecil + banyak pohon + **early stopping** pada data validasi, lalu `max_depth`/`num_leaves`, `subsample`, dan `colsample_bytree`. scikit-learn juga punya `HistGradientBoostingClassifier`: algoritma serupa LightGBM tanpa instalasi tambahan.
 
 **Peta memilih model** untuk data tabular: mulai dari baseline sederhana (regresi linear/logistik), lalu Random Forest, lalu gradient boosting. Pilih yang paling sederhana jika selisih skornya kecil, karena model sederhana lebih mudah dijelaskan dan dirawat.
+
+::: rangkuman
+- `learning_rate` kecil, banyak pohon, dan early stopping.
+- Tuning `max_depth` atau `num_leaves`, `subsample`, `colsample_bytree`.
+- Urutan memilih model: baseline linear, random forest, lalu boosting.
+:::
 
 ## Latihan
 

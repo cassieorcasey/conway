@@ -2,6 +2,10 @@ Catatan ini mengikuti lima langkah di checklist, ditambah mini-proyek penutup Fa
 
 ## 1. Menetapkan kebutuhan
 
+::: intinya
+Mulailah dari kebutuhan, bukan arsitektur: keputusan yang dibantu, latensi, throughput, SLA, anggaran, biaya salah, dan data yang tersedia saat prediksi.
+:::
+
 Mulailah dari kebutuhan, bukan dari arsitektur. Tanyakan hal ini sebelum menggambar apa pun:
 
 | Pertanyaan | Mengapa penting |
@@ -31,7 +35,17 @@ print(kebutuhan_mesin(200, 0.08, 8))      # 3 mesin termasuk cadangan 30%
 
 Perhitungan kasar seperti ini sering cukup untuk menyingkirkan desain yang jelas tidak masuk akal sebelum ada kode.
 
+::: rangkuman
+- Batch bila hasil bisa disiapkan sebelumnya; online bila butuh konteks seketika.
+- Jumlah mesin kira-kira = QPS × latensi ÷ konkurensi, plus cadangan.
+- Hitungan kasar menyingkirkan desain yang tidak masuk akal sejak awal.
+:::
+
 ## 2. Arsitektur end-to-end
+
+::: intinya
+Hampir semua sistem ML terdiri dari data, fitur, training, serving, dan monitoring. Di setiap sambungan, periksa pemilik, kontrak data, versi, dan log.
+:::
 
 Hampir semua sistem ML terdiri dari lima bagian yang sama. Gambar milikmu sendiri dengan nama komponen nyata:
 
@@ -56,7 +70,17 @@ Hal yang diperiksa pada setiap panah:
 
 Prinsip yang membuat sistem bertahan: mulailah dari **versi paling sederhana yang berfungsi** (sering aturan bisnis atau model linear) lalu tambah kerumitan ketika ukuran nyata menuntutnya. Setiap komponen tambahan adalah sesuatu yang harus dirawat seseorang di jam dua pagi.
 
+::: rangkuman
+- Gambar arsitektur dengan nama komponen nyata.
+- Setiap prediksi harus bisa ditelusuri ke kode, data, dan model.
+- Mulai dari versi paling sederhana yang berfungsi.
+:::
+
 ## 3. Pola serving dan rilis
+
+::: intinya
+Pilih pola serving (batch, online, streaming, di perangkat) dari kebutuhan, lalu rilis bertahap lewat shadow dan canary. Setiap sistem online butuh fallback yang dipantau.
+:::
 
 | Pola | Cara kerja | Cocok untuk |
 |---|---|---|
@@ -95,7 +119,17 @@ print(prediksi_dengan_fallback({"x": 1}, model_rusak, aturan))     # (0.5, 'fall
 
 Fallback yang tidak dipantau berbahaya: jika 30% permintaan diam-diam jatuh ke fallback, kualitas turun tanpa ada yang tahu. Catat dan beri alarm pada persentasenya.
 
+::: rangkuman
+- Shadow, canary, bertahap, dan rollback yang sudah dilatih.
+- A/B test untuk membuktikan dampak bisnis.
+- Persentase permintaan yang jatuh ke fallback harus dipantau.
+:::
+
 ## 4. Mode kegagalan
+
+::: intinya
+Sistem ML sering gagal tanpa error tapi diam-diam salah: skew, kebocoran, drift, ketergantungan hulu, dan umpan balik berputar.
+:::
 
 Sistem ML gagal dengan cara yang tidak muncul di perangkat lunak biasa: **tanpa error, tapi diam-diam salah**.
 
@@ -112,7 +146,17 @@ Sistem ML gagal dengan cara yang tidak muncul di perangkat lunak biasa: **tanpa 
 
 Dua pertanyaan yang sebaiknya selalu ditanyakan di design review: **"Bagaimana kita tahu kalau ini rusak?"** dan **"Bagaimana kita kembali ke keadaan sebelumnya dalam hitungan menit?"** Jika jawabannya tidak ada, desainnya belum selesai.
 
+::: rangkuman
+- Satu kode fitur untuk training dan serving.
+- Data contract, tes skema, dan alarm kesegaran.
+- Tanyakan selalu: bagaimana kita tahu ini rusak, dan bagaimana kembali dalam hitungan menit?
+:::
+
 ## 5. Design doc dan design review
+
+::: intinya
+Design doc adalah alat berpikir sebelum menjadi dokumen. Catat keputusan penting sebagai ADR, dan pimpin design review yang menghasilkan keputusan tercatat.
+:::
 
 Design doc adalah alat berpikir sebelum menjadi dokumen. Menulisnya membuat celah logika muncul saat memperbaikinya masih murah. Kerangka dua sampai empat halaman:
 
@@ -138,7 +182,17 @@ Saat memimpin design review:
 - Hargai usulan paling sederhana yang memenuhi kebutuhan. Kerumitan harus membuktikan dirinya.
 - Akhiri dengan keputusan tercatat dan pemilik untuk setiap tindak lanjut.
 
+::: rangkuman
+- Konteks, bukan tujuan, kebutuhan, desain, alternatif, risiko, monitoring, rencana rilis.
+- ADR: konteks, keputusan, konsekuensi.
+- Kirim dokumen sebelum rapat dan akhiri dengan pemilik tindak lanjut.
+:::
+
 ## Mini-proyek Fase 8
+
+::: intinya
+Ambil proyek Fase 6 dan jadikan siap produksi: tracking, CI, log prediksi, pemeriksaan drift, design doc, dan review dari orang lain.
+:::
 
 Ambil proyek Fase 6 (model yang disajikan lewat API di Docker) dan jadikan lebih siap produksi:
 
@@ -147,6 +201,12 @@ Ambil proyek Fase 6 (model yang disajikan lewat API di Docker) dan jadikan lebih
 3. Tambahkan **log prediksi** dan satu pemeriksaan **drift** sederhana, misalnya PSI pada dua fitur terpenting.
 4. Tulis **design doc dua halaman** dengan struktur di atas, termasuk tabel mode kegagalan dan rencana rollback.
 5. Minta **satu orang me-review** dokumennya (teman, rekan kerja, atau komunitas), perbaiki berdasarkan komentarnya, dan catat satu keputusan sebagai ADR.
+
+::: rangkuman
+- MLflow dan Model Registry untuk versi model.
+- CI dengan tes kode, data, dan ambang model.
+- Design doc dua halaman yang direview, plus satu ADR.
+:::
 
 ## Latihan
 

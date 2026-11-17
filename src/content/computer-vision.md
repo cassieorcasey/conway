@@ -4,6 +4,10 @@ Gambar bagi komputer adalah tensor angka: tinggi × lebar × kanal (3 kanal RGB,
 
 ## 1. CNN dan pooling layer
 
+::: intinya
+CNN menggeser filter kecil di atas gambar sehingga bobot dipakai bersama dan pola dikenali di mana pun letaknya. Pooling mengecilkan feature map, dan augmentasi memperbanyak variasi data latih.
+:::
+
 Fully connected layer biasa tidak cocok untuk gambar: gambar 224×224×3 punya 150.528 input, sehingga satu layer 1.000 neuron sudah butuh 150 juta bobot, dan layer itu tidak tahu bahwa piksel yang berdekatan saling berhubungan.
 
 **Konvolusi** menyelesaikan keduanya. Sebuah **filter** kecil (misalnya 3×3) digeser ke seluruh gambar; di setiap posisi dihitung dot product antara filter dan potongan gambar di bawahnya. Hasilnya **feature map** yang menyala di tempat pola filter ditemukan.
@@ -49,7 +53,17 @@ latih = transforms.Compose([
 ])
 ```
 
+::: rangkuman
+- Konvolusi: berbagi bobot dan membangun hierarki fitur dari tepi sampai objek.
+- Ukuran keluaran = `(N - K + 2P) / S + 1`.
+- Max pooling mengecilkan peta; augmentasi mengurangi overfit.
+:::
+
 ## 2. Transfer learning dengan ResNet
+
+::: intinya
+Transfer learning memakai model yang sudah dilatih pada ImageNet, lalu mengganti dan melatih ulang bagian akhirnya. ResNet dengan skip connection adalah titik awal yang umum.
+:::
 
 Melatih CNN besar dari nol butuh jutaan gambar. **Transfer learning** memakai model yang sudah dilatih pada ImageNet (1,2 juta gambar, 1.000 kelas): fitur umumnya (tepi, tekstur, bentuk) sudah berguna untuk tugas lain, jadi cukup mengganti layer terakhir dan melatih sedikit.
 
@@ -76,7 +90,17 @@ Strategi bertahap yang umum:
 
 Selalu pakai preprocessing yang sama dengan saat model dilatih (`weights.transforms()`), termasuk normalisasi.
 
+::: rangkuman
+- Skip connection `F(x) + x` membuat jaringan sangat dalam tetap bisa dilatih.
+- Feature extraction dulu, lalu fine-tuning blok akhir dengan learning rate kecil.
+- Pakai preprocessing yang sama dengan saat model dilatih.
+:::
+
 ## 3. YOLO
+
+::: intinya
+Deteksi objek menjawab "apa dan di mana" dengan kotak pembatas. YOLO memprediksi semua kotak dalam satu kali lewat jaringan, cukup cepat untuk video real-time.
+:::
 
 Klasifikasi menjawab "apa"; **deteksi objek** menjawab "apa dan di mana" dengan kotak pembatas (*bounding box*) dan skor keyakinan. **YOLO** (*You Only Look Once*) memprediksi semua kotak dalam satu kali lewat jaringan, sehingga cukup cepat untuk video real-time.
 
@@ -102,6 +126,12 @@ metrik = model.val()                        # mAP pada data validasi
 ```
 
 File `dataset.yaml` berisi lokasi folder gambar train/val dan daftar nama kelas. Label bisa dibuat dengan alat anotasi seperti CVAT atau Label Studio. Versi YOLO berganti cepat; cek dokumentasi Ultralytics untuk nama model terbaru.
+
+::: rangkuman
+- IoU mengukur ketepatan kotak; NMS membuang kotak duplikat.
+- mAP adalah metrik standar deteksi.
+- `ultralytics` adalah cara paling praktis; label dibuat dengan alat anotasi.
+:::
 
 ## Latihan
 

@@ -20,6 +20,10 @@ proyek/
 
 ## 1. Menulis Dockerfile
 
+::: intinya
+Dockerfile adalah resep membangun image: setiap instruksi menjadi satu layer yang di-cache. Taruh hal yang jarang berubah di atas dan kode di bawah, supaya build ulang tetap cepat.
+:::
+
 ```dockerfile
 # Image dasar: Python resmi versi ramping
 FROM python:3.12-slim
@@ -59,7 +63,17 @@ Setiap instruksi membentuk satu **layer**. Docker menyimpan layer di cache, dan 
 
 Server harus mendengarkan di `0.0.0.0`, bukan `127.0.0.1`, supaya bisa diakses dari luar container.
 
+::: rangkuman
+- Urutan: base image, requirements, `pip install`, baru `COPY` kode.
+- Cache dipakai ulang hanya jika layer dan semua layer sebelumnya tidak berubah.
+- Server mendengarkan di `0.0.0.0`, bukan `127.0.0.1`.
+:::
+
 ## 2. Memaketkan kode dan dependensi
+
+::: intinya
+Kunci versi dependensi, saring file dengan `.dockerignore`, dan jangan pernah memasukkan rahasia ke image. Image kecil lebih cepat diunduh dan dijalankan.
+:::
 
 **Kunci versi** di `requirements.txt` supaya build hari ini dan bulan depan menghasilkan hal yang sama:
 
@@ -92,7 +106,17 @@ Prinsip yang perlu dipegang:
 - **Model besar** (ratusan MB ke atas) lebih baik diunduh saat start dari penyimpanan objek (S3, Hugging Face Hub) daripada dimasukkan ke image.
 - Untuk library yang butuh kompilasi, **multi-stage build** memisahkan tahap build (dengan compiler) dari image akhir yang ramping.
 
+::: rangkuman
+- Versi di `requirements.txt` sama dengan lingkungan training.
+- `.dockerignore` membuang data, `.venv`, dan rahasia.
+- Varian `-slim`, model besar diunduh saat start, multi-stage untuk kompilasi.
+:::
+
 ## 3. Menjalankan container
+
+::: intinya
+`docker run` menjalankan image menjadi container, dengan konfigurasi dan rahasia diberikan lewat variabel lingkungan. Docker Compose menjalankan beberapa layanan sekaligus, dan volume menyimpan data yang harus bertahan.
+:::
 
 ```bash
 docker build -t api-diagnosis:1.0 .              # bangun image dari Dockerfile di folder ini
@@ -145,6 +169,12 @@ docker compose down
 ```
 
 Data di dalam container **hilang** saat container dihapus. Simpan data yang harus bertahan di **volume** (seperti `pgdata` di atas).
+
+::: rangkuman
+- `-p` memetakan port, `-e` atau `--env-file` memberi konfigurasi.
+- Compose untuk API + database + layanan lain dalam satu file.
+- Data di container hilang saat dihapus; pakai volume.
+:::
 
 ## Latihan
 

@@ -2,6 +2,10 @@ Catatan ini mengikuti dua langkah di checklist. Model di notebook belum memberi 
 
 ## 1. Mengubah model menjadi fungsi prediksi
 
+::: intinya
+Pisahkan training dari inference: simpan seluruh pipeline sebagai satu artefak, lalu tulis fungsi prediksi yang memvalidasi input, mengurutkan fitur, dan mengembalikan hasil berstruktur beserta versi model.
+:::
+
 Langkah pertama adalah memisahkan **training** dari **inference**. Hasil training disimpan sebagai satu artefak, lalu kode inference cukup memuat artefak itu dan memanggil `predict`.
 
 Simpan seluruh **pipeline**, bukan hanya model. Preprocessing (imputasi, scaling, encoding) harus ikut, supaya data baru diproses persis seperti saat training.
@@ -50,7 +54,17 @@ Catatan penting:
 - Untuk portabilitas antarbahasa, model bisa diekspor ke **ONNX**. Untuk PyTorch, simpan `state_dict` atau gunakan `torch.export`.
 - **Batch atau real-time?** Kalau prediksi cukup dihitung sekali sehari (skor churn semua pelanggan), jalankan skrip batch terjadwal dan simpan hasilnya ke database. API real-time hanya perlu jika prediksi dibutuhkan saat itu juga.
 
+::: rangkuman
+- Simpan pipeline lengkap, bukan hanya model.
+- Kunci versi library; jangan memuat pickle dari sumber yang tidak dipercaya.
+- Batch terjadwal sering cukup; API real-time hanya bila prediksi dibutuhkan seketika.
+:::
+
 ## 2. Membungkus model jadi REST API dengan FastAPI atau Flask
+
+::: intinya
+FastAPI membungkus fungsi prediksi menjadi REST API dengan validasi input otomatis dan dokumentasi interaktif di `/docs`. Menolak input yang tidak lengkap lebih baik daripada menebak.
+:::
 
 **FastAPI** adalah pilihan utama untuk API Python modern: validasi input otomatis dari type hint (lewat Pydantic), dokumentasi interaktif otomatis di `/docs`, dan cepat.
 
@@ -137,6 +151,12 @@ def test_health():
 def test_fitur_hilang_ditolak():
     assert client.post("/predict", json={"pasien": [{"mean radius": 1.0}]}).status_code == 422
 ```
+
+::: rangkuman
+- Pydantic memvalidasi input dari type hint; input buruk dijawab `422`.
+- Sediakan `/health` dan `/predict`; Flask lebih sederhana tapi validasi ditulis sendiri.
+- Siap produksi: validasi, log, versi model, tes otomatis, dan pengukuran latensi.
+:::
 
 ## Latihan
 

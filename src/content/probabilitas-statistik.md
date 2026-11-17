@@ -7,6 +7,10 @@ from scipy import stats
 
 ## 1. Statistik deskriptif: mean, median, mode
 
+::: intinya
+Mean, median, dan mode adalah tiga cara meringkas "nilai tipikal". Untuk data miring seperti gaji, median lebih jujur karena tidak tertarik oleh nilai ekstrem.
+:::
+
 | Ukuran | Arti | Kapan dipakai |
 |---|---|---|
 | Mean | Rata-rata | Data simetris tanpa outlier ekstrem |
@@ -24,7 +28,17 @@ print(statistics.mode(gaji))        # 6
 
 Kalau mean jauh lebih besar dari median, data miring ke kanan: ada nilai besar yang menarik rata-rata. Selalu laporkan keduanya untuk data seperti pendapatan atau waktu respons.
 
+::: rangkuman
+- Mean untuk data simetris, median untuk data miring, mode untuk kategori.
+- Mean jauh di atas median berarti data miring ke kanan.
+- Laporkan keduanya untuk pendapatan atau waktu respons.
+:::
+
 ## 2. Varians dan standar deviasi
+
+::: intinya
+Varians dan standar deviasi mengukur seberapa tersebar data dari rata-ratanya. Untuk sampel, bagi dengan `n - 1`.
+:::
 
 Varians mengukur seberapa jauh data tersebar dari mean: rata-rata kuadrat selisih terhadap mean. Standar deviasi adalah akar varians, satuannya sama dengan data asli.
 
@@ -38,7 +52,17 @@ Pakai `ddof=1` saat data adalah **sampel** dari populasi yang lebih besar (hampi
 
 Untuk distribusi normal, aturan 68–95–99,7: sekitar 68% data berada dalam 1 standar deviasi dari mean, 95% dalam 2, dan 99,7% dalam 3. Jarak suatu nilai dari mean dalam satuan standar deviasi disebut **z-score**: `z = (x - mean) / std`.
 
+::: rangkuman
+- Standar deviasi = akar varians, satuannya sama dengan data.
+- Sampel memakai `ddof=1`; NumPy default 0, pandas default 1.
+- Aturan 68–95–99,7 dan z-score untuk distribusi normal.
+:::
+
 ## 3. Distribusi probabilitas
+
+::: intinya
+Distribusi probabilitas menggambarkan peluang setiap kemungkinan hasil. Central Limit Theorem menjamin rata-rata banyak sampel mendekati normal, apa pun bentuk data aslinya.
+:::
 
 Distribusi menggambarkan peluang tiap kemungkinan hasil.
 
@@ -59,7 +83,17 @@ print(stats.poisson.pmf(0, mu=4))           # P(0 pesanan | rata-rata 4) ≈ 0.0
 
 **Central Limit Theorem (CLT)**: rata-rata dari banyak sampel acak akan terdistribusi mendekati normal, **apa pun** bentuk distribusi aslinya, selama sampelnya cukup besar. Inilah alasan uji z dan uji t bisa dipakai secara luas.
 
+::: rangkuman
+- Diskret: Bernoulli, Binomial, Poisson. Kontinu: Uniform, Normal, Eksponensial.
+- Pilih distribusi sesuai proses yang menghasilkan data.
+- CLT adalah alasan uji z dan uji t bisa dipakai luas.
+:::
+
 ## 4. Teorema Bayes
+
+::: intinya
+Teorema Bayes memperbarui keyakinan setelah melihat bukti. Pelajaran terpentingnya: **base rate** sangat menentukan, sehingga tes yang akurat pun bisa sering salah untuk kejadian langka.
+:::
 
 ```text
 P(A | B) = P(B | A) · P(A) / P(B)
@@ -80,7 +114,17 @@ print(round(p_pos_jika_sakit * p_sakit / p_pos, 3))   # 0.167
 
 Hanya sekitar 17%, karena orang sehat jauh lebih banyak sehingga positif palsunya mendominasi. Pelajaran untuk ML: **base rate** penting. Model deteksi penipuan dengan akurasi tinggi tetap bisa menghasilkan lebih banyak alarm palsu daripada penipuan sungguhan kalau penipuannya langka. Naive Bayes dan seluruh statistik Bayesian dibangun di atas rumus ini.
 
+::: rangkuman
+- `P(A|B) = P(B|A) · P(A) / P(B)`.
+- Tes 99% akurat untuk penyakit 1% hanya memberi peluang sekitar 17% saat positif.
+- Kejadian langka membuat alarm palsu mendominasi.
+:::
+
 ## 5. Inferensi statistik
+
+::: intinya
+Inferensi menarik kesimpulan tentang populasi dari sampel, selalu dengan ketidakpastian. Standard error dan confidence interval mengukur seberapa presisi estimasimu.
+:::
 
 Inferensi adalah menarik kesimpulan tentang **populasi** dari **sampel**. Karena setiap sampel sedikit berbeda, estimasi selalu disertai ketidakpastian.
 
@@ -98,7 +142,17 @@ print(f"{mean:.1f} cm, CI 95% [{lo:.1f}, {hi:.1f}]")
 
 Yang **bukan** arti CI 95%: "ada peluang 95% nilai sebenarnya di rentang ini." Nilai sebenarnya tetap; yang acak adalah rentangnya.
 
+::: rangkuman
+- Standard error = `s / √n`; presisi dua kali lipat butuh sampel empat kali.
+- CI 95%: prosedur yang memuat nilai sebenarnya pada 95% pengulangan.
+- Nilai sebenarnya tetap; yang acak adalah rentangnya.
+:::
+
 ## 6. Hypothesis testing: p-value, z-test, t-test
+
+::: intinya
+Uji hipotesis memeriksa apakah sebuah efek kemungkinan nyata atau kebetulan. P-value adalah peluang hasil seekstrem ini **jika tidak ada efek**, bukan peluang hipotesisnya benar.
+:::
 
 Langkah uji hipotesis:
 
@@ -126,7 +180,17 @@ print(f"t = {t:.2f}, p = {p:.4f}")
 
 Dua jenis kesalahan: **Tipe I** (positif palsu, menolak H0 yang benar; peluangnya α) dan **Tipe II** (negatif palsu, gagal mendeteksi efek nyata). **Power** = 1 − peluang Tipe II, biasanya ditargetkan 80%.
 
+::: rangkuman
+- Tetapkan H0, H1, dan α sebelum melihat data.
+- z-test, t-test satu sampel, Welch, dan berpasangan untuk situasi berbeda.
+- Signifikan tidak sama dengan penting; perhatikan Tipe I, Tipe II, dan power.
+:::
+
 ## 7. A/B testing
+
+::: intinya
+A/B testing membandingkan dua versi pada pengguna yang dibagi acak, sehingga perbedaan yang signifikan bisa diatribusikan ke perubahan itu. Rancangan ditetapkan sebelum eksperimen dimulai.
+:::
 
 A/B testing adalah eksperimen terkontrol: pengguna dibagi **acak** ke versi A (kontrol) dan B (perlakuan), lalu metriknya dibandingkan. Karena pembagiannya acak, perbedaan yang signifikan bisa diatribusikan ke perubahan itu sendiri.
 
@@ -166,7 +230,17 @@ Kesalahan umum yang harus dihindari:
 - **Durasi terlalu pendek**: minimal satu siklus mingguan penuh, karena perilaku hari kerja dan akhir pekan berbeda.
 - **Efek kebaruan**: pengguna mencoba fitur baru karena baru, lalu kembali ke kebiasaan lama.
 
+::: rangkuman
+- Satu metrik utama, guardrail, MDE, dan ukuran sampel ditentukan di awal.
+- Analisis konversi dengan uji z dua proporsi.
+- Jangan mengintip lalu berhenti; jalankan minimal satu siklus mingguan.
+:::
+
 ## Mini-proyek Fase 2
+
+::: intinya
+Bangun regresi linear dari nol dengan dua cara, solusi tertutup dan gradient descent, supaya aljabar linear, kalkulus, dan statistik terasa menyatu dalam satu masalah.
+:::
 
 Implementasikan regresi linear tanpa pustaka ML, supaya aljabar linear, kalkulus, dan statistik terasa menyatu:
 
@@ -195,6 +269,12 @@ print(beta_tertutup.round(2), beta.round(2))               # keduanya mendekati 
 ```
 
 Tanda selesai: kamu bisa menjelaskan mengapa kedua cara memberi jawaban yang sama, dan apa yang terjadi jika laju belajar dibuat terlalu besar.
+
+::: rangkuman
+- Data sintetis `y = 3x + 5 + derau`.
+- Bandingkan persamaan normal dengan gradient descent, plus interval kepercayaan.
+- Jelaskan hasilnya kepada orang non teknis.
+:::
 
 ## Latihan
 

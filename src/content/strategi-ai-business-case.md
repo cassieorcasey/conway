@@ -2,6 +2,10 @@ Catatan ini mengikuti enam langkah di checklist dan melengkapi catatan Prinsip L
 
 ## 1. Menilai peluang AI
 
+::: intinya
+Sebelum membangun, saring peluang AI dari keputusan, nilai, data, kelayakan teknis, dan kesiapan operasional. Kadang jawaban terbaik adalah tidak memakai AI.
+:::
+
 Sebelum menulis satu baris kode, lewati lima penyaring ini:
 
 | Penyaring | Pertanyaan | Tanda bahaya |
@@ -21,7 +25,17 @@ Gunakan matriks **dampak × kelayakan** untuk memilah daftar ide:
 
 Dan ingat pertanyaan paling jujur: **apakah ini perlu AI?** Aturan bisnis, query SQL, atau perbaikan proses sering memberi 70% manfaat dengan 10% biaya. Aturan pertama Google Rules of ML adalah: jangan takut meluncurkan produk tanpa ML.
 
+::: rangkuman
+- Lima penyaring: keputusan, nilai, data, kelayakan, kesiapan operasional.
+- Matriks dampak × kelayakan memilah daftar ide.
+- Aturan bisnis atau SQL sering memberi sebagian besar manfaat dengan biaya kecil.
+:::
+
 ## 2. Business case dan ROI
+
+::: intinya
+Business case adalah argumen berbasis angka yang bisa diperiksa: biaya total, manfaat, asumsi, dan skenario. Analisis sensitivitas menunjukkan seberapa besar manfaat yang harus terwujud agar impas.
+:::
 
 Business case adalah argumen berbasis angka yang bisa diperiksa orang lain. Strukturnya sederhana:
 
@@ -61,7 +75,17 @@ Beberapa kebiasaan yang membuat business case dipercaya:
 - **Tulis asumsi dan pemiliknya.** Jika tim bisnis menyatakan adopsi 80%, mintalah dia yang bertanggung jawab atas angka itu.
 - **Bandingkan dengan alternatif**, termasuk "tidak melakukan apa-apa" dan solusi non-AI.
 
+::: rangkuman
+- Hitung biaya awal dan berulang, termasuk perawatan dan waktu orang.
+- NPV dan waktu balik modal untuk tiga skenario.
+- Tulis asumsi beserta pemiliknya; bandingkan dengan tidak melakukan apa-apa.
+:::
+
 ## 3. Build vs buy vs API
+
+::: intinya
+Build, buy, atau API dipilih dari keunggulan kompetitif, sensitivitas data, biaya pada volume nyata, ketergantungan vendor, dan kemampuan tim merawatnya.
+:::
 
 Tiga jalan yang umum: **membangun sendiri**, **membeli produk jadi**, atau **memakai API model** dengan lapisan aplikasi sendiri.
 
@@ -85,7 +109,17 @@ Pertanyaan penentu:
 
 Seringkali jalur terbaiknya bertahap: mulai dengan API atau produk jadi untuk membuktikan nilai, lalu bangun sendiri hanya bagian yang terbukti penting dan mahal.
 
+::: rangkuman
+- Fungsi umum hampir selalu dibeli; pembeda kompetitif dipertimbangkan untuk dibangun.
+- Harga per pemakaian yang murah saat uji coba bisa besar pada skala penuh.
+- Sering terbaik bertahap: buktikan nilai dengan API, bangun yang terbukti penting.
+:::
+
 ## 4. Prioritisasi dan roadmap tim
+
+::: intinya
+Prioritas yang sehat tidak bergantung pada siapa yang paling vokal. Skor dampak × keyakinan ÷ usaha memaksa percakapan, dan roadmap now/next/later menjaga komitmen tetap realistis.
+:::
 
 Tim selalu punya lebih banyak permintaan daripada kapasitas. Prioritisasi yang sehat tidak bergantung pada siapa yang paling vokal.
 
@@ -113,7 +147,17 @@ Tips menyusun roadmap:
 - Sebut **apa yang tidak akan dikerjakan** dan kenapa. Itu bagian terpenting dari prioritas.
 - Tinjau tiap kuartal dan berani menghentikan proyek yang bukti awalnya lemah.
 
+::: rangkuman
+- Skor sebagai alat diskusi, bukan kebenaran.
+- Sisihkan 20–30% kapasitas untuk perawatan dan hal mendadak.
+- Sebutkan juga apa yang tidak akan dikerjakan.
+:::
+
 ## 5. Risiko dan kesiapan organisasi
+
+::: intinya
+Keberhasilan proyek AI sering ditentukan oleh hal non teknis: kesiapan data, adopsi pengguna, perubahan proses, kepercayaan, etika, dan ketergantungan.
+:::
 
 Pertanyaan yang menentukan keberhasilan sering bukan teknis.
 
@@ -128,7 +172,17 @@ Pertanyaan yang menentukan keberhasilan sering bukan teknis.
 
 Model paling akurat tetap tidak bernilai jika tim operasional mengabaikan keluarannya. Biasanya **sponsor di sisi bisnis** dan **pengguna yang dilibatkan sejak hari pertama** menentukan nasib proyek lebih besar daripada selisih AUC dua poin.
 
+::: rangkuman
+- Libatkan pengguna dan sponsor bisnis sejak hari pertama.
+- Keterjelasan dan jalur eskalasi ke manusia membangun kepercayaan.
+- Siapkan rencana cadangan untuk vendor, tim, atau data yang hilang.
+:::
+
 ## 6. Mengukur dan melaporkan dampak
+
+::: intinya
+Tutup lingkaran dengan membuktikan nilai yang dijanjikan: metrik bisnis dengan angka dasar, OKR, laporan berkala, dan review pascaproyek tanpa menyalahkan.
+:::
 
 Tutup lingkaran: bukti bahwa proyek menghasilkan nilai yang dijanjikan.
 
@@ -137,6 +191,12 @@ Tutup lingkaran: bukti bahwa proyek menghasilkan nilai yang dijanjikan.
 - Kaitkan dengan **OKR** tim: satu tujuan, dua sampai tiga hasil kunci yang terukur, misalnya "turunkan churn pelanggan berisiko dari 12% ke 10% dalam kuartal ini".
 - **Laporan berkala** satu halaman: apa yang dijanjikan, apa yang tercapai, apa yang dipelajari, dan keputusan yang dibutuhkan.
 - Lakukan **review pascaproyek** tanpa menyalahkan: apa yang berjalan baik, apa yang meleset dari asumsi business case, dan apa yang diubah pada proyek berikutnya. Mencocokkan angka aktual dengan business case adalah cara terbaik mempertajam estimasi.
+
+::: rangkuman
+- Tetapkan metrik bisnis dan angka dasar sebelum peluncuran.
+- Bedakan metrik model dari metrik dampak; buktikan dengan eksperimen bila bisa.
+- Cocokkan hasil aktual dengan business case untuk mempertajam estimasi.
+:::
 
 ## Latihan
 

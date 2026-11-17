@@ -7,6 +7,10 @@ from sklearn import metrics
 
 ## 1. Metrik regresi: MSE, RMSE, MAE, R squared
 
+::: intinya
+Metrik regresi mengukur seberapa jauh tebakan dari nilai sebenarnya. MAE mudah dijelaskan, RMSE menghukum kesalahan besar, dan R² membandingkan model dengan sekadar menebak rata-rata.
+:::
+
 | Metrik | Rumus | Satuan | Sifat |
 |---|---|---|---|
 | MAE | rata-rata `abs(y - ŷ)` | sama dengan y | Mudah dijelaskan, tahan outlier |
@@ -28,7 +32,17 @@ Satu error 100 membuat RMSE jauh di atas MAE. Kalau satu kesalahan besar sangat 
 
 R² = 1 berarti sempurna, 0 berarti sama saja dengan menebak rata-rata, dan **bisa negatif** jika model lebih buruk dari rata-rata. Untuk target dengan rentang sangat lebar (harga rumah), pertimbangkan MAPE atau error pada skala log.
 
+::: rangkuman
+- MAE tahan outlier; RMSE untuk saat kesalahan besar sangat mahal.
+- R² bisa negatif kalau model lebih buruk dari rata-rata.
+- Rentang target lebar: pertimbangkan MAPE atau skala log.
+:::
+
 ## 2. Metrik klasifikasi: Accuracy, Precision, Recall, F1
+
+::: intinya
+Accuracy menyesatkan untuk data tidak seimbang. Precision mengukur ketepatan alarm, recall mengukur berapa banyak kasus yang tertangkap, dan pilihan metrik ditentukan oleh **biaya kesalahan**.
+:::
 
 Empat sel dasar: **TP** (positif tertebak positif), **FP** (negatif tertebak positif, alarm palsu), **FN** (positif terlewat), **TN**.
 
@@ -57,7 +71,17 @@ Pilih metrik dari **biaya kesalahan**:
 - FP mahal (email penting masuk spam, pelanggan baik diblokir): utamakan **precision**.
 - Keduanya penting: F1, atau F-beta untuk memberi bobot.
 
+::: rangkuman
+- TP, FP, FN, TN adalah empat sel dasarnya.
+- FN mahal: utamakan recall; FP mahal: utamakan precision.
+- F1 atau F-beta saat keduanya penting.
+:::
+
 ## 3. Confusion Matrix dan ROC-AUC
+
+::: intinya
+Confusion matrix menunjukkan jenis kesalahan model. ROC-AUC mengukur kemampuan model membedakan kelas di semua ambang; untuk data sangat tidak seimbang, kurva precision-recall lebih jujur.
+:::
 
 ```python
 print(metrics.confusion_matrix(y_true, y_pred))
@@ -86,7 +110,17 @@ fpr, tpr, ambang = metrics.roc_curve(y_te, skor)
 
 Untuk data **sangat tidak seimbang**, kurva **precision-recall** dan *average precision* lebih informatif daripada ROC, karena ROC bisa tampak bagus hanya karena jumlah negatif yang sangat banyak. Setelah memilih model berdasarkan AUC, tetap tentukan ambang operasional berdasarkan biaya FP dan FN.
 
+::: rangkuman
+- AUC = peluang skor positif acak lebih tinggi dari negatif acak.
+- 0,5 = menebak acak, 1,0 = sempurna.
+- Pilih model dengan AUC, lalu tentukan ambang dari biaya FP dan FN.
+:::
+
 ## 4. K-Fold Cross Validation
+
+::: intinya
+K-Fold melatih dan menguji model `k` kali pada potongan data berbeda, sehingga skornya tidak bergantung keberuntungan satu pembagian. Semua preprocessing harus berada di dalam pipeline yang di-cross-validate.
+:::
 
 Satu kali pembagian train/test itu bergantung keberuntungan. K-Fold membagi data menjadi `k` bagian; model dilatih `k` kali, setiap kali satu bagian berbeda menjadi data validasi. Hasilnya rata-rata **dan** sebaran skor.
 
@@ -108,7 +142,17 @@ Pilih jenis pembagian sesuai data:
 
 > **Penting:** semua preprocessing (imputasi, scaling, encoding, seleksi fitur) harus berada **di dalam pipeline** yang di-cross-validate. Kalau scaler di-fit ke seluruh data sebelum CV, informasi dari fold validasi bocor ke training dan skornya terlalu optimis.
 
+::: rangkuman
+- Laporkan rata-rata dan sebaran skor.
+- Stratified untuk kelas tidak seimbang, group untuk entitas berulang, time series untuk data waktu.
+- Scaler yang di-fit sebelum CV membocorkan informasi.
+:::
+
 ## 5. Bias variance tradeoff
+
+::: intinya
+Error berasal dari bias (model terlalu sederhana), varians (terlalu sensitif terhadap data latih), dan noise. Kurva validasi dan kurva belajar menunjukkan masalah mana yang sedang kamu hadapi.
+:::
 
 Error prediksi berasal dari tiga sumber: **bias** (model terlalu sederhana dan meleset secara sistematis), **varians** (model terlalu sensitif terhadap data latih tertentu), dan noise yang tidak bisa dihilangkan.
 
@@ -133,7 +177,17 @@ for d, a, b in zip(kedalaman, tr.mean(1), va.mean(1)):
 
 Kalau kurva belajar menunjukkan skor validasi masih naik saat data ditambah, mengumpulkan data lebih banyak akan membantu. Kalau sudah datar, data tambahan tidak menolong; perbaiki fitur atau modelnya.
 
+::: rangkuman
+- Skor train dan validasi sama-sama rendah = bias tinggi.
+- Train tinggi, validasi rendah = varians tinggi.
+- Kurva belajar masih naik? Data tambahan akan membantu.
+:::
+
 ## 6. Hyperparameter tuning
+
+::: intinya
+Hyperparameter adalah pengaturan yang tidak dipelajari dari data, dan dicari dengan grid search, random search, atau metode Bayesian di dalam cross-validation. Data uji dipakai sekali saja, di akhir.
+:::
 
 Hyperparameter adalah pengaturan yang tidak dipelajari dari data (`max_depth`, `C`, `learning_rate`). Cara mencarinya:
 
@@ -164,7 +218,17 @@ print(round(cari.score(X_te, y_te), 3))   # data uji hanya disentuh sekali, di a
 
 Aturan yang tidak boleh dilanggar: data uji **hanya dipakai sekali**, setelah semua pilihan selesai. Kalau kamu memilih model berdasarkan skor uji, data uji sudah berubah fungsi menjadi data validasi dan skornya tidak lagi jujur. Untuk estimasi yang benar-benar tidak bias saat tuning intensif, gunakan *nested cross-validation*.
 
+::: rangkuman
+- Grid untuk ruang kecil, random untuk ruang besar, Optuna untuk efisiensi.
+- Selalu tuning di dalam cross-validation.
+- Memilih model dari skor uji membuat skor itu tidak jujur lagi.
+:::
+
 ## Mini-proyek Fase 4
+
+::: intinya
+Bangun satu proyek prediksi dari problem statement sampai dampak bisnis, dengan baseline, validasi yang benar, dan analisis error. Ini kerangka yang akan kamu ulangi di hampir setiap proyek ML.
+:::
 
 Bangun satu proyek prediksi dari awal sampai akhir pada dataset tabular yang kamu pilih:
 
@@ -175,6 +239,12 @@ Bangun satu proyek prediksi dari awal sampai akhir pada dataset tabular yang kam
 5. Tulis satu paragraf **dampak bisnis**: keputusan apa yang berubah dan perkiraan nilainya.
 
 Tanda selesai: kamu bisa menunjukkan bahwa modelmu mengalahkan baseline dan menjelaskan satu kelemahan terbesarnya.
+
+::: rangkuman
+- Problem statement dan metrik ditulis sebelum memodelkan.
+- Model harus mengalahkan baseline sederhana dengan validasi yang tidak bocor.
+- Tutup dengan error analysis dan satu paragraf dampak bisnis.
+:::
 
 ## Latihan
 

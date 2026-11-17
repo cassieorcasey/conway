@@ -7,6 +7,10 @@ import pandas as pd
 
 ## 1. Missing values dan imputasi
 
+::: intinya
+Sebelum mengisi nilai kosong, pahami **kenapa** datanya kosong, karena alasannya menentukan perlakuan. Hitung nilai pengisi hanya dari data latih supaya tidak terjadi kebocoran.
+:::
+
 Pertama, ukur seberapa banyak dan di mana:
 
 ```python
@@ -47,7 +51,17 @@ X_train_isi = imp.fit_transform(X_train)   # belajar median dari train
 X_test_isi = imp.transform(X_test)         # pakai median yang sama
 ```
 
+::: rangkuman
+- Ukur dulu: berapa persen kosong, di kolom mana.
+- Pilihan: hapus, isi median atau modus, isi per kelompok, imputasi model, plus kolom penanda.
+- Fit imputer hanya di data latih, paling aman di dalam `Pipeline`.
+:::
+
 ## 2. Deteksi outlier
+
+::: intinya
+Outlier bisa berupa kesalahan atau kejadian nyata yang langka dan justru penting. Deteksi dengan IQR, z-score, visual, atau `IsolationForest`, lalu putuskan dengan sadar, jangan langsung dihapus.
+:::
 
 Outlier adalah nilai yang jauh dari mayoritas. Bisa berupa **kesalahan** (umur 999, harga negatif) atau **kejadian nyata yang langka** (transaksi besar, yang justru penting di deteksi penipuan). Jangan langsung hapus.
 
@@ -75,7 +89,17 @@ Setelah ketemu, pilih:
 | Transformasi | Data miring: `np.log1p` |
 | Biarkan | Model berbasis pohon cukup tahan outlier, atau outlier adalah sinyal |
 
+::: rangkuman
+- IQR tahan outlier; z-score cocok untuk data mendekati normal.
+- Selalu lihat box plot dan histogram dulu.
+- Pilihan: perbaiki, hapus, batasi (clip), atau biarkan, dengan alasan tercatat.
+:::
+
 ## 3. Hapus duplikat
+
+::: intinya
+Duplikat persis mudah dibuang dengan `drop_duplicates`, tapi duplikat yang berbeda tulisan (`Jakarta` dan `jakarta `) perlu teks dirapikan dulu.
+:::
 
 ```python
 df.duplicated().sum()                                   # duplikat persis di semua kolom
@@ -93,7 +117,17 @@ df["kota"] = df["kota"].str.strip().str.title().replace({"Dki Jakarta": "Jakarta
 
 Duplikat juga berbahaya di sisi evaluasi: data yang sama di train dan test membuat skor model terlihat lebih bagus dari kenyataannya.
 
+::: rangkuman
+- Tentukan kolom yang mendefinisikan baris unik.
+- Rapikan huruf besar-kecil, spasi, dan variasi nama sebelum mencari duplikat.
+- Duplikat di train dan test membuat skor model terlihat palsu bagus.
+:::
+
 ## 4. Encoding fitur kategorikal
+
+::: intinya
+Model butuh angka, jadi kategori harus di-encode. One-hot untuk kategori tanpa urutan, ordinal untuk yang berurutan, dan target encoding dengan validasi silang untuk kategori yang sangat banyak.
+:::
 
 Model butuh angka. Cara mengubah kategori:
 
@@ -116,7 +150,17 @@ X_ukuran = ukuran.fit_transform(df[["ukuran"]])
 
 Jangan beri angka 1, 2, 3 ke kategori **tanpa urutan** (Jakarta=1, Bandung=2): model linear akan menganggap Bandung "dua kali" Jakarta. `handle_unknown="ignore"` mencegah error ketika data baru berisi kategori yang tidak ada saat training. Target encoding harus dihitung dengan cross-validation (`TargetEncoder` di scikit-learn melakukannya) supaya tidak bocor.
 
+::: rangkuman
+- One-hot untuk kategori tanpa urutan, dengan `handle_unknown="ignore"`.
+- Ordinal hanya untuk kategori yang benar-benar berurutan.
+- Target encoding harus memakai validasi silang supaya tidak bocor.
+:::
+
 ## 5. Feature scaling
+
+::: intinya
+Fitur dengan skala berbeda membuat model berbasis jarak dan gradien berat sebelah. Standarisasi atau normalisasi menyamakan skalanya; model pohon tidak membutuhkannya.
+:::
 
 Fitur dengan skala berbeda (umur 20–60, gaji 5.000.000–50.000.000) membuat model berbasis jarak dan gradien berat sebelah ke fitur bernilai besar.
 
@@ -146,6 +190,12 @@ prep = ColumnTransformer([
 model = Pipeline([("prep", prep), ("clf", LogisticRegression(max_iter=1000))])
 model.fit(X_train, y_train)          # semua statistik dipelajari dari train saja
 ```
+
+::: rangkuman
+- `StandardScaler`, `MinMaxScaler`, dan `RobustScaler` untuk kebutuhan berbeda.
+- Model berbasis pohon tidak butuh scaling.
+- Satukan semua langkah di `ColumnTransformer` dan `Pipeline`.
+:::
 
 ## Latihan
 
