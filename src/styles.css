@@ -290,7 +290,7 @@ a { color: inherit; }
 
 .reader {
   position: fixed; inset: 0; z-index: 80; background: var(--r-bg); color: var(--r-fg);
-  font-family: var(--r-sans); letter-spacing: 0; outline: none;
+  font-family: var(--r-sans); letter-spacing: 0; outline: none; contain: layout paint;
   animation: r-in 0.32s cubic-bezier(0.2, 0.8, 0.2, 1);
   transition: background-color 0.25s, color 0.25s;
 }

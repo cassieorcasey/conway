@@ -71,9 +71,13 @@ export function Reader({ topic, phase, phaseIndex, done, start, resume, onStep, 
     el.style.overflow = 'hidden';
     // Isi di belakang pembaca tidak bisa dijangkau Tab atau pembaca layar selama pembaca terbuka.
     const behind = [...document.body.children].filter(c => c !== root.current && !c.hasAttribute('inert'));
-    behind.forEach(c => c.setAttribute('inert', ''));
+    // visibility:hidden menjaga tata letak (posisi gulir peta tetap), tapi iOS berhenti menggambar lapisan blur di belakang.
+    behind.forEach(c => { c.setAttribute('inert', ''); (c as HTMLElement).style.visibility = 'hidden'; });
     root.current?.focus();
-    return () => { el.style.overflow = prev; behind.forEach(c => c.removeAttribute('inert')); };
+    return () => {
+      el.style.overflow = prev;
+      behind.forEach(c => { c.removeAttribute('inert'); (c as HTMLElement).style.visibility = ''; });
+    };
   }, []);
 
   useEffect(() => {
