@@ -95,13 +95,30 @@ export function Reader({ topic, phase, phaseIndex, done, start, resume, onStep, 
     if (page >= 0) remember(page, s.scrollTop);
   }, [page]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Bilah progres: satu pembaruan per frame (rAF), tanpa transisi CSS, supaya mengikuti gulir tanpa tertinggal.
+  const raf = useRef(0);
   function measure() {
     const s = scroller.current;
     if (!s) return;
     const h = s.scrollHeight - s.clientHeight;
     const p = h > 0 ? Math.min(1, Math.max(0, s.scrollTop / h)) : 0;
-    if (bar.current) bar.current.style.transform = `scaleX(${p})`;
+    if (bar.current) bar.current.style.transform = `scaleX(${p.toFixed(4)})`;
   }
+  function schedule() {
+    if (raf.current) return;
+    raf.current = requestAnimationFrame(() => { raf.current = 0; measure(); });
+  }
+
+  // Tinggi isi berubah (font selesai dimuat, ukuran huruf, kuis dibuka, layar diputar): hitung ulang.
+  useEffect(() => {
+    const s = scroller.current;
+    if (!s || typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver(schedule);
+    ro.observe(s);
+    if (s.lastElementChild) ro.observe(s.lastElementChild); // <main>: tingginya ikut isi bab
+    document.fonts?.ready.then(schedule);
+    return () => { ro.disconnect(); cancelAnimationFrame(raf.current); raf.current = 0; clearTimeout(saveTimer.current); };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   function remember(p: number, y: number) {
     const c = book.chapters[p];
@@ -109,7 +126,7 @@ export function Reader({ topic, phase, phaseIndex, done, start, resume, onStep, 
   }
 
   function onScroll() {
-    measure();
+    schedule();
     if (page < 0) return;
     clearTimeout(saveTimer.current);
     const y = scroller.current?.scrollTop ?? 0;

@@ -318,7 +318,7 @@ a { color: inherit; }
 .r-icon:active { background: var(--r-tint); }
 .r-aa { font: 600 17px/1 var(--r-serif); letter-spacing: -0.01em; }
 .r-progress { height: 2.5px; margin: 0 calc(-1 * max(16px, env(safe-area-inset-right))) -1px calc(-1 * max(16px, env(safe-area-inset-left))); overflow: hidden; }
-.r-progress i { display: block; height: 100%; background: var(--r-accent); transform-origin: left; transform: scaleX(0); transition: transform 0.1s linear; }
+.r-progress i { display: block; height: 100%; background: var(--r-accent); transform-origin: left; transform: scaleX(0); will-change: transform; }
 
 .r-page {
   --fs: 18px; max-width: 40rem; margin: 0 auto;
