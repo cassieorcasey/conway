@@ -28,7 +28,7 @@ export function Login() {
     <main className="login">
       <div className="login-card">
         <Logo size={56} />
-        <h1>Waypoint</h1>
+        <h1>Conway</h1>
         <p className="muted">Roadmap Lead Data Science</p>
         {state === 'sent' ? (
           <p className="login-sent" role="status">

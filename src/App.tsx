@@ -97,7 +97,7 @@ function Roadmap({ userId }: { userId: string | null }) {
     <>
       <div className={`page${sheetOpen ? ' with-sheet' : ''}`}>
         <header className="topbar">
-          <div className="brand"><Logo /><span>Waypoint</span></div>
+          <div className="brand"><Logo /><span>Conway</span></div>
           {DEMO
             ? <a className="chip" href="./">Mode contoh · Keluar</a>
             : <button type="button" className="chip" onClick={() => sb?.auth.signOut()}>Keluar</button>}
@@ -121,7 +121,7 @@ function Roadmap({ userId }: { userId: string | null }) {
           {legacy.length > 0 && (
             <motion.div className="banner" role="status"
               initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
-              <p>Ada <strong>{legacy.length} centang</strong> dari roadmap lama. Pindahkan ke Waypoint?</p>
+              <p>Ada <strong>{legacy.length} centang</strong> dari roadmap lama. Pindahkan ke Conway?</p>
               <div className="banner-actions">
                 <button type="button" className="btn-primary" onClick={importLegacy}>Pindahkan</button>
                 <button type="button" className="btn-ghost" onClick={() => { setLegacy([]); markLegacyHandled(); }}>Abaikan</button>

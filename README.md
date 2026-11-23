@@ -1,4 +1,4 @@
-# Waypoint
+# Conway
 
 Roadmap Lead Data Science dalam bentuk peta berurutan. Sembilan fase berderet vertikal sebagai jalur utama. Ketuk satu fase untuk memunculkan topik-topiknya sebagai gelembung, lalu ketuk topik untuk membuka panel berisi langkah dan sumber belajar.
 
@@ -14,7 +14,7 @@ Tabel menumpang di project Supabase **StudyO**, sama dengan Synthesis. Awalan `w
 
 Setiap push ke `main` otomatis di-build dan di-deploy oleh `.github/workflows/deploy.yml`.
 
-Login memakai akun StudyO (magic link). Synthesis dan Waypoint ada di domain yang sama, jadi kalau sudah masuk di salah satunya, yang lain ikut masuk.
+Login memakai akun StudyO (magic link). Synthesis dan Conway ada di domain yang sama, jadi kalau sudah masuk di salah satunya, yang lain ikut masuk.
 
 ## Mode contoh
 
@@ -63,7 +63,7 @@ Yang juga didukung: judul `###`, paragraf, daftar, blok kode berpagar dengan pew
 
 ## Progres dari roadmap lama
 
-Kalau roadmap HTML lama pernah dibuka di `cassieorcasey.github.io`, centangnya terdeteksi otomatis dan Waypoint menawarkan untuk memindahkannya. Dari tempat lain, buka `https://cassieorcasey.github.io/waypoint/#impor=1.2.7` dengan nomor checkbox lama (c1, c2, c7, ...).
+Kalau roadmap HTML lama pernah dibuka di `cassieorcasey.github.io`, centangnya terdeteksi otomatis dan Conway menawarkan untuk memindahkannya. Dari tempat lain, buka `https://cassieorcasey.github.io/waypoint/#impor=1.2.7` dengan nomor checkbox lama (c1, c2, c7, ...).
 
 ## Struktur
 

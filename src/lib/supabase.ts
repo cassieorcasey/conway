@@ -1,7 +1,7 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { DEMO, SUPABASE_ANON_KEY, SUPABASE_URL } from '../config';
 
-// Synthesis dan Waypoint sama-sama di cassieorcasey.github.io, jadi sesi login ikut terbagi:
+// Synthesis dan Conway sama-sama di cassieorcasey.github.io, jadi sesi login ikut terbagi:
 // sudah masuk di Synthesis berarti sudah masuk di sini juga.
 export const sb: SupabaseClient | null = DEMO
   ? null

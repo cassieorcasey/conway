@@ -1,5 +1,5 @@
 /**
- * Tanda Waypoint, "Architectural Cadence": tiga batu pijakan datar yang melayang bertingkat dari
+ * Tanda Conway, "Architectural Cadence": tiga batu pijakan datar yang melayang bertingkat dari
  * kiri bawah ke kanan atas. Pijakan bawah terisi (posisi sekarang), pijakan berikutnya berupa garis
  * luar, dan pijakan teratas garis luar 45% sebagai horizon yang tetap terbuka.
  *

@@ -1,4 +1,4 @@
-// Isi roadmap Waypoint. Ini satu-satunya tempat struktur roadmap ditulis.
+// Isi roadmap Conway. Ini satu-satunya tempat struktur roadmap ditulis.
 //
 // Aturan id (penting, karena progres di Supabase tersimpan per id langkah):
 // - Jangan pernah mengganti atau menomori ulang id yang sudah ada.

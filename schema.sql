@@ -1,4 +1,4 @@
--- Waypoint · skema Supabase v1
+-- Conway · skema Supabase v1
 -- Jalankan sekali di Supabase → SQL Editor, di project StudyO (sama dengan Synthesis).
 -- Aman dijalankan ulang. Tidak menyentuh tabel StudyO maupun tabel peta_* milik Synthesis.
 --
