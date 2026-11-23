@@ -2,14 +2,14 @@
 
 Roadmap Lead Data Science dalam bentuk peta berurutan. Sembilan fase berderet vertikal sebagai jalur utama. Ketuk satu fase untuk memunculkan topik-topiknya sebagai gelembung, lalu ketuk topik untuk membuka panel berisi langkah dan sumber belajar.
 
-Situs: https://cassieorcasey.github.io/waypoint/
+Situs: https://cassieorcasey.github.io/conway/
 
 ## Setup sekali
 
 Tabel menumpang di project Supabase **StudyO**, sama dengan Synthesis. Awalan `waypoint_` membuatnya tidak bentrok dengan tabel lain.
 
 1. **Supabase → SQL Editor**: tempel isi `schema.sql`, lalu Run. Aman dijalankan ulang.
-2. **Supabase → Authentication → URL Configuration → Redirect URLs**: tambahkan `https://cassieorcasey.github.io/waypoint/`.
+2. **Supabase → Authentication → URL Configuration → Redirect URLs**: tambahkan `https://cassieorcasey.github.io/conway/`.
 3. **GitHub → repo → Settings → Pages → Source**: pilih **GitHub Actions**.
 
 Setiap push ke `main` otomatis di-build dan di-deploy oleh `.github/workflows/deploy.yml`.
@@ -63,7 +63,7 @@ Yang juga didukung: judul `###`, paragraf, daftar, blok kode berpagar dengan pew
 
 ## Progres dari roadmap lama
 
-Kalau roadmap HTML lama pernah dibuka di `cassieorcasey.github.io`, centangnya terdeteksi otomatis dan Conway menawarkan untuk memindahkannya. Dari tempat lain, buka `https://cassieorcasey.github.io/waypoint/#impor=1.2.7` dengan nomor checkbox lama (c1, c2, c7, ...).
+Kalau roadmap HTML lama pernah dibuka di `cassieorcasey.github.io`, centangnya terdeteksi otomatis dan Conway menawarkan untuk memindahkannya. Dari tempat lain, buka `https://cassieorcasey.github.io/conway/#impor=1.2.7` dengan nomor checkbox lama (c1, c2, c7, ...).
 
 ## Struktur
 

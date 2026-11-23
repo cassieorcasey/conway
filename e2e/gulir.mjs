@@ -2,7 +2,7 @@
 // Memastikan peta tetap bisa digulir saat panel topik terbuka, dan pembaca materi bisa digulir.
 import { chromium, webkit, devices } from 'playwright';
 
-const URL = process.env.E2E_URL ?? 'http://localhost:4173/waypoint/?demo';
+const URL = process.env.E2E_URL ?? 'http://localhost:4173/conway/?demo';
 const hasil = [];
 const cek = (nama, ok, detail) => { hasil.push({ nama, ok, detail }); console.log(`${ok ? 'LULUS' : 'GAGAL'}  ${nama}  ${detail}`); };
 

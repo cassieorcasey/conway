@@ -4,7 +4,7 @@ import { safeStorage } from './hooks';
 // Roadmap HTML lama menyimpan centang di localStorage "roadmap_progress_v2" sebagai {c1: true, c7: true, ...},
 // dengan c1..cN mengikuti urutan langkah. Dua jalur impor:
 // 1. Otomatis, kalau roadmap lama pernah dibuka di domain yang sama (cassieorcasey.github.io).
-// 2. Lewat link: .../waypoint/#impor=1.7.12 (nomor checkbox lama).
+// 2. Lewat link: .../conway/#impor=1.7.12 (nomor checkbox lama).
 const OLD_KEY = 'roadmap_progress_v2';
 const FLAG = 'waypoint_legacy_handled';
 

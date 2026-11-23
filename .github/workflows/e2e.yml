@@ -21,5 +21,5 @@ jobs:
       - name: Jalankan pratinjau dan tes
         run: |
           npx vite preview --port 4173 --strictPort &
-          for i in $(seq 1 30); do curl -sf http://localhost:4173/waypoint/ >/dev/null && break; sleep 1; done
+          for i in $(seq 1 30); do curl -sf http://localhost:4173/conway/ >/dev/null && break; sleep 1; done
           node e2e/gulir.mjs
