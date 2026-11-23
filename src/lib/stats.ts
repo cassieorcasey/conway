@@ -36,6 +36,6 @@ export const findTopic = (id: string | null) => {
   return null;
 };
 
-/** Warna cincin: Amber di awal, bergeser ke Teal saat makin penuh. */
+/** Warna cincin: aksen slate blue selama berjalan, sage saat selesai. */
 export const ringColor = (pct: number) =>
-  pct >= 1 ? 'var(--teal)' : `color-mix(in oklab, var(--teal) ${Math.round(pct * 100)}%, var(--amber))`;
+  pct >= 1 ? 'var(--status-done)' : 'var(--accent-primary)';

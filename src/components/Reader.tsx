@@ -25,9 +25,9 @@ export const chapterLabel = (c: Chapter) => (c.n !== null ? `Bab ${c.n}` : c.ste
 
 const TONES: { v: Tone; label: string; swatch?: string }[] = [
   { v: 'auto', label: 'Otomatis' },
-  { v: 'light', label: 'Terang', swatch: '#f9fbfa' },
+  { v: 'light', label: 'Terang', swatch: '#f5f5f7' },
   { v: 'sepia', label: 'Sepia', swatch: '#f2e8d2' },
-  { v: 'dark', label: 'Gelap', swatch: '#0e1413' },
+  { v: 'dark', label: 'Gelap', swatch: '#0b0b0d' },
 ];
 const MODES: { v: Mode; label: string }[] = [{ v: 'lengkap', label: 'Lengkap' }, { v: 'cepat', label: 'Cepat' }];
 

@@ -18,7 +18,6 @@ export function Ring({ size, stroke, pct, className }: { size: number; stroke: n
         initial={false}
         animate={{ strokeDashoffset: c * (1 - pct), opacity: pct > 0 ? 1 : 0 }}
         transition={SETTLE}
-        style={{ filter: pct > 0 ? 'var(--ring-glow)' : 'none', color }}
       />
     </svg>
   );
