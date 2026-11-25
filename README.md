@@ -4,22 +4,6 @@ Roadmap Lead Data Science dalam bentuk peta berurutan. Sembilan fase berderet ve
 
 Situs: https://cassieorcasey.github.io/conway/
 
-## Setup sekali
-
-Tabel menumpang di project Supabase **StudyO**, sama dengan Synthesis. Awalan `waypoint_` membuatnya tidak bentrok dengan tabel lain.
-
-1. **Supabase → SQL Editor**: tempel isi `schema.sql`, lalu Run. Aman dijalankan ulang.
-2. **Supabase → Authentication → URL Configuration → Redirect URLs**: tambahkan `https://cassieorcasey.github.io/conway/`.
-3. **GitHub → repo → Settings → Pages → Source**: pilih **GitHub Actions**.
-
-Setiap push ke `main` otomatis di-build dan di-deploy oleh `.github/workflows/deploy.yml`.
-
-Login memakai akun StudyO (magic link). Synthesis dan Conway ada di domain yang sama, jadi kalau sudah masuk di salah satunya, yang lain ikut masuk.
-
-## Mode contoh
-
-Tambahkan `?demo` di URL untuk mencoba tanpa login. Progres mode ini hanya tersimpan di browser.
-
 ## Mengubah isi roadmap
 
 Semua fase, topik, langkah, dan sumber ada di `src/data/roadmap.ts`.
