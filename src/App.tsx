@@ -97,7 +97,7 @@ function Roadmap({ userId }: { userId: string | null }) {
     <>
       <div className={`page${sheetOpen ? ' with-sheet' : ''}`}>
         <header className="topbar">
-          <div className="brand"><Logo /><span>Conway</span></div>
+          <div className="brand"><span className="logo-badge"><Logo size={24} variant="dream" /></span><span>Conway</span></div>
           {DEMO
             ? <a className="chip" href="./">Mode contoh · Keluar</a>
             : <button type="button" className="chip" onClick={() => sb?.auth.signOut()}>Keluar</button>}
