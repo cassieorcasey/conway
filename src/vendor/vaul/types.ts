@@ -4,4 +4,3 @@ export interface SnapPoint {
   height: number;
 }
 
-export type AnyFunction = (...args: any) => any;

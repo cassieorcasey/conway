@@ -20,6 +20,9 @@ export interface Chapter {
   minutes: number;
 }
 
+/** Label bab untuk kepala halaman dan daftar isi: "Bab 3", "Mini-proyek", atau "Lampiran". */
+export const chapterLabel = (c: Chapter) => (c.n !== null ? `Bab ${c.n}` : c.stepId ? 'Mini-proyek' : 'Lampiran');
+
 export interface Book { intro: string; chapters: Chapter[]; minutes: number }
 
 const FENCE_RE = /^\s*```/;

@@ -1,6 +1,6 @@
 // Pengaturan pembaca dan posisi baca terakhir. Disimpan per perangkat (localStorage),
 // aman kalau penyimpanan diblokir: semuanya kembali ke nilai bawaan.
-import { safeStorage } from './hooks';
+import { safeStorage } from './storage';
 
 export type Tone = 'light' | 'sepia';
 export type Mode = 'lengkap' | 'cepat';

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { PHASES } from '../data/roadmap';
-import { safeStorage } from './hooks';
+import { safeStorage } from './storage';
 
 const TABLE = 'waypoint_progress';
 const DEMO_KEY = 'waypoint_demo_progress';

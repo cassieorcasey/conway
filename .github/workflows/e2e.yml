@@ -13,7 +13,6 @@ jobs:
         with:
           node-version: 22
       - run: npm install --no-audit --no-fund
-      - run: npm ls vaul @radix-ui/react-dialog react-remove-scroll || true
       - run: npm test
       - run: npm run build
       - run: npm install --no-save --no-audit --no-fund playwright@1.48.2

@@ -1,20 +1,16 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ElementType, type RefObject } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ElementType } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { Drawer } from '../vendor/vaul';
-import type { Phase, Topic } from '../data/roadmap';
-import { currentTopicId, isPreview, nextTopicId, topicCount, topicNumber } from '../lib/stats';
 import { NOTES } from '../content';
-import { splitBook } from '../lib/book';
+import { chapterLabel, splitBook } from '../lib/book';
+import { useScrollProgress } from '../lib/hooks';
 import { loadPos } from '../lib/reader';
+import { currentTopicId, isPreview, nextTopicId, pad2, topicCount, topicNumber, type TopicEntry } from '../lib/stats';
 import { Ring } from './Ring';
-import { chapterLabel } from './Reader';
-import { pad2 } from './PhaseMap';
 import { ArrowUpRight, Book, Check, ChevronRight, Close, Globe, Play } from './icons';
 
-export type DrawerData = { topic: Topic; phase: Phase; phaseIndex: number };
-
 interface BodyProps {
-  data: DrawerData;
+  data: TopicEntry;
   done: Set<string>;
   onStep: (id: string, value: boolean) => void;
   /** Buka pembaca materi di bab tertentu (null = sampul). */
@@ -39,7 +35,7 @@ export function MaterialDrawer(props: BodyProps) {
 }
 
 /** Laci Materi di iPhone dan tablet: bottom sheet 85vh, puncak peta tetap terlihat di atasnya. */
-export function MaterialSheet({ data, onClose, ...rest }: Omit<BodyProps, 'data'> & { data: DrawerData | null; onClose: () => void }) {
+export function MaterialSheet({ data, onClose, ...rest }: Omit<BodyProps, 'data'> & { data: TopicEntry | null; onClose: () => void }) {
   // Simpan isi terakhir supaya laci tidak kosong selama animasi menutup.
   const [shown, setShown] = useState(data);
   useEffect(() => { if (data) setShown(data); }, [data]);
@@ -61,27 +57,10 @@ export function MaterialSheet({ data, onClose, ...rest }: Omit<BodyProps, 'data'
 function DrawerBody({ data, Title, ...rest }: BodyProps & { Title: ElementType }) {
   const scroller = useRef<HTMLDivElement>(null);
   const hair = useRef<HTMLElement>(null);
-  const raf = useRef(0);
-
-  // Scroll-Linked Reading Hairline: garis 2px di tepi atas laci, scaleX mengikuti persentase gulir.
-  function measure() {
-    const s = scroller.current;
-    if (!s || !hair.current) return;
-    const h = s.scrollHeight - s.clientHeight;
-    hair.current.style.transform = `scaleX(${h > 0 ? Math.min(1, Math.max(0, s.scrollTop / h)) : 0})`;
-  }
-  const schedule = () => {
-    if (raf.current) return;
-    raf.current = requestAnimationFrame(() => { raf.current = 0; measure(); });
-  };
-  useEffect(() => {
-    const s = scroller.current;
-    if (!s || typeof ResizeObserver === 'undefined') return;
-    const ro = new ResizeObserver(schedule);
-    ro.observe(s);
-    if (s.firstElementChild) ro.observe(s.firstElementChild);
-    return () => { ro.disconnect(); cancelAnimationFrame(raf.current); raf.current = 0; };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  // Garis baca 2px di tepi atas laci: scaleX mengikuti persentase gulir.
+  const { measure, schedule } = useScrollProgress(scroller, p => {
+    if (hair.current) hair.current.style.transform = `scaleX(${p})`;
+  });
 
   return (
     <div className="sheet-scroll d-scroll" ref={scroller} onScroll={schedule}>
@@ -91,15 +70,15 @@ function DrawerBody({ data, Title, ...rest }: BodyProps & { Title: ElementType }
           key={data.topic.id} className="d-page"
           initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0, transition: ENTER }} exit={{ opacity: 0, y: -8, transition: LEAVE }}
         >
-          <DrawerPage data={data} Title={Title} scroller={scroller} onMeasure={measure} {...rest} />
+          <DrawerPage data={data} Title={Title} onShown={() => { if (scroller.current) scroller.current.scrollTop = 0; measure(); }} {...rest} />
         </motion.div>
       </AnimatePresence>
     </div>
   );
 }
 
-function DrawerPage({ data, done, Title, scroller, onMeasure, onStep, onRead, onComplete, onGo }: BodyProps & {
-  Title: ElementType; scroller: RefObject<HTMLDivElement | null>; onMeasure: () => void;
+function DrawerPage({ data, done, Title, onShown, onStep, onRead, onComplete, onGo }: BodyProps & {
+  Title: ElementType; onShown: () => void;
 }) {
   const { topic, phase, phaseIndex } = data;
   const c = topicCount(topic, done);
@@ -117,10 +96,7 @@ function DrawerPage({ data, done, Title, scroller, onMeasure, onStep, onRead, on
   const [saved, setSaved] = useState(false);
 
   // Halaman baru selalu mulai dari atas, dan garis baca ikut kembali ke nol.
-  useLayoutEffect(() => {
-    if (scroller.current) scroller.current.scrollTop = 0;
-    onMeasure();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useLayoutEffect(onShown, []);
 
   const status = isDone ? 'Selesai' : topic.id === cur ? 'Tahap aktif' : preview ? 'Pratinjau' : 'Dimulai';
 

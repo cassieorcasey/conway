@@ -1,24 +1,10 @@
-import { AnyFunction, DrawerDirection } from './types';
+import { DrawerDirection } from './types';
 
 interface Style {
   [key: string]: string;
 }
 
 const cache = new WeakMap();
-
-export function isInView(el: HTMLElement): boolean {
-  const rect = el.getBoundingClientRect();
-
-  if (!window.visualViewport) return false;
-
-  return (
-    rect.top >= 0 &&
-    rect.left >= 0 &&
-    // Need + 40 for safari detection
-    rect.bottom <= window.visualViewport.height - 40 &&
-    rect.right <= window.visualViewport.width
-  );
-}
 
 export function set(el: Element | HTMLElement | null | undefined, styles: Style, ignoreCache = false) {
   if (!el || !(el instanceof HTMLElement)) return;
@@ -89,29 +75,4 @@ export function getTranslate(element: HTMLElement, direction: DrawerDirection): 
 
 export function dampenValue(v: number) {
   return 8 * (Math.log(v + 1) - 2);
-}
-
-export function assignStyle(element: HTMLElement | null | undefined, style: Partial<CSSStyleDeclaration>) {
-  if (!element) return () => {};
-
-  const prevStyle = element.style.cssText;
-  Object.assign(element.style, style);
-
-  return () => {
-    element.style.cssText = prevStyle;
-  };
-}
-
-/**
- * Receives functions as arguments and returns a new function that calls all.
- */
-export function chain<T>(...fns: T[]) {
-  return (...args: T extends AnyFunction ? Parameters<T> : never) => {
-    for (const fn of fns) {
-      if (typeof fn === 'function') {
-        // @ts-ignore
-        fn(...args);
-      }
-    }
-  };
 }

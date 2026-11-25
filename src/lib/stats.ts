@@ -1,12 +1,8 @@
 import { PHASES, type Phase, type Topic } from '../data/roadmap';
 
-export type Status = 'todo' | 'doing' | 'done';
-
 export interface Count { done: number; total: number; pct: number }
 
 const count = (done: number, total: number): Count => ({ done, total, pct: total ? done / total : 0 });
-
-export const statusOf = (c: Count): Status => (c.done === 0 ? 'todo' : c.done === c.total ? 'done' : 'doing');
 
 export const topicCount = (t: Topic, done: Set<string>) =>
   count(t.steps.filter(s => done.has(s.id)).length, t.steps.length);
@@ -27,7 +23,9 @@ export const overallCount = (done: Set<string>) => {
 export const currentPhaseId = (done: Set<string>) =>
   PHASES.find(p => phaseCount(p, done).pct < 1)?.id ?? PHASES[PHASES.length - 1].id;
 
-export const findTopic = (id: string | null) => {
+export interface TopicEntry { topic: Topic; phase: Phase; phaseIndex: number }
+
+export const findTopic = (id: string | null): TopicEntry | null => {
   if (!id) return null;
   for (const [i, p] of PHASES.entries()) {
     const t = p.topics.find(x => x.id === id);
@@ -36,11 +34,11 @@ export const findTopic = (id: string | null) => {
   return null;
 };
 
-/** Cincin: gradasi Twilight Horizon selama berjalan, sage solid saat selesai. */
-export const ringDone = (pct: number) => pct >= 1;
-
 /** Semua topik dalam urutan belajar, lintas fase (01–34). */
 export const ALL_TOPICS: Topic[] = PHASES.flatMap(p => p.topics);
+
+/** Nomor dua digit untuk tampilan: 1 → "01". */
+export const pad2 = (n: number) => String(n).padStart(2, '0');
 
 /** Nomor urut global topik, mulai 1; 0 bila tidak dikenal. */
 export const topicNumber = (id: string) => ALL_TOPICS.findIndex(t => t.id === id) + 1;

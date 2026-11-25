@@ -27,7 +27,6 @@ Semua fase, topik, langkah, dan sumber ada di `src/data/roadmap.ts`.
 - Teks dan judul boleh diubah kapan saja.
 - **Jangan mengganti id yang sudah ada.** Progres di Supabase tersimpan per id langkah.
 - Langkah baru memakai id baru (misalnya `python-10`), meski disisipkan di tengah daftar.
-- **`LEGACY_ORDER` jangan diubah.** Daftar itu dibekukan pada 124 langkah asli supaya nomor checkbox lama tetap cocok saat impor. Langkah baru tidak punya nomor lama.
 
 ## Materi per topik (pembaca buku)
 
@@ -61,22 +60,23 @@ Yang juga didukung: judul `###`, paragraf, daftar, blok kode berpagar dengan pew
 
 `npm test` menjalankan tes pembagi bab, parser, pewarnaan kode, dan memastikan setiap langkah punya tepat satu bab lengkap dengan Intinya dan rangkuman.
 
-## Progres dari roadmap lama
-
-Kalau roadmap HTML lama pernah dibuka di `cassieorcasey.github.io`, centangnya terdeteksi otomatis dan Conway menawarkan untuk memindahkannya. Dari tempat lain, buka `https://cassieorcasey.github.io/conway/#impor=1.2.7` dengan nomor checkbox lama (c1, c2, c7, ...).
-
 ## Struktur
 
 | Bagian | Isi |
 |---|---|
 | `src/data/roadmap.ts` | Struktur roadmap: 9 fase, 34 topik, 171 langkah |
+| `src/App.tsx` | Masuk (Supabase) atau mode contoh, lalu `Roadmap` |
+| `src/components/Roadmap.tsx` | Halaman utama: state navigasi peta, laci, dan pembaca |
 | `src/components/PhaseMap.tsx` | Jalur fase, cincin progres, jalur tahap (Living Ink Path, denyut tahap aktif) |
 | `src/components/MaterialDrawer.tsx` | Laci Materi: kolom kanan 58% di laptop, bottom sheet 85vh (Vaul) di iPhone |
 | `src/components/Reader.tsx` | Pembaca materi bergaya buku |
+| `src/components/ReaderSheet.tsx` | Lembar daftar isi dan tampilan baca (Aa) di dalam pembaca |
+| `src/lib/hooks.ts` | `useMedia` dan `useScrollProgress` (garis baca laci dan bilah progres pembaca) |
 | `src/lib/book.ts` | Membagi catatan menjadi sampul dan bab |
 | `src/content/` | Catatan materi per topik (markdown) dan daftarnya |
 | `src/lib/markdown.ts` | Pembaca markdown kecil tanpa dependensi |
 | `src/lib/progress.ts` | Baca dan simpan progres (Supabase atau localStorage) |
+| `src/vendor/vaul/` | Salinan Vaul yang dipangkas untuk bottom sheet non-modal (lihat README di folder itu) |
 | `schema.sql` | Tabel `waypoint_progress` dan RLS |
 
 Dibangun dengan React, Vite, Motion, Vaul, dan supabase-js.

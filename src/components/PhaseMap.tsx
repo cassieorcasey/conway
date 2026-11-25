@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { PHASES, type Phase } from '../data/roadmap';
-import { phaseCount, topicCount, topicNumber } from '../lib/stats';
+import { pad2, phaseCount, topicCount, topicNumber } from '../lib/stats';
 import { Ring } from './Ring';
 import { Check } from './icons';
 import { useMedia } from '../lib/hooks';
@@ -18,8 +18,6 @@ const CY = ROW_H / 2; // pusat node fase di dalam baris
 const NODE = 72;
 const TNODE = 28; // node tahap (topik)
 const LIST_TOP = CY + NODE / 2 + 14; // awal jalur tahap di bawah node fase
-
-export const pad2 = (n: number) => String(n).padStart(2, '0');
 
 interface Props {
   done: Set<string>;

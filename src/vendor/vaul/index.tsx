@@ -14,13 +14,11 @@ import {
   CLOSE_THRESHOLD,
   SCROLL_LOCK_TIMEOUT,
   BORDER_RADIUS,
-  NESTED_DISPLACEMENT,
   WINDOW_TOP_OFFSET,
   DRAG_CLASS,
 } from './constants';
 import { DrawerDirection } from './types';
 import { useControllableState } from './use-controllable-state';
-import { useScaleBackground } from './use-scale-background';
 import { usePositionFixed } from './use-position-fixed';
 import { isIOS, isMobileFirefox } from './browser';
 
@@ -204,7 +202,6 @@ export function Root({
   const dragEndTime = React.useRef<Date | null>(null);
   const lastTimeDragPrevented = React.useRef<Date | null>(null);
   const isAllowedToDrag = React.useRef<boolean>(false);
-  const nestedOpenChangeTimer = React.useRef<NodeJS.Timeout | null>(null);
   const pointerStart = React.useRef(0);
   const keyboardIsOpen = React.useRef(false);
   const shouldAnimate = React.useRef(!defaultOpen);
@@ -677,65 +674,6 @@ export function Root({
     };
   }, [isOpen]);
 
-  function onNestedOpenChange(o: boolean) {
-    const scale = o ? (window.innerWidth - NESTED_DISPLACEMENT) / window.innerWidth : 1;
-
-    const initialTranslate = o ? -NESTED_DISPLACEMENT : 0;
-
-    if (nestedOpenChangeTimer.current) {
-      window.clearTimeout(nestedOpenChangeTimer.current);
-    }
-
-    set(drawerRef.current, {
-      transition: `transform ${TRANSITIONS.DURATION}s cubic-bezier(${TRANSITIONS.EASE.join(',')})`,
-      transform: isVertical(direction)
-        ? `scale(${scale}) translate3d(0, ${initialTranslate}px, 0)`
-        : `scale(${scale}) translate3d(${initialTranslate}px, 0, 0)`,
-    });
-
-    if (!o && drawerRef.current) {
-      nestedOpenChangeTimer.current = setTimeout(() => {
-        const translateValue = getTranslate(drawerRef.current as HTMLElement, direction);
-        set(drawerRef.current, {
-          transition: 'none',
-          transform: isVertical(direction)
-            ? `translate3d(0, ${translateValue}px, 0)`
-            : `translate3d(${translateValue}px, 0, 0)`,
-        });
-      }, 500);
-    }
-  }
-
-  function onNestedDrag(_event: React.PointerEvent<HTMLDivElement>, percentageDragged: number) {
-    if (percentageDragged < 0) return;
-
-    const initialScale = (window.innerWidth - NESTED_DISPLACEMENT) / window.innerWidth;
-    const newScale = initialScale + percentageDragged * (1 - initialScale);
-    const newTranslate = -NESTED_DISPLACEMENT + percentageDragged * NESTED_DISPLACEMENT;
-
-    set(drawerRef.current, {
-      transform: isVertical(direction)
-        ? `scale(${newScale}) translate3d(0, ${newTranslate}px, 0)`
-        : `scale(${newScale}) translate3d(${newTranslate}px, 0, 0)`,
-      transition: 'none',
-    });
-  }
-
-  function onNestedRelease(_event: React.PointerEvent<HTMLDivElement>, o: boolean) {
-    const dim = isVertical(direction) ? window.innerHeight : window.innerWidth;
-    const scale = o ? (dim - NESTED_DISPLACEMENT) / dim : 1;
-    const translate = o ? -NESTED_DISPLACEMENT : 0;
-
-    if (o) {
-      set(drawerRef.current, {
-        transition: `transform ${TRANSITIONS.DURATION}s cubic-bezier(${TRANSITIONS.EASE.join(',')})`,
-        transform: isVertical(direction)
-          ? `scale(${scale}) translate3d(0, ${translate}px, 0)`
-          : `scale(${scale}) translate3d(${translate}px, 0, 0)`,
-      });
-    }
-  }
-
   React.useEffect(() => {
     if (!modal) {
       // Need to do this manually unfortunately
@@ -779,9 +717,6 @@ export function Root({
           isDragging,
           shouldFade,
           closeDrawer,
-          onNestedDrag,
-          onNestedOpenChange,
-          onNestedRelease,
           keyboardIsOpen,
           modal,
           snapPointsOffset,
@@ -799,34 +734,6 @@ export function Root({
     </DialogPrimitive.Root>
   );
 }
-
-export const Overlay = React.forwardRef<HTMLDivElement, React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>>(
-  function ({ ...rest }, ref) {
-    const { overlayRef, snapPoints, onRelease, shouldFade, isOpen, modal, shouldAnimate } = useDrawerContext();
-    const composedRef = useComposedRefs(ref, overlayRef);
-    const hasSnapPoints = snapPoints && snapPoints.length > 0;
-    const onMouseUp = React.useCallback((event: React.PointerEvent<HTMLDivElement>) => onRelease(event), [onRelease]);
-
-    // Overlay is the component that is locking scroll, removing it will unlock the scroll without having to dig into Radix's Dialog library
-    if (!modal) {
-      return null;
-    }
-
-    return (
-      <DialogPrimitive.Overlay
-        onMouseUp={onMouseUp}
-        ref={composedRef}
-        data-vaul-overlay=""
-        data-vaul-snap-points={isOpen && hasSnapPoints ? 'true' : 'false'}
-        data-vaul-snap-points-overlay={isOpen && shouldFade ? 'true' : 'false'}
-        data-vaul-animate={shouldAnimate?.current ? 'true' : 'false'}
-        {...rest}
-      />
-    );
-  },
-);
-
-Overlay.displayName = 'Drawer.Overlay';
 
 export type ContentProps = React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>;
 
@@ -858,7 +765,6 @@ export const Content = React.forwardRef<HTMLDivElement, ContentProps>(function (
   const lastKnownPointerEventRef = React.useRef<React.PointerEvent<HTMLDivElement> | null>(null);
   const wasBeyondThePointRef = React.useRef(false);
   const hasSnapPoints = snapPoints && snapPoints.length > 0;
-  useScaleBackground();
 
   const isDeltaInDirection = (delta: { x: number; y: number }, direction: DrawerDirection, threshold = 0) => {
     if (wasBeyondThePointRef.current) return true;
@@ -986,145 +892,6 @@ export const Content = React.forwardRef<HTMLDivElement, ContentProps>(function (
 
 Content.displayName = 'Drawer.Content';
 
-export type HandleProps = React.ComponentPropsWithoutRef<'div'> & {
-  preventCycle?: boolean;
-};
-
-const LONG_HANDLE_PRESS_TIMEOUT = 250;
-const DOUBLE_TAP_TIMEOUT = 120;
-
-export const Handle = React.forwardRef<HTMLDivElement, HandleProps>(function (
-  { preventCycle = false, children, ...rest },
-  ref,
-) {
-  const {
-    closeDrawer,
-    isDragging,
-    snapPoints,
-    activeSnapPoint,
-    setActiveSnapPoint,
-    dismissible,
-    handleOnly,
-    isOpen,
-    onPress,
-    onDrag,
-  } = useDrawerContext();
-
-  const closeTimeoutIdRef = React.useRef<number | null>(null);
-  const shouldCancelInteractionRef = React.useRef(false);
-
-  function handleStartCycle() {
-    // Stop if this is the second click of a double click
-    if (shouldCancelInteractionRef.current) {
-      handleCancelInteraction();
-      return;
-    }
-    window.setTimeout(() => {
-      handleCycleSnapPoints();
-    }, DOUBLE_TAP_TIMEOUT);
-  }
-
-  function handleCycleSnapPoints() {
-    // Prevent accidental taps while resizing drawer
-    if (isDragging || preventCycle || shouldCancelInteractionRef.current) {
-      handleCancelInteraction();
-      return;
-    }
-    // Make sure to clear the timeout id if the user releases the handle before the cancel timeout
-    handleCancelInteraction();
-
-    if (!snapPoints || snapPoints.length === 0) {
-      if (!dismissible) {
-        closeDrawer();
-      }
-      return;
-    }
-
-    const isLastSnapPoint = activeSnapPoint === snapPoints[snapPoints.length - 1];
-
-    if (isLastSnapPoint && dismissible) {
-      closeDrawer();
-      return;
-    }
-
-    const currentSnapIndex = snapPoints.findIndex((point) => point === activeSnapPoint);
-    if (currentSnapIndex === -1) return; // activeSnapPoint not found in snapPoints
-    const nextSnapPoint = snapPoints[currentSnapIndex + 1];
-    setActiveSnapPoint(nextSnapPoint);
-  }
-
-  function handleStartInteraction() {
-    closeTimeoutIdRef.current = window.setTimeout(() => {
-      // Cancel click interaction on a long press
-      shouldCancelInteractionRef.current = true;
-    }, LONG_HANDLE_PRESS_TIMEOUT);
-  }
-
-  function handleCancelInteraction() {
-    if (closeTimeoutIdRef.current) {
-      window.clearTimeout(closeTimeoutIdRef.current);
-    }
-    shouldCancelInteractionRef.current = false;
-  }
-
-  return (
-    <div
-      onClick={handleStartCycle}
-      onPointerCancel={handleCancelInteraction}
-      onPointerDown={(e) => {
-        if (handleOnly) onPress(e);
-        handleStartInteraction();
-      }}
-      onPointerMove={(e) => {
-        if (handleOnly) onDrag(e);
-      }}
-      // onPointerUp is already handled by the content component
-      ref={ref}
-      data-vaul-drawer-visible={isOpen ? 'true' : 'false'}
-      data-vaul-handle=""
-      aria-hidden="true"
-      {...rest}
-    >
-      {/* Expand handle's hit area beyond what's visible to ensure a 44x44 tap target for touch devices */}
-      <span data-vaul-handle-hitarea="" aria-hidden="true">
-        {children}
-      </span>
-    </div>
-  );
-});
-
-Handle.displayName = 'Drawer.Handle';
-
-export function NestedRoot({ onDrag, onOpenChange, open: nestedIsOpen, ...rest }: DialogProps) {
-  const { onNestedDrag, onNestedOpenChange, onNestedRelease } = useDrawerContext();
-
-  if (!onNestedDrag) {
-    throw new Error('Drawer.NestedRoot must be placed in another drawer');
-  }
-
-  return (
-    <Root
-      nested
-      open={nestedIsOpen}
-      onClose={() => {
-        onNestedOpenChange(false);
-      }}
-      onDrag={(e, p) => {
-        onNestedDrag(e, p);
-        onDrag?.(e, p);
-      }}
-      onOpenChange={(o) => {
-        if (o) {
-          onNestedOpenChange(o);
-        }
-        onOpenChange?.(o);
-      }}
-      onRelease={onNestedRelease}
-      {...rest}
-    />
-  );
-}
-
 type PortalProps = React.ComponentPropsWithoutRef<typeof DialogPrimitive.Portal>;
 
 export function Portal(props: PortalProps) {
@@ -1136,13 +903,8 @@ export function Portal(props: PortalProps) {
 
 export const Drawer = {
   Root,
-  NestedRoot,
   Content,
-  Overlay,
-  Trigger: DialogPrimitive.Trigger,
   Portal,
-  Handle,
   Close: DialogPrimitive.Close,
   Title: DialogPrimitive.Title,
-  Description: DialogPrimitive.Description,
 };
