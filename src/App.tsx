@@ -52,6 +52,13 @@ function Roadmap({ userId }: { userId: string | null }) {
   const later = (fn: () => void, ms: number) => { timers.current.push(window.setTimeout(fn, ms)); };
   useEffect(() => () => timers.current.forEach(clearTimeout), []);
 
+  // Pilihan otomatis untuk laci kanan desktop tidak boleh membuka bottom sheet saat layar mengecil.
+  const wasDesktop = useRef(isDesktop);
+  useEffect(() => {
+    if (wasDesktop.current && !isDesktop) setActiveTopic(null);
+    wasDesktop.current = isDesktop;
+  }, [isDesktop]);
+
   const current = currentTopicId(done);
   // Di laptop laci selalu terbuka: tanpa pilihan, laci menampilkan tahap aktif.
   const shownTopic = activeTopic ?? (isDesktop ? current ?? ALL_TOPICS[ALL_TOPICS.length - 1].id : null);

@@ -3,6 +3,7 @@ import { PHASES, type Phase } from '../data/roadmap';
 import { phaseCount, topicCount, topicNumber } from '../lib/stats';
 import { Ring } from './Ring';
 import { Check } from './icons';
+import { useMedia } from '../lib/hooks';
 
 // Pegas. ζ = damping / (2·√(stiffness·mass)).
 const BLOOM = { type: 'spring', stiffness: 260, damping: 26 } as const; // ζ ≈ 0,8: mekar, sedikit membal
@@ -34,7 +35,9 @@ interface Props {
 
 export function PhaseMap({ done, openPhase, selected, current, isDesktop, onTogglePhase, onTopic }: Props) {
   const nodeX = isDesktop ? 48 : 40;
-  const th = isDesktop ? 84 : 78; // tinggi satu tahap di jalur
+  // Tinggi satu tahap di jalur. Layar sempit memberi ruang judul dua baris (judul dibatasi 2 baris di CSS).
+  const narrow = useMedia('(max-width: 419px)');
+  const th = isDesktop ? 84 : narrow ? 88 : 78;
   const currentPhase = current ? PHASES.find(p => p.topics.some(t => t.id === current))?.id : null;
 
   return (
