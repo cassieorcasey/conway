@@ -19,6 +19,8 @@ interface Props {
   resume?: boolean;
   onStep: (id: string, value: boolean) => void;
   onClose: () => void;
+  /** Laptop: pembaca menempati kolom laci (58%), peta di kirinya tetap terlihat dan bisa dipakai. */
+  docked?: boolean;
 }
 
 export const chapterLabel = (c: Chapter) => (c.n !== null ? `Bab ${c.n}` : c.stepId ? 'Mini-proyek' : 'Lampiran');
@@ -30,7 +32,7 @@ const TONES: { v: Tone; label: string; swatch?: string }[] = [
 const MODES: { v: Mode; label: string }[] = [{ v: 'lengkap', label: 'Lengkap' }, { v: 'cepat', label: 'Cepat' }];
 
 /** Pembaca materi layar penuh, bergaya buku: sampul, daftar isi, lalu satu bab per langkah. */
-export function Reader({ topic, phase, phaseIndex, done, start, resume, onStep, onClose }: Props) {
+export function Reader({ topic, phase, phaseIndex, done, start, resume, onStep, onClose, docked = false }: Props) {
   const book = useMemo(() => splitBook(NOTES[topic.id] ?? '', topic.steps), [topic]);
   const numbered = book.chapters.filter(c => c.n !== null).length;
 
@@ -66,9 +68,12 @@ export function Reader({ topic, phase, phaseIndex, done, start, resume, onStep, 
   useEffect(() => {
     const el = document.documentElement;
     const prev = el.style.overflow;
-    el.style.overflow = 'hidden';
+    // Mode laci (laptop): peta tetap bisa digulir dan diklik; hanya laci di bawah pembaca yang disembunyikan.
+    if (!docked) el.style.overflow = 'hidden';
     // Isi di belakang pembaca tidak bisa dijangkau Tab atau pembaca layar selama pembaca terbuka.
-    const behind = [...document.body.children].filter(c => c !== root.current && !c.hasAttribute('inert'));
+    const behind = docked
+      ? [...document.querySelectorAll('.drawer')].filter(c => !c.hasAttribute('inert'))
+      : [...document.body.children].filter(c => c !== root.current && !c.hasAttribute('inert'));
     // visibility:hidden menjaga tata letak (posisi gulir peta tetap), tapi iOS berhenti menggambar lapisan blur di belakang.
     behind.forEach(c => { c.setAttribute('inert', ''); (c as HTMLElement).style.visibility = 'hidden'; });
     root.current?.focus();
@@ -76,7 +81,7 @@ export function Reader({ topic, phase, phaseIndex, done, start, resume, onStep, 
       el.style.overflow = prev;
       behind.forEach(c => { c.removeAttribute('inert'); (c as HTMLElement).style.visibility = ''; });
     };
-  }, []);
+  }, [docked]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -154,7 +159,7 @@ export function Reader({ topic, phase, phaseIndex, done, start, resume, onStep, 
     : 'Sampul';
 
   return createPortal(
-    <div className="reader" ref={root} tabIndex={-1} role="dialog" aria-modal="true" aria-label={`Materi ${topic.title}`}
+    <div className={`reader${docked ? ' docked' : ''}`} ref={root} tabIndex={-1} role="dialog" aria-modal={docked ? undefined : 'true'} aria-label={`Materi ${topic.title}`}
       data-tone={settings.tone === 'light' ? undefined : settings.tone}>
       <div className="r-scroll" ref={scroller} onScroll={onScroll}>
         <header className="r-bar">

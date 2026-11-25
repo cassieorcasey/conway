@@ -1,6 +1,6 @@
 # Conway
 
-Roadmap Lead Data Science dalam bentuk peta berurutan. Sembilan fase berderet vertikal sebagai jalur utama. Ketuk satu fase untuk memunculkan topik-topiknya sebagai gelembung, lalu ketuk topik untuk membuka panel berisi langkah dan sumber belajar.
+Roadmap Lead Data Science dalam bentuk peta berurutan. Sembilan fase berderet vertikal sebagai jalur utama. Ketuk satu fase untuk memunculkan tahap-tahapnya (topik) sebagai jalur vertikal, lalu ketuk tahap untuk membukanya di Laci Materi berisi langkah dan sumber belajar. Di laptop laci selalu terbuka di sisi kanan (split-view 42/58); di iPhone laci muncul sebagai bottom sheet.
 
 Situs: https://cassieorcasey.github.io/conway/
 
@@ -70,8 +70,8 @@ Kalau roadmap HTML lama pernah dibuka di `cassieorcasey.github.io`, centangnya t
 | Bagian | Isi |
 |---|---|
 | `src/data/roadmap.ts` | Struktur roadmap: 9 fase, 34 topik, 171 langkah |
-| `src/components/PhaseMap.tsx` | Jalur fase, cincin progres, gelembung topik |
-| `src/components/TopicSheet.tsx` | Panel langkah dan sumber (Vaul) |
+| `src/components/PhaseMap.tsx` | Jalur fase, cincin progres, jalur tahap (Living Ink Path, denyut tahap aktif) |
+| `src/components/MaterialDrawer.tsx` | Laci Materi: kolom kanan 58% di laptop, bottom sheet 85vh (Vaul) di iPhone |
 | `src/components/Reader.tsx` | Pembaca materi bergaya buku |
 | `src/lib/book.ts` | Membagi catatan menjadi sampul dan bab |
 | `src/content/` | Catatan materi per topik (markdown) dan daftarnya |
