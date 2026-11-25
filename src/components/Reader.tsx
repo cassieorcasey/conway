@@ -106,7 +106,7 @@ export function Reader({ topic, phase, phaseIndex, done, start, resume, onStep, 
     if (!s) return;
     const h = s.scrollHeight - s.clientHeight;
     const p = h > 0 ? Math.min(1, Math.max(0, s.scrollTop / h)) : 0;
-    if (bar.current) bar.current.style.transform = `scaleX(${p.toFixed(4)})`;
+    if (bar.current) bar.current.style.clipPath = `inset(0 ${((1 - p) * 100).toFixed(2)}% 0 0)`;
   }
   function schedule() {
     if (raf.current) return;

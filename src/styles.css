@@ -1,14 +1,22 @@
-/* ───────── Token: "Whisper Surface" ─────────
-   Permukaan netral bertingkat + kilau garis tepi 1px. Satu aksen dingin (slate blue) hanya untuk
-   waypoint yang sedang dipelajari dan fokus; sage yang diredam untuk yang sudah selesai. */
+/* ───────── Token: "Dreamy Accents on Quiet Canvas" ─────────
+   ~85% kanvas netral (permukaan bertingkat + kilau garis tepi 1px), ~15% aksen atmosferik "Dreamy Haze"
+   (indigo, ungu pastel, langit, merah muda) untuk posisi, perjalanan, dan fokus. Selesai tetap sage.
+   Warna pastel terang tidak pernah dipakai sebagai teks; teks aksen memakai --text-accent. */
 :root {
+  /* Palet inti Dreamy Haze */
+  --dh-indigo: #7181c8;
+  --dh-purple: #ababdc;
+  --dh-sky: #b7d3f4;
+  --dh-candy: #f1cfed;
+  --dh-fairy: #f1e5f6;
+
   /* Permukaan */
   --bg-canvas: #f5f5f7;
-  --bg-surface-elevated: linear-gradient(180deg, #ffffff 0%, #f8f8fa 100%);
-  --bg-surface-hover: linear-gradient(180deg, #ffffff 0%, #f2f2f5 100%);
+  --bg-surface-elevated: linear-gradient(180deg, #ffffff 0%, #f9f9fb 100%);
+  --bg-surface-hover: linear-gradient(180deg, #ffffff 0%, #f3f3f6 100%);
   --bg-surface-sunken: #ededf0;
   /* Garis tepi & bayangan */
-  --border-subtle: rgba(0, 0, 0, 0.06);
+  --border-subtle: rgba(29, 29, 31, 0.08);
   --border-sheen-top: inset 0 1px 0 0 rgba(255, 255, 255, 0.9);
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.02);
   /* Teks */
@@ -16,15 +24,20 @@
   --text-secondary: #5c5c66;
   --text-tertiary: #868692;
   /* Aksen & status */
-  --accent-primary: #3b669b;
-  --accent-surface: rgba(59, 102, 155, 0.08);
-  --accent-glow: radial-gradient(circle, rgba(59, 102, 155, 0.08) 0%, transparent 70%);
+  --accent-primary: #7181c8;
+  --accent-strong: #5261ab; /* isian tombol utama: putih di atasnya 5,7:1 (di atas #7181c8 hanya 3,7:1) */
+  --text-accent: #5261ab;
+  --accent-surface: rgba(241, 229, 246, 0.65);
+  --accent-glow: radial-gradient(circle, rgba(183, 211, 244, 0.7) 0%, rgba(241, 207, 237, 0.45) 45%, transparent 72%);
   --on-accent: #ffffff;
   --status-done: #2f6f56;
   --on-done: #ffffff;
   --track-line-default: #dcdce2;
-  --track-line-completed: linear-gradient(180deg, #868692 0%, #3b669b 100%);
-  --track-line-completed-solid: color-mix(in oklab, #868692 45%, #3b669b);
+  --grad-horizon: linear-gradient(135deg, #7181c8 0%, #ababdc 52%, #f1cfed 100%); /* progres: cincin, bilah baca */
+  --grad-path: linear-gradient(180deg, #b7d3f4 0%, #ababdc 50%, #7181c8 100%);     /* jalur peta yang sudah dilewati */
+  --grad-veil: linear-gradient(135deg, rgba(241, 229, 246, 0.5) 0%, rgba(183, 211, 244, 0.5) 100%); /* kartu sorotan */
+  --track-line-completed: var(--grad-path);
+  --track-line-completed-solid: color-mix(in oklab, #ababdc 50%, #7181c8);
 
   /* Turunan yang dipakai komponen */
   --bg: var(--bg-canvas);
@@ -37,6 +50,7 @@
   --sheet-shadow: 0 0 0 1px var(--border-subtle), var(--border-sheen-top), 0 1px 2px rgba(0, 0, 0, 0.04), 0 16px 40px -16px rgba(0, 0, 0, 0.12);
   --logo-ink: #0b0b0d;
   --focus: var(--accent-primary);
+  --focus-halo: var(--dh-purple);
   --ease: 180ms ease-out;
   color-scheme: light;
 }
@@ -47,21 +61,22 @@
     --bg-surface-elevated: linear-gradient(180deg, #16161a 0%, #101013 100%);
     --bg-surface-hover: linear-gradient(180deg, #1c1c21 0%, #141418 100%);
     --bg-surface-sunken: #08080a;
-    --border-subtle: rgba(255, 255, 255, 0.07);
+    --border-subtle: rgba(255, 255, 255, 0.08);
     --border-sheen-top: inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
     --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.25);
     --text-primary: #f2f2f5;
     --text-secondary: #9898a3;
     --text-tertiary: #63636e;
-    --accent-primary: #7aa2d6;
-    --accent-surface: rgba(122, 162, 214, 0.12);
-    --accent-glow: radial-gradient(circle, rgba(122, 162, 214, 0.12) 0%, transparent 70%);
+    --accent-primary: #9aa7e6;
+    --accent-strong: #9aa7e6;
+    --text-accent: #b7d3f4;
+    --accent-surface: rgba(113, 129, 200, 0.14);
+    --accent-glow: radial-gradient(circle, rgba(113, 129, 200, 0.38) 0%, rgba(171, 171, 220, 0.2) 45%, transparent 72%);
+    --grad-veil: linear-gradient(135deg, rgba(113, 129, 200, 0.2) 0%, rgba(171, 171, 220, 0.1) 100%);
     --on-accent: #0b0b0d;
     --status-done: #63b090;
     --on-done: #0b0b0d;
     --track-line-default: #232329;
-    --track-line-completed: linear-gradient(180deg, #52525c 0%, #7aa2d6 100%);
-    --track-line-completed-solid: color-mix(in oklab, #52525c 45%, #7aa2d6);
     --pill-bg: rgba(255, 255, 255, 0.06);
     --sheet-shadow: 0 0 0 1px var(--border-subtle), var(--border-sheen-top), 0 1px 2px rgba(0, 0, 0, 0.4), 0 24px 48px -16px rgba(0, 0, 0, 0.6);
     --logo-ink: #f5f5f7;
@@ -127,7 +142,7 @@ a { color: inherit; }
 .btn-primary, .btn-ghost {
   min-height: 40px; padding: 0 16px; border-radius: 99px; font-size: 15px; font-weight: 600;
 }
-.btn-primary { background: var(--text); color: var(--bg); }
+.btn-primary { background: var(--accent-strong); color: var(--on-accent); box-shadow: var(--border-sheen-top); }
 .btn-primary:disabled { opacity: 0.5; }
 .btn-ghost { color: var(--muted); }
 
@@ -230,6 +245,7 @@ a { color: inherit; }
   transition: background-color var(--ease), border-color var(--ease);
 }
 .step:hover .tick { border-color: var(--text-tertiary); }
+.step:focus-visible .tick { box-shadow: 0 0 0 3px var(--focus-halo); }
 .step.on .tick { background: var(--status-done); border-color: var(--status-done); }
 .step-text { font-size: 15.5px; line-height: 1.4; transition: color 0.25s; }
 .step.on .step-text { color: var(--muted); }
@@ -252,14 +268,14 @@ a { color: inherit; }
 /* ───────── Kartu "Baca materi" dan tombol bab di panel ───────── */
 .book-card {
   display: flex; align-items: center; gap: 12px; width: 100%; margin-top: 18px; padding: 12px 14px; text-align: left;
-  border-radius: 16px; background: var(--bg-surface-elevated); box-shadow: var(--elevated);
-  transition: transform var(--ease);
+  border-radius: 16px; background: var(--grad-veil), var(--bg-surface-elevated); box-shadow: var(--elevated);
+  transition: transform var(--ease), box-shadow var(--ease);
 }
-.book-card:hover { background: var(--bg-surface-hover); }
+.book-card:hover { box-shadow: 0 0 0 1px var(--accent-primary), var(--border-sheen-top), var(--shadow-card); }
 .book-card:active { transform: scale(0.99); }
 .book-card-icon {
   flex: none; width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center;
-  background: var(--accent-surface); color: var(--accent-primary);
+  background: var(--accent-strong); color: var(--on-accent); box-shadow: var(--border-sheen-top);
 }
 .book-card-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .book-card-text strong { font-size: 15.5px; font-weight: 650; letter-spacing: -0.015em; }
@@ -276,15 +292,15 @@ a { color: inherit; }
 /* ───────── Pembaca materi (buku) ─────────
    Satu kolom selebar ~65 karakter. Serif untuk bacaan, sistem untuk kontrol, mono untuk kode.
    Tema baca terpisah dari tema aplikasi: otomatis mengikuti sistem, atau terang, sepia, gelap. */
-/* Token baca mengikuti Whisper Surface. Ditulis sebagai nilai tetap (bukan var aplikasi), supaya
+/* Token baca mengikuti Dreamy Accents on Quiet Canvas (Terang/Gelap); Sepia tetap kertas hangat. Ditulis sebagai nilai tetap (bukan var aplikasi), supaya
    pilihan Terang tetap terang walau sistem sedang gelap, dan sebaliknya. */
 .reader {
   --r-bg: #f5f5f7; --r-surface: #ffffff; --r-fg: #1d1d1f; --r-muted: #5c5c66; --r-line: rgba(0, 0, 0, 0.06); --r-track: #dcdce2;
-  --r-accent: #3b669b; --r-on-accent: #ffffff; --r-tint: rgba(59, 102, 155, 0.08);
+  --r-accent: #7181c8; --r-ink: #5261ab; --r-btn: #5261ab; --r-on-accent: #ffffff; --r-tint: rgba(241, 229, 246, 0.65);
   --r-elev: linear-gradient(180deg, #ffffff 0%, #f8f8fa 100%); --r-elev-hover: linear-gradient(180deg, #ffffff 0%, #f2f2f5 100%);
   --r-sheen: inset 0 1px 0 0 rgba(255, 255, 255, 0.9); --r-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.02);
-  --r-code: #ededf0; --r-hl: rgba(59, 102, 155, 0.09); --r-scrim: rgba(0, 0, 0, 0.32);
-  --r-k: #3b669b; --r-s: #2f6f56; --r-c: #5c5c66; --r-n: #7a5a34; --r-f: #46506b;
+  --r-code: #ededf0; --r-hl: rgba(241, 207, 237, 0.55); --r-scrim: rgba(0, 0, 0, 0.32);
+  --r-k: #5261ab; --r-s: #2f6f56; --r-c: #5c5c66; --r-n: #8a4a80; --r-f: #3f4b8a;
   --r-serif: 'Literata', Georgia, 'Times New Roman', serif;
   --r-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', 'Helvetica Neue', Arial, sans-serif;
   --r-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
@@ -293,17 +309,17 @@ a { color: inherit; }
 @media (prefers-color-scheme: dark) {
   .reader:not([data-tone]) {
     --r-bg: #0b0b0d; --r-surface: #16161a; --r-fg: #f2f2f5; --r-muted: #9898a3; --r-line: rgba(255, 255, 255, 0.07); --r-track: #2a2a31;
-    --r-accent: #7aa2d6; --r-on-accent: #0b0b0d; --r-tint: rgba(122, 162, 214, 0.12);
+    --r-accent: #9aa7e6; --r-ink: #b7d3f4; --r-btn: #9aa7e6; --r-on-accent: #0b0b0d; --r-tint: rgba(113, 129, 200, 0.14);
     --r-elev: linear-gradient(180deg, #16161a 0%, #101013 100%); --r-elev-hover: linear-gradient(180deg, #1c1c21 0%, #141418 100%);
     --r-sheen: inset 0 1px 0 0 rgba(255, 255, 255, 0.08); --r-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.25);
-    --r-code: #08080a; --r-hl: rgba(122, 162, 214, 0.18); --r-scrim: rgba(0, 0, 0, 0.6);
-    --r-k: #7aa2d6; --r-s: #63b090; --r-c: #9898a3; --r-n: #c8a97e; --r-f: #b4bfd4;
+    --r-code: #08080a; --r-hl: rgba(241, 207, 237, 0.14); --r-scrim: rgba(0, 0, 0, 0.6);
+    --r-k: #9aa7e6; --r-s: #63b090; --r-c: #9898a3; --r-n: #f1cfed; --r-f: #b7d3f4;
     color-scheme: dark;
   }
 }
 .reader[data-tone="sepia"] {
   --r-bg: #f2e8d2; --r-surface: #f8f0de; --r-fg: #3a2e20; --r-muted: #6f5f49; --r-line: rgba(58, 46, 32, 0.1); --r-track: #dccfae;
-  --r-accent: #8b4a0e; --r-on-accent: #fff7ea; --r-tint: rgba(139, 74, 14, 0.08);
+  --r-accent: #8b4a0e; --r-ink: #8b4a0e; --r-btn: #8b4a0e; --r-on-accent: #fff7ea; --r-tint: rgba(139, 74, 14, 0.08);
   --r-elev: linear-gradient(180deg, #f8f0de 0%, #f4ead5 100%); --r-elev-hover: linear-gradient(180deg, #faf3e4 0%, #f1e6cd 100%);
   --r-sheen: inset 0 1px 0 0 rgba(255, 250, 238, 0.8); --r-shadow: 0 1px 2px rgba(58, 46, 32, 0.05), 0 4px 12px rgba(58, 46, 32, 0.03);
   --r-code: #e9dcbf; --r-hl: rgba(139, 74, 14, 0.14);
@@ -311,11 +327,11 @@ a { color: inherit; }
 }
 .reader[data-tone="dark"] {
   --r-bg: #0b0b0d; --r-surface: #16161a; --r-fg: #f2f2f5; --r-muted: #9898a3; --r-line: rgba(255, 255, 255, 0.07); --r-track: #2a2a31;
-  --r-accent: #7aa2d6; --r-on-accent: #0b0b0d; --r-tint: rgba(122, 162, 214, 0.12);
+  --r-accent: #9aa7e6; --r-ink: #b7d3f4; --r-btn: #9aa7e6; --r-on-accent: #0b0b0d; --r-tint: rgba(113, 129, 200, 0.14);
   --r-elev: linear-gradient(180deg, #16161a 0%, #101013 100%); --r-elev-hover: linear-gradient(180deg, #1c1c21 0%, #141418 100%);
   --r-sheen: inset 0 1px 0 0 rgba(255, 255, 255, 0.08); --r-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.25);
-  --r-code: #08080a; --r-hl: rgba(122, 162, 214, 0.18); --r-scrim: rgba(0, 0, 0, 0.6);
-  --r-k: #7aa2d6; --r-s: #63b090; --r-c: #9898a3; --r-n: #c8a97e; --r-f: #b4bfd4;
+  --r-code: #08080a; --r-hl: rgba(241, 207, 237, 0.14); --r-scrim: rgba(0, 0, 0, 0.6);
+  --r-k: #9aa7e6; --r-s: #63b090; --r-c: #9898a3; --r-n: #f1cfed; --r-f: #b7d3f4;
   color-scheme: dark;
 }
 
@@ -337,7 +353,7 @@ a { color: inherit; }
 .r-bar-in { max-width: 40rem; margin: 0 auto; display: flex; align-items: center; gap: 2px; min-height: 52px; }
 .r-back {
   display: inline-flex; align-items: center; gap: 1px; min-height: 44px; max-width: 42%; padding: 0 8px 0 0;
-  color: var(--r-accent); font-weight: 600; font-size: 15px;
+  color: var(--r-ink); font-weight: 600; font-size: 15px;
 }
 .r-back span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .r-back svg { flex: none; margin-left: -6px; }
@@ -349,7 +365,7 @@ a { color: inherit; }
 .r-icon:active { background: var(--r-tint); }
 .r-aa { font: 600 17px/1 var(--r-serif); letter-spacing: -0.01em; }
 .r-progress { height: 2.5px; margin: 0 calc(-1 * max(16px, env(safe-area-inset-right))) -1px calc(-1 * max(16px, env(safe-area-inset-left))); overflow: hidden; }
-.r-progress i { display: block; height: 100%; background: var(--r-accent); transform-origin: left; transform: scaleX(0); will-change: transform; }
+.r-progress i { display: block; height: 100%; background: var(--grad-horizon); clip-path: inset(0 100% 0 0); }
 
 .r-page {
   --fs: 18px; max-width: 40rem; margin: 0 auto;
@@ -358,18 +374,18 @@ a { color: inherit; }
   box-sizing: content-box;
 }
 @media (min-width: 720px) { .r-page { padding-top: 48px; } }
-.r-kicker { margin: 0 0 14px; font: 650 12px/1.3 var(--r-sans); letter-spacing: 0.13em; text-transform: uppercase; color: var(--r-accent); }
+.r-kicker { margin: 0 0 14px; font: 650 12px/1.3 var(--r-sans); letter-spacing: 0.13em; text-transform: uppercase; color: var(--r-ink); }
 .r-title { margin: 0 0 12px; font: 700 clamp(2rem, 8.5vw, 2.75rem)/1.1 var(--r-serif); letter-spacing: -0.02em; text-wrap: balance; }
 .r-meta { margin: 0 0 26px; font: 500 13px/1.45 var(--r-sans); color: var(--r-muted); font-variant-numeric: tabular-nums; }
 .r-label {
   display: flex; align-items: center; gap: 7px; margin: 0 0 8px;
-  font: 650 11.5px/1 var(--r-sans); letter-spacing: 0.13em; text-transform: uppercase; color: var(--r-accent);
+  font: 650 11.5px/1 var(--r-sans); letter-spacing: 0.13em; text-transform: uppercase; color: var(--r-ink);
 }
-.r-inti { margin: 0 0 8px; padding: 16px 18px 4px; border-radius: 16px; background: var(--r-tint); border: 1px solid var(--r-line); box-shadow: var(--r-sheen); }
+.r-inti { margin: 0 0 8px; padding: 16px 18px 4px; border-radius: 16px; background: var(--r-tint); border: 1px solid var(--r-line); box-shadow: inset 3px 0 0 var(--r-accent), var(--r-sheen); }
 .r-quick { margin: 16px 0 0; font: 500 13.5px/1.5 var(--r-sans); color: var(--r-muted); }
 .r-body { margin-top: 10px; }
 .r-recap { margin-top: 2.2em; padding-top: 1.1em; border-top: 1px solid var(--r-line); }
-.r-recap .md li::marker { color: var(--r-accent); }
+.r-recap .md li::marker { color: var(--r-ink); }
 .r-end { display: grid; gap: 10px; margin-top: 2em; }
 
 .r-btn {
@@ -379,8 +395,8 @@ a { color: inherit; }
   transition: border-color 180ms ease-out, transform 150ms ease-out;
 }
 .r-btn:active:not(:disabled) { transform: scale(0.98); }
-.r-btn.primary { background: var(--r-accent); border-color: var(--r-accent); color: var(--r-on-accent); box-shadow: var(--r-shadow); }
-.r-btn.is-done { color: var(--r-accent); border-color: var(--r-accent); }
+.r-btn.primary { background: var(--r-btn); border-color: var(--r-btn); color: var(--r-on-accent); box-shadow: var(--r-shadow); }
+.r-btn.is-done { color: var(--r-ink); border-color: var(--r-ink); }
 .r-btn:disabled { opacity: 0.4; cursor: default; }
 .r-btn.wide { width: 100%; }
 .r-next {
@@ -402,14 +418,14 @@ a { color: inherit; }
   border-bottom: 1px solid var(--r-line); font: 500 15px/1.35 var(--r-sans); color: var(--r-fg);
 }
 .r-toc-cover { color: var(--r-muted); }
-.r-toc-cover.now { color: var(--r-accent); font-weight: 650; }
+.r-toc-cover.now { color: var(--r-ink); font-weight: 650; }
 .r-toc-no {
   flex: none; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center;
   border: 1.5px solid var(--r-track); color: var(--r-muted); font: 600 12px/1 var(--r-sans); font-variant-numeric: tabular-nums;
 }
-.r-toc .done .r-toc-no { background: var(--r-accent); border-color: var(--r-accent); color: var(--r-on-accent); }
+.r-toc .done .r-toc-no { background: var(--r-btn); border-color: var(--r-btn); color: var(--r-on-accent); }
 .r-toc .now { font-weight: 650; }
-.r-toc .now .r-toc-no { border-color: var(--r-accent); color: var(--r-accent); }
+.r-toc .now .r-toc-no { border-color: var(--r-accent); color: var(--r-ink); }
 .r-toc-t { flex: 1; min-width: 0; }
 .r-toc-t small { display: block; font-size: 11.5px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--r-muted); }
 .r-toc-tag { flex: none; font-size: 12px; color: var(--r-muted); font-variant-numeric: tabular-nums; }
@@ -472,7 +488,7 @@ a { color: inherit; }
 .reader .md h4 { font-size: 1.1em; }
 .reader .md ul, .reader .md ol { margin: 0 0 1.05em; padding-left: 1.3em; }
 .reader .md li { padding: 0 0 0.35em 0.15em; }
-.reader .md a { color: var(--r-accent); }
+.reader .md a { color: var(--r-ink); }
 .reader .md strong { font-weight: 650; }
 .reader .md hr { border-top-color: var(--r-line); }
 .reader .md code { font: 500 0.82em var(--r-mono); background: var(--r-code); padding: 0.12em 0.38em; border-radius: 6px; overflow-wrap: anywhere; }
@@ -500,7 +516,7 @@ a { color: inherit; }
 .tk-k { color: var(--r-k); } .tk-s { color: var(--r-s); } .tk-n { color: var(--r-n); } .tk-f { color: var(--r-f); }
 .tk-c { color: var(--r-c); font-style: italic; }
 
-.block-label { margin: 0 0 10px !important; font: 650 11.5px/1 var(--r-sans); letter-spacing: 0.13em; text-transform: uppercase; color: var(--r-accent); }
+.block-label { margin: 0 0 10px !important; font: 650 11.5px/1 var(--r-sans); letter-spacing: 0.13em; text-transform: uppercase; color: var(--r-ink); }
 .trace { margin: 0 0 1.3em; padding: 14px 14px 12px; border-radius: 16px; background: var(--r-elev); border: 1px solid var(--r-line); box-shadow: var(--r-sheen), var(--r-shadow); }
 .trace .code { margin-bottom: 12px !important; }
 .trace-text { min-height: 5.2em; margin: 0 0 10px !important; font-size: 0.94em; line-height: 1.6; }
@@ -512,7 +528,7 @@ a { color: inherit; }
 .quiz-q { margin: 0 0 10px !important; font: 600 0.92em/1.45 var(--r-sans); }
 .quiz-opts { display: flex; flex-wrap: wrap; gap: 8px; }
 .quiz-opt { flex: 0 1 auto; min-width: 64px; max-width: 100%; padding: 10px 14px; white-space: normal; text-align: left; font-size: 14px; line-height: 1.35; }
-.quiz-opt.right { background: var(--r-accent); border-color: var(--r-accent); color: var(--r-on-accent); }
+.quiz-opt.right { background: var(--r-btn); border-color: var(--r-btn); color: var(--r-on-accent); }
 .quiz-opt.right code { background: transparent; color: inherit; }
 .quiz-opt.wrong { border-style: dashed; opacity: 0.7; }
 .quiz-fb { margin: 12px 0 0 !important; font-size: 0.94em; line-height: 1.6; }

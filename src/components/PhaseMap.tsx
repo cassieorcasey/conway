@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { PHASES, type Phase } from '../data/roadmap';
-import { phaseCount, ringColor, statusOf, topicCount } from '../lib/stats';
+import { phaseCount, statusOf, topicCount } from '../lib/stats';
 import { useWidth } from '../lib/hooks';
 import { Ring } from './Ring';
 import { Check } from './icons';
@@ -122,7 +122,7 @@ function PhaseRow({ phase, index, done, prevComplete, isLast, open, dim, activeT
       >
         <span className="phase-node">
           <Ring size={NODE} stroke={7} pct={pc.pct} />
-          <span className="phase-num" style={complete ? { color: ringColor(1) } : undefined}>
+          <span className="phase-num" style={complete ? { color: 'var(--status-done)' } : undefined}>
             {complete ? <Check size={22} /> : index + 1}
           </span>
         </span>

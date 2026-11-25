@@ -36,6 +36,5 @@ export const findTopic = (id: string | null) => {
   return null;
 };
 
-/** Warna cincin: aksen slate blue selama berjalan, sage saat selesai. */
-export const ringColor = (pct: number) =>
-  pct >= 1 ? 'var(--status-done)' : 'var(--accent-primary)';
+/** Cincin: gradasi Twilight Horizon selama berjalan, sage solid saat selesai. */
+export const ringDone = (pct: number) => pct >= 1;
