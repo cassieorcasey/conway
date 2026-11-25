@@ -55,35 +55,6 @@
   color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg-canvas: #0b0b0d;
-    --bg-surface-elevated: linear-gradient(180deg, #16161a 0%, #101013 100%);
-    --bg-surface-hover: linear-gradient(180deg, #1c1c21 0%, #141418 100%);
-    --bg-surface-sunken: #08080a;
-    --border-subtle: rgba(255, 255, 255, 0.08);
-    --border-sheen-top: inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
-    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.25);
-    --text-primary: #f2f2f5;
-    --text-secondary: #9898a3;
-    --text-tertiary: #63636e;
-    --accent-primary: #9aa7e6;
-    --accent-strong: #9aa7e6;
-    --text-accent: #b7d3f4;
-    --accent-surface: rgba(113, 129, 200, 0.14);
-    --accent-glow: radial-gradient(circle, rgba(113, 129, 200, 0.38) 0%, rgba(171, 171, 220, 0.2) 45%, transparent 72%);
-    --grad-veil: linear-gradient(135deg, rgba(113, 129, 200, 0.2) 0%, rgba(171, 171, 220, 0.1) 100%);
-    --on-accent: #0b0b0d;
-    --status-done: #63b090;
-    --on-done: #0b0b0d;
-    --track-line-default: #232329;
-    --pill-bg: rgba(255, 255, 255, 0.06);
-    --sheet-shadow: 0 0 0 1px var(--border-subtle), var(--border-sheen-top), 0 1px 2px rgba(0, 0, 0, 0.4), 0 24px 48px -16px rgba(0, 0, 0, 0.6);
-    --logo-ink: #f2f2f5;
-    color-scheme: dark;
-  }
-}
-
 /* ───────── Dasar ───────── */
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
@@ -292,8 +263,8 @@ a { color: inherit; }
 /* ───────── Pembaca materi (buku) ─────────
    Satu kolom selebar ~65 karakter. Serif untuk bacaan, sistem untuk kontrol, mono untuk kode.
    Tema baca terpisah dari tema aplikasi: otomatis mengikuti sistem, atau terang, sepia, gelap. */
-/* Token baca mengikuti Dreamy Accents on Quiet Canvas (Terang/Gelap); Sepia tetap kertas hangat. Ditulis sebagai nilai tetap (bukan var aplikasi), supaya
-   pilihan Terang tetap terang walau sistem sedang gelap, dan sebaliknya. */
+/* Token baca mengikuti Dreamy Accents on Quiet Canvas (Terang); Sepia kertas hangat. Ditulis sebagai nilai tetap (bukan var aplikasi), supaya
+   tema baca tidak ikut berubah oleh pengaturan sistem. */
 .reader {
   --r-bg: #f5f5f7; --r-surface: #ffffff; --r-fg: #1d1d1f; --r-muted: #5c5c66; --r-line: rgba(0, 0, 0, 0.06); --r-track: #dcdce2;
   --r-accent: #7181c8; --r-ink: #5261ab; --r-btn: #5261ab; --r-on-accent: #ffffff; --r-tint: rgba(241, 229, 246, 0.65);
@@ -306,17 +277,6 @@ a { color: inherit; }
   --r-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
   color-scheme: light;
 }
-@media (prefers-color-scheme: dark) {
-  .reader:not([data-tone]) {
-    --r-bg: #0b0b0d; --r-surface: #16161a; --r-fg: #f2f2f5; --r-muted: #9898a3; --r-line: rgba(255, 255, 255, 0.07); --r-track: #2a2a31;
-    --r-accent: #9aa7e6; --r-ink: #b7d3f4; --r-btn: #9aa7e6; --r-on-accent: #0b0b0d; --r-tint: rgba(113, 129, 200, 0.14);
-    --r-elev: linear-gradient(180deg, #16161a 0%, #101013 100%); --r-elev-hover: linear-gradient(180deg, #1c1c21 0%, #141418 100%);
-    --r-sheen: inset 0 1px 0 0 rgba(255, 255, 255, 0.08); --r-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.25);
-    --r-code: #08080a; --r-hl: rgba(241, 207, 237, 0.14); --r-scrim: rgba(0, 0, 0, 0.6);
-    --r-k: #9aa7e6; --r-s: #63b090; --r-c: #9898a3; --r-n: #f1cfed; --r-f: #b7d3f4;
-    color-scheme: dark;
-  }
-}
 .reader[data-tone="sepia"] {
   --r-bg: #f2e8d2; --r-surface: #f8f0de; --r-fg: #3a2e20; --r-muted: #6f5f49; --r-line: rgba(58, 46, 32, 0.1); --r-track: #dccfae;
   --r-accent: #8b4a0e; --r-ink: #8b4a0e; --r-btn: #8b4a0e; --r-on-accent: #fff7ea; --r-tint: rgba(139, 74, 14, 0.08);
@@ -324,15 +284,6 @@ a { color: inherit; }
   --r-sheen: inset 0 1px 0 0 rgba(255, 250, 238, 0.8); --r-shadow: 0 1px 2px rgba(58, 46, 32, 0.05), 0 4px 12px rgba(58, 46, 32, 0.03);
   --r-code: #e9dcbf; --r-hl: rgba(139, 74, 14, 0.14);
   --r-k: #8b4a0e; --r-s: #2f6b3a; --r-c: #6f5f49; --r-n: #7a5a34; --r-f: #1f5a8a;
-}
-.reader[data-tone="dark"] {
-  --r-bg: #0b0b0d; --r-surface: #16161a; --r-fg: #f2f2f5; --r-muted: #9898a3; --r-line: rgba(255, 255, 255, 0.07); --r-track: #2a2a31;
-  --r-accent: #9aa7e6; --r-ink: #b7d3f4; --r-btn: #9aa7e6; --r-on-accent: #0b0b0d; --r-tint: rgba(113, 129, 200, 0.14);
-  --r-elev: linear-gradient(180deg, #16161a 0%, #101013 100%); --r-elev-hover: linear-gradient(180deg, #1c1c21 0%, #141418 100%);
-  --r-sheen: inset 0 1px 0 0 rgba(255, 255, 255, 0.08); --r-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.25);
-  --r-code: #08080a; --r-hl: rgba(241, 207, 237, 0.14); --r-scrim: rgba(0, 0, 0, 0.6);
-  --r-k: #9aa7e6; --r-s: #63b090; --r-c: #9898a3; --r-n: #f1cfed; --r-f: #b7d3f4;
-  color-scheme: dark;
 }
 
 .reader {
@@ -550,10 +501,6 @@ a { color: inherit; }
 }
 .login-card .logo-badge { margin: 0 auto; }
 .brand .logo-badge { --badge: 34px; }
-@media (prefers-color-scheme: dark) {
-  .login-card .logo-badge { background: transparent; box-shadow: none; }
-  .brand .logo-badge { box-shadow: none; }
-}
 .login-card h1 { margin: 16px 0 0; font: 600 30px/1.15 'Literata', Georgia, serif; letter-spacing: -0.02em; }
 .login-card > .muted { margin: 4px 0 24px; }
 .login-card form { display: flex; flex-direction: column; gap: 10px; text-align: left; }

@@ -2,13 +2,13 @@
 // aman kalau penyimpanan diblokir: semuanya kembali ke nilai bawaan.
 import { safeStorage } from './hooks';
 
-export type Tone = 'auto' | 'light' | 'sepia' | 'dark';
+export type Tone = 'light' | 'sepia';
 export type Mode = 'lengkap' | 'cepat';
 export interface ReaderSettings { fs: number; tone: Tone; mode: Mode }
 
 export const FS_MIN = 15;
 export const FS_MAX = 26;
-const DEFAULTS: ReaderSettings = { fs: 18, tone: 'auto', mode: 'lengkap' };
+const DEFAULTS: ReaderSettings = { fs: 18, tone: 'light', mode: 'lengkap' };
 const SKEY = 'waypoint-reader';
 const PKEY = 'waypoint-reader-pos';
 
@@ -24,7 +24,7 @@ export function loadSettings(): ReaderSettings {
   const s = parse<Partial<ReaderSettings>>(safeStorage.get(SKEY), {});
   return {
     fs: typeof s.fs === 'number' ? Math.min(FS_MAX, Math.max(FS_MIN, Math.round(s.fs))) : DEFAULTS.fs,
-    tone: s.tone === 'light' || s.tone === 'sepia' || s.tone === 'dark' ? s.tone : 'auto',
+    tone: s.tone === 'sepia' ? 'sepia' : 'light',
     mode: s.mode === 'cepat' ? 'cepat' : 'lengkap',
   };
 }

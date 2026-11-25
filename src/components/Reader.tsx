@@ -24,10 +24,8 @@ interface Props {
 export const chapterLabel = (c: Chapter) => (c.n !== null ? `Bab ${c.n}` : c.stepId ? 'Mini-proyek' : 'Lampiran');
 
 const TONES: { v: Tone; label: string; swatch?: string }[] = [
-  { v: 'auto', label: 'Otomatis' },
   { v: 'light', label: 'Terang', swatch: '#f5f5f7' },
   { v: 'sepia', label: 'Sepia', swatch: '#f2e8d2' },
-  { v: 'dark', label: 'Gelap', swatch: '#0b0b0d' },
 ];
 const MODES: { v: Mode; label: string }[] = [{ v: 'lengkap', label: 'Lengkap' }, { v: 'cepat', label: 'Cepat' }];
 
@@ -157,7 +155,7 @@ export function Reader({ topic, phase, phaseIndex, done, start, resume, onStep, 
 
   return createPortal(
     <div className="reader" ref={root} tabIndex={-1} role="dialog" aria-modal="true" aria-label={`Materi ${topic.title}`}
-      data-tone={settings.tone === 'auto' ? undefined : settings.tone}>
+      data-tone={settings.tone === 'light' ? undefined : settings.tone}>
       <div className="r-scroll" ref={scroller} onScroll={onScroll}>
         <header className="r-bar">
           <div className="r-bar-in">

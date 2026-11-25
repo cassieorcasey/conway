@@ -31,7 +31,7 @@ Semua fase, topik, langkah, dan sumber ada di `src/data/roadmap.ts`.
 
 ## Materi per topik (pembaca buku)
 
-Setiap topik punya catatan markdown di `src/content/<id-topik>.md` yang dibuka sebagai buku layar penuh lewat kartu **Baca materi** atau tombol buku di samping setiap langkah. Pembaca punya sampul dengan daftar isi, satu bab per langkah, mode Cepat/Lengkap, ukuran huruf, tema otomatis/terang/sepia/gelap, dan mengingat posisi baca terakhir di perangkat itu.
+Setiap topik punya catatan markdown di `src/content/<id-topik>.md` yang dibuka sebagai buku layar penuh lewat kartu **Baca materi** atau tombol buku di samping setiap langkah. Pembaca punya sampul dengan daftar isi, satu bab per langkah, mode Cepat/Lengkap, ukuran huruf, tema terang/sepia, dan mengingat posisi baca terakhir di perangkat itu.
 
 Aturan menulis catatan:
 
