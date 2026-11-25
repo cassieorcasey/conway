@@ -27,7 +27,7 @@ export function Login() {
   return (
     <main className="login">
       <div className="login-card">
-        <span className="logo-badge"><Logo size={36} variant="dream" /></span>
+        <Logo size={56} />
         <h1>Conway</h1>
         <p className="muted">Roadmap Lead Data Science</p>
         {state === 'sent' ? (
