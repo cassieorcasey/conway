@@ -1,5 +1,7 @@
 # Conway
 
+> **In English:** My Lead Data Science learning roadmap as a sequential map, with study notes for each topic. Built as a web app, with progress stored in Supabase. The rest of this page is in Indonesian.
+
 Roadmap Lead Data Science dalam bentuk peta berurutan. Sembilan fase berderet vertikal sebagai jalur utama. Ketuk satu fase untuk memunculkan tahap-tahapnya (topik) sebagai jalur vertikal, lalu ketuk tahap untuk membukanya di Laci Materi berisi langkah dan sumber belajar. Di laptop laci selalu terbuka di sisi kanan (split-view 42/58); di iPhone laci muncul sebagai bottom sheet.
 
 Situs: https://cassieorcasey.github.io/conway/
